@@ -7,7 +7,8 @@ export function getTiandituImgLayer() {
     subdomains: subDomains,
     tileMatrixSetID: "EPSG::900913",
     tilingScheme: new Cesium.GeographicTilingScheme(),
-    maximumLevel: 17,
+    maximumLevel: 18,
+    tileMatrixLabels:["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"]
   });
   return imgMap;
 }
@@ -20,7 +21,9 @@ export function getTiandituImgMarkLayer() {
     subdomains: subDomains,
     tileMatrixSetID: "EPSG::900913",
     tilingScheme: new Cesium.GeographicTilingScheme(),
-    maximumLevel: 17,
+    maximumLevel: 18,
+    tileMatrixLabels:["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"]
+
   });
   return imgMap;
 }
@@ -36,6 +39,8 @@ export function getTiandituVecLayer() {
     tileMatrixSetID: "EPSG::4490",
     tilingScheme: new Cesium.GeographicTilingScheme(),
     maximumLevel: 17,
+    tileMatrixLabels:["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"]
+
   });
   return vecMap;
 }
@@ -49,6 +54,7 @@ export function getTiandituVecMarkLayer() {
     tileMatrixSetID: "EPSG::4490",
     tilingScheme: new Cesium.GeographicTilingScheme(),
     maximumLevel: 17,
+    tileMatrixLabels:["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"]
   });
   return vecMap;
 }

@@ -38,7 +38,6 @@
 
       // 叠加天地图
       imageryProvider : getTiandituImgLayer(),
-      terrainProvider: Cesium.createWorldTerrain(),
     }); 
     viewer.cesiumWidget.creditContainer.style.display = "none";  // 去除logo
     viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
