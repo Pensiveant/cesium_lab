@@ -74,6 +74,18 @@
           .catch(function (error) {
             console.log(error);
           });
+
+        tileset.tileLoad.addEventListener(function (tile) {
+          let content = tile.content;
+          let featuresLength = content.featuresLength;
+          console.log("要素数量为：");
+          console.log(featuresLength);
+          console.log("第一个要素为：");
+          let feature = content.getFeature(0);
+          console.log(feature);
+          console.log(feature.getPropertyIds());
+          console.log(feature.getProperty('Height'));
+        });
       }
 
       //
