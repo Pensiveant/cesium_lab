@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8" />
     <!-- Include the CesiumJS JavaScript and CSS files -->
-    <title>wms</title>
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
     <link
       href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
@@ -31,7 +30,7 @@
         getTiandituImgMarkLayer,
         getTiandituVecLayer,
         getTiandituVecMarkLayer,
-      } from "./utils/basemap.js";
+      } from "../utils/basemap.js";
       // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
       // 初始化view
@@ -52,23 +51,13 @@
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
-      // 加载wms 服务
-      const wmsLayer = new Cesium.WebMapServiceImageryProvider({
-        url: "https://nationalmap.gov.au/proxy/http://geoserver.nationalmap.nicta.com.au/geotopo_250k/ows",
-        layers: "Hydrography:bores",
-        parameters: {
-          transparent: true,
-          format: "image/png",
+      // 定位到成都
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+        orientation: {
+          heading: Cesium.Math.toRadians(0.0),
+          pitch: Cesium.Math.toRadians(-45.0),
         },
-      });
-      viewer.imageryLayers.addImageryProvider(wmsLayer);
-      viewer.camera.setView({
-        destination: Cesium.Rectangle.fromDegrees(
-          114.591,
-          -45.837,
-          148.97,
-          -5.73
-        ),
       });
     </script>
   </body>

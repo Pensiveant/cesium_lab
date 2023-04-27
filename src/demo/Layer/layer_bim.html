@@ -30,7 +30,7 @@
         getTiandituImgMarkLayer,
         getTiandituVecLayer,
         getTiandituVecMarkLayer,
-      } from "./utils/basemap.js";
+      } from "../../utils/basemap.js";
       // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
       // 初始化view
@@ -55,7 +55,7 @@
       // 加载bim
       function addBimModel(viewer) {
         const tileset = new Cesium.Cesium3DTileset({
-          url: "./data/bim/tileset.json",
+          url: "../../data/bim/tileset.json",
         });
         tileset.readyPromise
           .then(function (tileset) {

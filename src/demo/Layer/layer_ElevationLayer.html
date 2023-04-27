@@ -3,9 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+    <title>Arcgis ElevationLayer</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Cesium.js"></script>
     <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
+      href="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Widgets/widgets.css"
       rel="stylesheet"
     />
     <style>
@@ -30,7 +31,7 @@
         getTiandituImgMarkLayer,
         getTiandituVecLayer,
         getTiandituVecMarkLayer,
-      } from "./utils/basemap.js";
+      } from "../../utils/basemap.js";
       // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
       // 初始化view
@@ -49,25 +50,30 @@
           url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
         }),
       });
+
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
-      const polineGraphic = new Cesium.PolylineGraphics({
-        positions: Cesium.Cartesian3.fromDegreesArray(
-          [
-            104.06063045979249, 30.664350322948774, 104.06657515589207,
-            30.66081057488708,
-          ],
-          viewer.scene.globe.ellipsoid
-        ),
-        width: 5,
-        material: Cesium.Color.RED,
-      });
-      viewer.entities.add({
-        name: "polyline",
-        polyline: polineGraphic,
+      // 加载地形
+      getArcGISTiledElevationTerrainProvider().then((terrainProvider) => {
+        viewer.terrainProvider = terrainProvider;
+
+        // 定位到成都
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+          orientation: {
+            heading: Cesium.Math.toRadians(0.0),
+            pitch: Cesium.Math.toRadians(-45.0),
+          },
+        });
       });
 
-      viewer.zoomTo(viewer.entities);
+      async function getArcGISTiledElevationTerrainProvider() {
+        const terrainProvider =
+          await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+            "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+          );
+        return terrainProvider;
+      }
     </script>
   </body>
 </html>

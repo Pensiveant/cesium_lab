@@ -30,7 +30,7 @@
         getTiandituImgMarkLayer,
         getTiandituVecLayer,
         getTiandituVecMarkLayer,
-      } from "./utils/basemap.js";
+      } from "../utils/basemap.js";
       // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
       // 初始化view
@@ -56,10 +56,17 @@
         destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
         orientation: {
           heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-90.0),
+          pitch: Cesium.Math.toRadians(-45.0),
         },
       });
-      console.log(viewer.camera)
+
+      // 鼠标事件
+      const eventHandler = new Cesium.ScreenSpaceEventHandler(
+        viewer.scene.canvas
+      );
+      eventHandler.setInputAction(function (evt) {
+       console.log('点击左键。。。。')
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     </script>
   </body>
 </html>

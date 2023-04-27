@@ -30,8 +30,7 @@
         getTiandituImgMarkLayer,
         getTiandituVecLayer,
         getTiandituVecMarkLayer,
-      } from "./utils/basemap.js";
-      import Point from "./utils/Geometry/point.js";
+      } from "../../utils/basemap.js";
       // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
       // 初始化view
@@ -40,7 +39,7 @@
         homeButton: false, // home
         sceneModePicker: false, // 隐藏二三维切换
         baseLayerPicker: false, //隐藏默认底图选择控件
-        navigationHelpButton: false, // 帮助？saa号
+        navigationHelpButton: false, // 帮助？号
         animation: false,
         infoBox: false,
         timeline: false,
@@ -52,24 +51,23 @@
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
-      //   // 定位到成都
-      //   viewer.camera.flyTo({
-      //     destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-      //     orientation: {
-      //       heading: Cesium.Math.toRadians(0.0),
-      //       pitch: Cesium.Math.toRadians(-45.0),
-      //     },
-      //   });
-      const billboardGraphics = new Cesium.BillboardGraphics({
-        image: "./img/locate.png",
+      const polineGraphic = new Cesium.PolylineGraphics({
+        positions: Cesium.Cartesian3.fromDegreesArray(
+          [
+            104.06063045979249, 30.664350322948774, 104.06657515589207,
+            30.66081057488708,
+          ],
+          viewer.scene.globe.ellipsoid
+        ),
+        width: 5,
+        material: Cesium.Color.RED,
       });
-      const wyoming = viewer.entities.add({
-        name: "广告牌",
-        position: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 0),
-        billboard: billboardGraphics,
+      viewer.entities.add({
+        name: "polyline",
+        polyline: polineGraphic,
       });
 
-      viewer.zoomTo(wyoming);
+      viewer.zoomTo(viewer.entities);
     </script>
   </body>
 </html>

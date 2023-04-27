@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <!-- Include the CesiumJS JavaScript and CSS files -->
+    <title>wms</title>
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
     <link
       href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
@@ -30,7 +31,7 @@
         getTiandituImgMarkLayer,
         getTiandituVecLayer,
         getTiandituVecMarkLayer,
-      } from "./utils/basemap.js";
+      } from "../../utils/basemap.js";
       // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
       // 初始化view
@@ -51,37 +52,24 @@
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
-      loadWfsLayer();
-      async function loadWfsLayer() {
-        try {
-          let geoJson = await Cesium.Resource.fetchJson({
-            url: "https://ahocevar.com/geoserver/wfs",
-            queryParameters: {
-              service: "WFS",
-              request: "GetFeature",
-              version: "1.0.0",
-              outputFormat: "application/json",
-              // typeName: "topp:states",
-              typeName: "usa:states",
-              
-            },
-          });
-          console.log(geoJson);
-          try {
-            let dataSource = await Cesium.GeoJsonDataSource.load(geoJson, {
-              stroke: Cesium.Color.BLUE,
-              fill: Cesium.Color.RED.withAlpha(0.7),
-              strokeWidth: 3,
-              clampToGround: true,
-            });
-            viewer.dataSources.add(dataSource);
-          } catch (error) {
-            throw new Error('"GeoJson加载失败"');
-          }
-        } catch (error) {
-          throw new Error("图层查询失败");
-        }
-      }
+      // 加载wms 服务
+      const wmsLayer = new Cesium.WebMapServiceImageryProvider({
+        url: "https://nationalmap.gov.au/proxy/http://geoserver.nationalmap.nicta.com.au/geotopo_250k/ows",
+        layers: "Hydrography:bores",
+        parameters: {
+          transparent: true,
+          format: "image/png",
+        },
+      });
+      viewer.imageryLayers.addImageryProvider(wmsLayer);
+      viewer.camera.setView({
+        destination: Cesium.Rectangle.fromDegrees(
+          114.591,
+          -45.837,
+          148.97,
+          -5.73
+        ),
+      });
     </script>
   </body>
 </html>
