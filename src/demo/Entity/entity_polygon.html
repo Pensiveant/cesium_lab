@@ -69,8 +69,45 @@
         },
       });
       const wyoming = viewer.entities.add(polygonEntity);
-
       viewer.zoomTo(wyoming);
+      // 三角形
+      let triangleEntity = new Cesium.Entity({
+        polygon: {
+          hierarchy: Cesium.Cartesian3.fromDegreesArray([
+            104.06323070997296, 30.664859231902437, 104.06447156563476,
+            30.663102418517475, 104.06216672075426, 30.663083850974235,
+          ]),
+          material: new Cesium.Color(0, 0, 1, 0.2),
+          perPositionHeight: true, // 不设置该值，边界线不起作用
+          outline: true,
+          outlineWidth: 2,
+          outlineColor: new Cesium.Color(0, 1, 0, 1),
+          extrudedHeight: 100, // 设置垂直于地表的拉伸高度
+        },
+      });
+      viewer.entities.add(triangleEntity);
+      //
+      let holeEntity = new Cesium.Entity({
+        polygon: {
+          hierarchy: {
+            positions: Cesium.Cartesian3.fromDegreesArray([
+              104.06520496581112, 30.660551607385386, 104.06624013406136,
+              30.660572590247572, 104.0662198895377, 30.65965616350186,
+              104.06522032461255, 30.659597547644264,
+            ]),
+            holes: [
+              new Cesium.PolygonHierarchy(
+                Cesium.Cartesian3.fromDegreesArray([
+                  104.06576266477147, 30.660233507702728, 104.06597736705955,
+                  30.659875123894466, 104.06551790399301, 30.659882881849438,
+                ])
+              ),
+            ],
+          },
+          material: new Cesium.Color(1, 0, 0, 0.2),
+        },
+      });
+      viewer.entities.add(holeEntity);
     </script>
   </body>
 </html>
