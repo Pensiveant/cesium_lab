@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>绘制面</title>
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      // 初始化view
+      const viewer = new Cesium.Viewer("cesiumContainer", {
+        geocoder: false, // 搜索功能
+        homeButton: false, // home
+        sceneModePicker: false, // 隐藏二三维切换
+        baseLayerPicker: false, //隐藏默认底图选择控件
+        navigationHelpButton: false, // 帮助？saa号
+        animation: false,
+        infoBox: false,
+        timeline: false,
+        fullscreenButton: false,
+        // 使用ArcGIS 底图
+        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        }),
+      });
+      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+
+      //   // 定位到成都
+      //   viewer.camera.flyTo({
+      //     destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+      //     orientation: {
+      //       heading: Cesium.Math.toRadians(0.0),
+      //       pitch: Cesium.Math.toRadians(-45.0),
+      //     },
+      //   });
+
+      let polygonEntity = new Cesium.Entity({
+        polygon: {
+          hierarchy: Cesium.Cartesian3.fromDegreesArray([
+            104.06191132017372, 30.660578937208562, 104.0647899580722,
+            30.66057893144176, 104.0648108078706, 30.658975472403927,
+            104.06183042266197, 30.65906414823539,
+          ]),
+          // 边界线
+          perPositionHeight: true, // 不设置该值，边界线不起作用
+          material: new Cesium.Color(1, 0, 0, 0.2),
+          outline: true,
+          outlineWidth: 2,
+          outlineColor: new Cesium.Color(0, 1, 0, 1),
+        },
+      });
+      const wyoming = viewer.entities.add(polygonEntity);
+
+      viewer.zoomTo(wyoming);
+    </script>
+  </body>
+</html>
