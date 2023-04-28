@@ -74,9 +74,9 @@
         // coordinate.longitude = (coordinate.longitude * 180) / Math.PI;
         // console.log(coordinate);
 
-        var ray = viewer.camera.getPickRay(e.position);
-        var cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+        var ray = viewer.camera.getPickRay(e.position); // 创建一条光线，起点为相机位置，穿过给定坐标（e.position）的像素
+        var cartesian = viewer.scene.globe.pick(ray, viewer.scene);   // 获取光线与椭球体表面的交点，交点的坐标为笛卡尔坐标（Cartesian3）。
+        var cartographic = Cesium.Cartographic.fromCartesian(cartesian); // 笛卡尔坐标转经纬度坐标（单位为弧度）
         var lng = Cesium.Math.toDegrees(cartographic.longitude); //经度值
         var lat = Cesium.Math.toDegrees(cartographic.latitude); //纬度值
         let height = cartographic.height; // 高程
