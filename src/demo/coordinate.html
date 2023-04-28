@@ -61,18 +61,28 @@
         viewer.scene.canvas
       );
       eventHandler.setInputAction(function (e) {
-        console.log(e);
-        const { x, y } = e.position;
-        const cartesian3 = viewer.scene.pickPosition(
-          new Cesium.Cartesian2(x, y)
-        );
-        console.log(cartesian3);
-        const coordinate = Cesium.Cartographic.fromCartesian(cartesian3);
-        console.log(coordinate);
-        // 弧度转度
-        coordinate.latitude = (coordinate.latitude * 180) / Math.PI;
-        coordinate.longitude = (coordinate.longitude * 180) / Math.PI;
-        console.log(coordinate);
+        // console.log(e);
+        // const { x, y } = e.position;
+        // const cartesian3 = viewer.scene.pickPosition(
+        //   new Cesium.Cartesian2(x, y)
+        // );
+        // console.log(cartesian3);
+        // const coordinate = Cesium.Cartographic.fromCartesian(cartesian3);
+        // console.log(coordinate);
+        // // 弧度转度
+        // coordinate.latitude = (coordinate.latitude * 180) / Math.PI;
+        // coordinate.longitude = (coordinate.longitude * 180) / Math.PI;
+        // console.log(coordinate);
+
+        var ray = viewer.camera.getPickRay(e.position);
+        var cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+        var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+        var lng = Cesium.Math.toDegrees(cartographic.longitude); //经度值
+        var lat = Cesium.Math.toDegrees(cartographic.latitude); //纬度值
+        let height = cartographic.height; // 高程
+        // let height=viewer.scene.globe.getHeight(cartographic); // 高程
+        var mapPosition = { lng: lng, lat: lat, z: height };
+        console.log(mapPosition);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     </script>
   </body>
