@@ -75,7 +75,7 @@
         // console.log(coordinate);
 
         var ray = viewer.camera.getPickRay(e.position); // 创建一条光线，起点为相机位置，穿过给定坐标（e.position）的像素
-        var cartesian = viewer.scene.globe.pick(ray, viewer.scene);   // 获取光线与椭球体表面的交点，交点的坐标为笛卡尔坐标（Cartesian3）。
+        var cartesian = viewer.scene.globe.pick(ray, viewer.scene); // 获取光线与椭球体表面的交点，交点的坐标为笛卡尔坐标（Cartesian3）。
         var cartographic = Cesium.Cartographic.fromCartesian(cartesian); // 笛卡尔坐标转经纬度坐标（单位为弧度）
         var lng = Cesium.Math.toDegrees(cartographic.longitude); //经度值
         var lat = Cesium.Math.toDegrees(cartographic.latitude); //纬度值
@@ -84,6 +84,21 @@
         var mapPosition = { lng: lng, lat: lat, z: height };
         console.log(mapPosition);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+      // 判断两个笛卡尔坐标，只是Z不同，是否经纬度相等---> 不相等
+      const cartesian1 = new Cesium.Cartesian3(
+        -1334359.4095493746,
+        5326730.822167071,
+        3233510.4552113283
+      );
+      const cartesian2 = new Cesium.Cartesian3(
+        -1334359.4095493746,
+        5326730.822167071,
+        0
+      );
+      const cartographic1 = Cesium.Cartographic.fromCartesian(cartesian1);
+      const cartographic2 = Cesium.Cartographic.fromCartesian(cartesian2);
+      console.log({ cartographic1, cartographic2 });
     </script>
   </body>
 </html>
