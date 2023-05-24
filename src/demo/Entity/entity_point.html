@@ -35,7 +35,7 @@
         baseLayerPicker: false, //隐藏默认底图选择控件
         navigationHelpButton: false, // 帮助？saa号
         animation: false,
-        infoBox: false,
+        infoBox: true,
         timeline: false,
         fullscreenButton: false,
         // 使用ArcGIS 底图
@@ -44,6 +44,7 @@
         }),
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+      window.viewer = viewer;
 
       // 加载地形
       getArcGISTiledElevationTerrainProvider().then((terrainProvider) => {
@@ -63,12 +64,37 @@
             outlineColor: Cesium.Color.WHITE,
             outlineWidth: 2,
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            heightReference:Cesium.HeightReference.CLAMP_TO_GROUND, // 贴地
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // 贴地
+          },
+          // description: `<table border="1">
+          //                 <tr>
+          //                   <th>longitude</th>
+          //                   <th>${point.properties.longitude}</th>
+          //                 </tr>
+          //                 <tr>
+          //                   <td>latitude</td>
+          //                   <td>31.341147649314625</td>
+          //                 </tr>
+          //               </table>`,
+          properties: {
+            longitude: "103.66553274314929",
+            latitude: "31.341147649314625",
           },
         });
+        point.description = `<table border="1">
+                          <tr>
+                            <th>longitude</th>
+                            <th>${point.properties.longitude}</th>
+                          </tr>
+                          <tr>
+                            <td>latitude</td>
+                            <td>${point.properties.latitude}</td>
+                          </tr>
+                        </table>`;
         const wyoming = viewer.entities.add(point);
 
         viewer.zoomTo(wyoming);
+        
       });
 
       async function getArcGISTiledElevationTerrainProvider() {
