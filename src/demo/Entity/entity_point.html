@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Cesium.js"></script>
     <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
+      href="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Widgets/widgets.css"
       rel="stylesheet"
     />
     <style>
@@ -25,13 +25,6 @@
   <body>
     <div id="cesiumContainer"></div>
     <script type="module">
-      import {
-        getTiandituImgLayer,
-        getTiandituImgMarkLayer,
-        getTiandituVecLayer,
-        getTiandituVecMarkLayer,
-      } from "../../utils/basemap.js";
-      import Point from "../../utils/Geometry/point.js";
       // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
       // 初始化view
@@ -52,28 +45,39 @@
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
-      //   // 定位到成都
-      //   viewer.camera.flyTo({
-      //     destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-      //     orientation: {
-      //       heading: Cesium.Math.toRadians(0.0),
-      //       pitch: Cesium.Math.toRadians(-45.0),
-      //     },
-      //   });
-      const point = new Point(
-        "point",
-        Cesium.Cartesian3.fromDegrees(
-          104.06335998805471,
-          30.659858531850176,
-          0
-        ),
-        {
-          name: "custom",
-        }
-      );
-      const wyoming = viewer.entities.add(point);
+      // 加载地形
+      getArcGISTiledElevationTerrainProvider().then((terrainProvider) => {
+        viewer.terrainProvider = terrainProvider;
 
-      viewer.zoomTo(wyoming);
+        // 绘制点
+        let point = new Cesium.Entity({
+          name: "点",
+          position: Cesium.Cartesian3.fromDegrees(
+            103.66553274314929,
+            31.341147649314625,
+            0
+          ),
+          point: {
+            pixelSize: 5,
+            color: Cesium.Color.RED,
+            outlineColor: Cesium.Color.WHITE,
+            outlineWidth: 2,
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            heightReference:Cesium.HeightReference.CLAMP_TO_GROUND, // 贴地
+          },
+        });
+        const wyoming = viewer.entities.add(point);
+
+        viewer.zoomTo(wyoming);
+      });
+
+      async function getArcGISTiledElevationTerrainProvider() {
+        const terrainProvider =
+          await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+            "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+          );
+        return terrainProvider;
+      }
     </script>
   </body>
 </html>
