@@ -5,7 +5,7 @@
  */
 import PickerHelper from "./PickerHelper.js";
 import EventHelper from "./EventHelper.js";
-import FeatureLayer from "./Layer/FeatureLayer.js";
+import FeatureLayer from "./layer/FeatureLayer.js";
 
 class Draw {
   constructor(viewer) {
