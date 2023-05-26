@@ -46,14 +46,14 @@
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
-      // 定位到成都
-      viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0),
-        },
-      });
+    //   // 定位到成都
+    //   viewer.camera.flyTo({
+    //     destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+    //     orientation: {
+    //       heading: Cesium.Math.toRadians(0.0),
+    //       pitch: Cesium.Math.toRadians(-45.0),
+    //     },
+    //   });
 
       // 加载Geojson：点
       let pointGeojson = Cesium.GeoJsonDataSource.load(
@@ -98,7 +98,7 @@
       viewer.dataSources.add(lineGeojson);
 
       // 加载Geojson: 面
-      let polygonGeojson = Cesium.GeoJsonDataSource.load(
+      Cesium.GeoJsonDataSource.load(
         {
           type: "Polygon",
           coordinates: [
@@ -116,8 +116,10 @@
           stroke: Cesium.Color.BLUE,
           strokeWidth: 10,
         }
-      );
-      viewer.dataSources.add(polygonGeojson);
+      ).then((polygonGeojson) => {
+        viewer.dataSources.add(polygonGeojson);
+        viewer.flyTo(polygonGeojson); // 定位
+      });
     </script>
   </body>
 </html>
