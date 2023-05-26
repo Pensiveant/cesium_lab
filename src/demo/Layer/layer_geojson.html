@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <title>Geojson</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
+
+      // 初始化view
+      const viewer = new Cesium.Viewer("cesiumContainer", {
+        geocoder: false, // 搜索功能
+        homeButton: false, // home
+        sceneModePicker: false, // 隐藏二三维切换
+        baseLayerPicker: false, //隐藏默认底图选择控件
+        navigationHelpButton: false, // 帮助？号
+        animation: false,
+        infoBox: false,
+        timeline: false,
+        fullscreenButton: false,
+        // 使用ArcGIS 底图
+        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        }),
+      });
+      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+
+      // 定位到成都
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+        orientation: {
+          heading: Cesium.Math.toRadians(0.0),
+          pitch: Cesium.Math.toRadians(-45.0),
+        },
+      });
+
+      // 加载Geojson：点
+      let pointGeojson = Cesium.GeoJsonDataSource.load(
+        {
+          type: "MultiPoint",
+          coordinates: [
+            [104.06195805020613, 30.66078405761359],
+            [104.06472135500121, 30.66082515265285],
+            [104.0649136907307, 30.659075942259765],
+            [104.06191360495933, 30.65903870930004],
+          ],
+        },
+        {
+          markerSize: 30, // 点大小
+          markerColor: Cesium.Color.RED, // 点颜色
+          markerSymbol: "village", // 点样式， 参考： https://sandcastle.cesium.com/index.html?src=GeoJSON%2520simplestyle.html
+        }
+      );
+      viewer.dataSources.add(pointGeojson);
+
+      // 加载Geojson: 线
+      let lineGeojson = Cesium.GeoJsonDataSource.load(
+        {
+          type: "MultiLineString",
+          coordinates: [
+            [
+              [104.06282938323385, 30.660160045411505],
+              [104.0633465023204, 30.659893773944063],
+              [104.06382420228766, 30.660096059452275],
+            ],
+            [
+              [104.06334696121931, 30.65944600357508],
+              [104.06369054688574, 30.659474598442998],
+            ],
+          ],
+        },
+        {
+          stroke: Cesium.Color.RED,
+          strokeWidth: 5,
+        }
+      );
+      viewer.dataSources.add(lineGeojson);
+
+      // 加载Geojson: 面
+      let polygonGeojson = Cesium.GeoJsonDataSource.load(
+        {
+          type: "Polygon",
+          coordinates: [
+            [
+              [104.06296095884295, 30.661462344023953],
+              [104.0636739306797, 30.661481793258414],
+              [104.06366702616418, 30.66100965457213],
+              [104.06296590121971, 30.66098394742872],
+              [104.06296095884295, 30.661462344023953],
+            ],
+          ],
+        },
+        {
+          fill: Cesium.Color.RED,
+          stroke: Cesium.Color.BLUE,
+          strokeWidth: 10,
+        }
+      );
+      viewer.dataSources.add(polygonGeojson);
+    </script>
+  </body>
+</html>

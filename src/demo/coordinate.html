@@ -68,7 +68,7 @@
         let height = cartographic.height; // 高程
         // let height=viewer.scene.globe.getHeight(cartographic); // 高程
         var mapPosition = { lng: lng, lat: lat, z: height };
-        console.log(mapPosition);
+        console.log({ position: mapPosition, positionArr: [lng, lat] });
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
       // 判断两个笛卡尔坐标，只是Z不同，是否经纬度相等---> 不相等
