@@ -53,23 +53,45 @@
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
       // 加载wms 服务
-      const wmsLayer = new Cesium.WebMapServiceImageryProvider({
+      const wmsProvider = new Cesium.WebMapServiceImageryProvider({
         url: "https://nationalmap.gov.au/proxy/http://geoserver.nationalmap.nicta.com.au/geotopo_250k/ows",
-        layers: "Hydrography:bores",
+        layers: "Hydrography:bores,Infrastructure:fences", // 需要加载的图层，多个用逗号隔开
         parameters: {
           transparent: true,
           format: "image/png",
         },
-      });
-      viewer.imageryLayers.addImageryProvider(wmsLayer);
-      viewer.camera.setView({
-        destination: Cesium.Rectangle.fromDegrees(
+        crs: "EPSG:4326",
+        // 解决定位错误
+        rectangle: Cesium.Rectangle.fromDegrees(
           114.591,
           -45.837,
           148.97,
           -5.73
         ),
       });
+      // 加载方法1：
+      // viewer.imageryLayers.addImageryProvider(wmsProvider);
+
+      // 加载方法2：
+      const wmsLayer = new Cesium.ImageryLayer(wmsProvider);
+      viewer.imageryLayers.add(wmsLayer);
+
+      // viewer.camera.setView({
+      //   destination: Cesium.Rectangle.fromDegrees(
+      //     114.591,
+      //     -45.837,
+      //     148.97,
+      //     -5.73
+      //   ),
+      // });
+
+      // 定位，需先设置rectangle
+      wmsLayer.getViewableRectangle().then(function (rectangle) {
+        return viewer.camera.flyTo({
+          destination: rectangle,
+        });
+      });
+      window.viewer = viewer;
     </script>
   </body>
 </html>
