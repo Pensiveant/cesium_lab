@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+      .draw-box {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        padding: 16px;
+        width: 200px;
+        z-index: 2;
+
+        border: 1px solid black;
+        background-color: #ddd;
+        border-radius: 5px;
+
+        display: flex;
+        justify-content: space-between;
+      }
+
+      button {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      import SceneView from "../src/SceneView.js";
+      
+      const viewer = new SceneView({
+        container: "cesiumContainer",
+      });
+    </script>
+  </body>
+</html>
