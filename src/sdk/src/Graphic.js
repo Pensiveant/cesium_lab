@@ -3,18 +3,30 @@ class Graphic {
     this.geometry = options?.geometry;
     this.attributes = options?.attributes;
     this.symbol = options?.symbol;
-    this._entity = undefined;
-    this._setEntity();
+    this._entities = [];
+    this._setEntities();
   }
 
-  _setEntity() {
+  _setEntities() {
     if (this.geometry.type === "point") {
-      this._entity = new Cesium.Entity({
+      const entity = new Cesium.Entity({
         position: this.geometry._position,
         point: {
           ...this.symbol,
         },
       });
+      this._entities.push(entity);
+    } else if (this.geometry.type === "polyline") {
+      const { paths } = this.geometry;
+      for (let i = 0; i < paths.length; i++) {
+        const entityItem = new Cesium.Entity({
+          polyline: {
+            positions: paths[i],
+            ...this.symbol,
+          },
+        });
+        this._entities.push(entityItem);
+      }
     }
   }
 }

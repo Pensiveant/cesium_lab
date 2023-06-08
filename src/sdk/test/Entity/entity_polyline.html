@@ -26,33 +26,38 @@
     <div id="cesiumContainer"></div>
     <script type="module">
       import SceneView from "../../src/SceneView.js";
-      import Point from "../../src/geometry/Point.js";
-      import PointSymbol from "../../src/symbols/PointSymbol.js";
+      import Polyline from "../../src/geometry/Polyline.js";
+      import PolylineSymbol from "../../src/symbols/PolylineSymbol.js";
       import Graphic from "../../src/Graphic.js";
 
       const viewer = new SceneView({
         container: "cesiumContainer",
       });
 
-      let point = new Point({
-        longitude: 104.06339500388229,
-        latitude: 30.65984739573395,
+      let polyline = new Polyline({
+        paths: [
+          Cesium.Cartesian3.fromDegreesArray(
+            [
+              104.05840213978989, 30.660710197196195, 104.06489477780019,
+              30.660744489868755,
+            ],
+            viewer.scene.globe.ellipsoid
+          ),
+        ],
       });
 
-      let pointSymbol = new PointSymbol({
-        pixelSize: 5,
-        color: Cesium.Color.RED,
-        outlineColor: Cesium.Color.WHITE,
-        outlineWidth: 2,
+      let polylineSymbol = new PolylineSymbol({
+        width: 5,
+        material: Cesium.Color.RED,
       });
 
-      let pointGraphics = new Graphic({
-        geometry: point,
-        symbol: pointSymbol,
+      let polylineGraphics = new Graphic({
+        geometry: polyline,
+        symbol: polylineSymbol,
       });
 
-      const pointEntity = viewer.entities.add(pointGraphics._entities[0]);
-      viewer.zoomTo(pointEntity);
+      const polylineEntity = viewer.entities.add(polylineGraphics._entities[0]);
+      viewer.zoomTo(polylineEntity);
     </script>
   </body>
 </html>
