@@ -15,7 +15,11 @@ class Map {
     }
   }
 
-  addMany(layers) {}
+  addMany(layers) {
+    for (let i = 0; i < layers.length; i++) {
+      this.add(layers[i]);
+    }
+  }
 
   remove(layer) {}
 }
