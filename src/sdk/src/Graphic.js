@@ -27,6 +27,16 @@ class Graphic {
         });
         this._entities.push(entityItem);
       }
+    } else if (this.geometry.type === "polygon") {
+      const entity = new Cesium.Entity({
+        polygon: {
+          hierarchy: {
+            ...this.geometry,
+          },
+          ...this.symbol,
+        },
+      });
+      this._entities.push(entity);
     }
   }
 }

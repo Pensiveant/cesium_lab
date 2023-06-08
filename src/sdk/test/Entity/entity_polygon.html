@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      import SceneView from "../../src/SceneView.js";
+      import Polygon from "../../src/geometry/Polygon.js";
+      import PolygonSymbol from "../../src/symbols/PolygonSymbol.js";
+      import Graphic from "../../src/Graphic.js";
+
+      const viewer = new SceneView({
+        container: "cesiumContainer",
+      });
+
+      let polygon = new Polygon({
+        positions: Cesium.Cartesian3.fromDegreesArray([
+          104.06520496581112, 30.660551607385386, 104.06624013406136,
+          30.660572590247572, 104.0662198895377, 30.65965616350186,
+          104.06522032461255, 30.659597547644264,
+        ]),
+        holes: [
+          new Cesium.PolygonHierarchy(
+            Cesium.Cartesian3.fromDegreesArray([
+              104.06576266477147, 30.660233507702728, 104.06597736705955,
+              30.659875123894466, 104.06551790399301, 30.659882881849438,
+            ])
+          ),
+        ],
+      });
+
+      let polygonSymbol = new PolygonSymbol({
+        material: new Cesium.Color(1, 0, 0, 0.2),
+      });
+
+      let polygonGraphics = new Graphic({
+        geometry: polygon,
+        symbol: polygonSymbol,
+      });
+
+      const polygonEntity = viewer.entities.add(polygonGraphics._entities[0]);
+      viewer.zoomTo(polygonEntity);
+    </script>
+  </body>
+</html>
