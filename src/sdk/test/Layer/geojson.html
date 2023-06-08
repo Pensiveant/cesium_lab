@@ -53,7 +53,7 @@
         map,
       });
 
-      let layer = new GeoJSONLayer({
+      let pointLayer = new GeoJSONLayer({
         source: {
           type: "MultiPoint",
           coordinates: [
@@ -64,8 +64,42 @@
           ],
         },
       });
-      viewer.map.add(layer);
+      viewer.map.add(pointLayer);
 
+      let lineLayer = new GeoJSONLayer({
+        source:{
+          type: "MultiLineString",
+          coordinates: [
+            [
+              [104.06282938323385, 30.660160045411505],
+              [104.0633465023204, 30.659893773944063],
+              [104.06382420228766, 30.660096059452275],
+            ],
+            [
+              [104.06334696121931, 30.65944600357508],
+              [104.06369054688574, 30.659474598442998],
+            ],
+          ],
+        },
+      });
+      viewer.map.add(lineLayer);
+
+      
+      let polygonLayer = new GeoJSONLayer({
+        source:  {
+          type: "Polygon",
+          coordinates: [
+            [
+              [104.06296095884295, 30.661462344023953],
+              [104.0636739306797, 30.661481793258414],
+              [104.06366702616418, 30.66100965457213],
+              [104.06296590121971, 30.66098394742872],
+              [104.06296095884295, 30.661462344023953],
+            ],
+          ],
+        },
+      });
+      viewer.map.add(polygonLayer);
     </script>
   </body>
 </html>

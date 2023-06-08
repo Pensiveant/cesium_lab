@@ -9,8 +9,8 @@ class Map {
   add(layer) {
     this.layers.push(layer);
     if (layer.type === "geojson") {
-      layer._loadData().then(() => {
-        this._viewer.dataSources.add(layer._data);
+      layer._loadData().then((geojsonDataSouce) => {
+        this._viewer.dataSources.add(geojsonDataSouce);
       });
     }
   }

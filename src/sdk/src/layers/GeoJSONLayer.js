@@ -7,7 +7,6 @@ class GeoJSONLayer extends Layer {
     this.type = "geojson";
     this.source = options?.source;
     this.url = options?.url;
-    this._data;
   }
 
   async _loadData() {
@@ -16,7 +15,12 @@ class GeoJSONLayer extends Layer {
       geojsonDataSouce = await Cesium.GeoJsonDataSource.load(this.source);
     }
 
-    this._data = geojsonDataSouce;
+    if (this.url) {
+      geojsonDataSouce = await Cesium.Resource.fetchJson({
+        url: this.url,
+      });
+    }
+    return geojsonDataSouce;
   }
 }
 
