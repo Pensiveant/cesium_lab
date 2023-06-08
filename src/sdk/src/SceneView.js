@@ -20,6 +20,9 @@ class SceneView {
     });
 
     viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+
+    viewer.map = options?.map;
+    viewer.map._viewer = viewer;
     this._modifyMouseAction(viewer);
     return viewer;
   }
@@ -48,7 +51,7 @@ class SceneView {
       Cesium.CameraEventType.WHEEL,
       Cesium.CameraEventType.PINCH,
     ];
-    
+
     //移除默认鼠标左键双击事件
     viewer.screenSpaceEventHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
