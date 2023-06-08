@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      import SceneView from "../../src/SceneView.js";
+      import Point from "../../src/geometry/Point.js";
+      import PointSymbol from "../../src/symbols/PointSymbol.js";
+      import Graphic from "../../src/Graphic.js";
+
+      const viewer = new SceneView({
+        container: "cesiumContainer",
+      });
+
+      let point = new Point({
+        longitude: 104.06339500388229,
+        latitude: 30.65984739573395,
+      });
+
+      let pointSymbol = new PointSymbol({
+        pixelSize: 5,
+        color: Cesium.Color.RED,
+        outlineColor: Cesium.Color.WHITE,
+        outlineWidth: 2,
+      });
+
+      let pointGraphics = new Graphic({
+        geometry: point,
+        symbol: pointSymbol,
+      });
+
+      const pointEntity = viewer.entities.add(pointGraphics._entity);
+      viewer.zoomTo(pointEntity);
+    </script>
+  </body>
+</html>
