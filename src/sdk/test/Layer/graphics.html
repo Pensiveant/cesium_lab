@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.105/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+      .tool {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        z-index: 2;
+
+        display: flex;
+        justify-content: space-between;
+      }
+
+      button {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer">
+      <div class="tool">
+        <button onclick="remove()">移除图层</button>
+      </div>
+    </div>
+    <script type="module">
+      import SceneView from "../../src/SceneView.js";
+      import Point from "../../src/geometry/Point.js";
+      import PointSymbol from "../../src/symbols/PointSymbol.js";
+      import Graphic from "../../src/Graphic.js";
+      import GraphicsLayer from "../../src/layers/GraphicsLayer.js";
+      import Map from "../../src/Map.js";
+      import Polyline from "../../src/geometry/Polyline.js";
+      import PolylineSymbol from "../../src/symbols/PolylineSymbol.js";
+      import Polygon from "../../src/geometry/Polygon.js";
+      import PolygonSymbol from "../../src/symbols/PolygonSymbol.js";
+
+      let map = new Map();
+      const viewer = new SceneView({
+        container: "cesiumContainer",
+        map,
+      });
+
+      let point = new Point({
+        longitude: 104.06339500388229,
+        latitude: 30.65984739573395,
+      });
+
+      let pointSymbol = new PointSymbol({
+        pixelSize: 5,
+        color: Cesium.Color.RED,
+        outlineColor: Cesium.Color.WHITE,
+        outlineWidth: 2,
+      });
+
+      let pointGraphics = new Graphic({
+        geometry: point,
+        symbol: pointSymbol,
+      });
+
+      let polyline = new Polyline({
+        paths: [
+          Cesium.Cartesian3.fromDegreesArray(
+            [
+              104.05840213978989, 30.660710197196195, 104.06489477780019,
+              30.660744489868755,
+            ],
+            viewer.scene.globe.ellipsoid
+          ),
+        ],
+      });
+
+      let polylineSymbol = new PolylineSymbol({
+        width: 5,
+        material: Cesium.Color.RED,
+      });
+
+      let polylineGraphics = new Graphic({
+        geometry: polyline,
+        symbol: polylineSymbol,
+      });
+
+      let polygon = new Polygon({
+        positions: Cesium.Cartesian3.fromDegreesArray([
+          104.06520496581112, 30.660551607385386, 104.06624013406136,
+          30.660572590247572, 104.0662198895377, 30.65965616350186,
+          104.06522032461255, 30.659597547644264,
+        ]),
+        holes: [
+          new Cesium.PolygonHierarchy(
+            Cesium.Cartesian3.fromDegreesArray([
+              104.06576266477147, 30.660233507702728, 104.06597736705955,
+              30.659875123894466, 104.06551790399301, 30.659882881849438,
+            ])
+          ),
+        ],
+      });
+
+      let polygonSymbol = new PolygonSymbol({
+        material: new Cesium.Color(1, 0, 0, 0.2),
+      });
+
+      let polygonGraphics = new Graphic({
+        geometry: polygon,
+        symbol: polygonSymbol,
+      });
+
+      let graphicsLayer = new GraphicsLayer({
+        title: "graphics 添加",
+      });
+      graphicsLayer.addMany([pointGraphics, polylineGraphics, polygonGraphics]);
+
+      viewer.map.add(graphicsLayer);
+      graphicsLayer.zoomTo();
+
+      window.viewer = viewer;
+      window.graphicsLayer = graphicsLayer;
+
+      function remove() {
+        viewer.map.remove(graphicsLayer);
+      }
+      window.remove=remove;
+    </script>
+  </body>
+</html>
