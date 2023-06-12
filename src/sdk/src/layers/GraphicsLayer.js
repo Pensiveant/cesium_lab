@@ -12,11 +12,15 @@ class GraphicsLayer extends Layer {
   add(graphic) {
     this.graphics.push(graphic);
     this._setEntities([graphic]);
+
+    this._addGraphicsToViewer([graphic]);
   }
 
   addMany(graphics) {
     this.graphics = [...this.graphics, ...graphics];
     this._setEntities(graphics);
+
+    this._addGraphicsToViewer([graphics]);
   }
 
   remove(graphic) {
@@ -45,7 +49,7 @@ class GraphicsLayer extends Layer {
   removeAll() {
     const entities = this._entities;
     for (let i = 0, len = entities.length; i < len; i++) {
-      viewer.entities.remove(entities[i]);
+      this._viewer.entities.remove(entities[i]);
     }
 
     this.graphics = [];
@@ -71,6 +75,15 @@ class GraphicsLayer extends Layer {
     for (let i = 0, len = graphics.length; i < len; i++) {
       const entities = graphics[i]._entities;
       this._entities = [...this._entities, ...entities];
+    }
+  }
+
+  _addGraphicsToViewer(graphics) {
+    for (let i = 0, len = graphics.length; i < len; i++) {
+      const entities = graphics[i]._entities;
+      for (let j = 0, len2 = entities.length; j < len2; j++) {
+        this._viewer.entities.add(entities[j]);
+      }
     }
   }
 }
