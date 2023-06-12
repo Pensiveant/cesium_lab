@@ -13,6 +13,10 @@ class Map {
         this._viewer.dataSources.add(geojsonDataSouce);
       });
     }
+    if (layer.type === "wms") {
+      let data = layer._loadData();
+      this._viewer.imageryLayers.add(data);
+    }
   }
 
   addMany(layers) {

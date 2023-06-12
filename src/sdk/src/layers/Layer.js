@@ -8,6 +8,9 @@ class Layer {
     this.opacity = options?.opacity || 1;
     this.fullExtent = options?.fullExtent;
   }
+
+  zoomTo() {}
+
   destroy() {}
 }
 
