@@ -8,8 +8,8 @@ class EventHelper {
 
   /**
    * 绑定事件
-   * @param {*} type 
-   * @param {*} handler 
+   * @param {*} type
+   * @param {*} handler
    */
   on(type, handler) {
     this._eventHandler.setInputAction(
@@ -20,7 +20,7 @@ class EventHelper {
 
   /**
    * 移除事件
-   * @param {*} type 
+   * @param {*} type
    */
   remove(type) {
     if (this._eventHandler) {
@@ -31,7 +31,7 @@ class EventHelper {
   /**
    * 移除元素上绑定的所有事件
    */
-  off() {
+  destroy() {
     if (this._eventHandler && !this._eventHandler.isDestroyed()) {
       this._eventHandler.destroy();
     }

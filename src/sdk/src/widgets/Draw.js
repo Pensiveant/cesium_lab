@@ -72,7 +72,7 @@ class Draw {
 
   destroy() {
     this.layer.destroy();
-    this._eventHelper.off();
+    this._eventHelper.destroy();
     that._pickerHelper.setCursor("default");
   }
 
