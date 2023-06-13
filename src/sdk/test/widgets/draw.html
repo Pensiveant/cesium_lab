@@ -45,7 +45,7 @@
     <div id="cesiumContainer">
       <div class="draw-box">
         <button onclick="drawPoint()">点</button>
-        <button>线</button>
+        <button onclick="drawPolyline()">线</button>
         <button>面</button>
         <button onclick="removeAll()">清除</button>
         <button onclick="destroy()">销毁</button>
@@ -87,6 +87,12 @@
 
       window.drawPoint = drawPoint;
       window.destroy = destroy;
+
+      // 
+      function drawPolyline() {
+        drawTool.drawPolyline();
+      }
+      window.drawPolyline = drawPolyline;
     </script>
   </body>
 </html>

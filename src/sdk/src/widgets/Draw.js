@@ -3,6 +3,8 @@ import PickerHelper from "./PickerHelper.js";
 import EventHelper from "./EventHelper.js";
 import Point from "../../src/geometry/Point.js";
 import PointSymbol from "../../src/symbols/PointSymbol.js";
+import Polyline from "../../src/geometry/Polyline.js";
+import PolylineSymbol from "../../src/symbols/PolylineSymbol.js";
 import Graphic from "../../src/Graphic.js";
 
 class Draw {
@@ -58,7 +60,61 @@ class Draw {
     });
   }
 
-  drawPolyline() {}
+  drawPolyline() {
+    // 改变鼠标样式
+    this._pickerHelper.setCursor("crosshair");
+    const that = this;
+    let prePoint;
+
+    let moveEntity;
+    this._eventHelper.on("MOUSE_MOVE", (evt) => {
+      let { position } = that._pickerHelper.hitTest(evt);
+      that.viewer.entities.remove(moveEntity);
+      moveEntity = undefined;
+      if (prePoint) {
+        const polineEntity = new Cesium.Entity({
+          polyline: {
+            positions: [prePoint, position],
+            width: 2,
+            material: Cesium.Color.YELLOW,
+          },
+        });
+        that.viewer.entities.add(polineEntity);
+        moveEntity = polineEntity;
+      }
+    });
+
+    this._eventHelper.on("LEFT_CLICK", (evt) => {
+      let { position } = that._pickerHelper.hitTest(evt);
+      if (prePoint) {
+        let polyline = new Polyline({
+          paths: [[prePoint, position]],
+        });
+
+        let polylineSymbol = new PolylineSymbol({
+          width: 5,
+          material: Cesium.Color.RED,
+        });
+        let polylineGraphics = new Graphic({
+          geometry: polyline,
+          symbol: polylineSymbol,
+        });
+
+        that.viewer.entities.remove(moveEntity);
+        moveEntity = undefined;
+        this.layer.add(polylineGraphics);
+      }
+
+      prePoint = position;
+    });
+
+
+    this._eventHelper.on("LEFT_DOUBLE_CLICK", () => {
+      that.viewer.entities.remove(moveEntity);
+      that._pickerHelper.setCursor("default");
+      that._removeAllEvent();
+    });
+  }
 
   drawPolygon() {}
 

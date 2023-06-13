@@ -24,15 +24,19 @@ class GraphicsLayer extends Layer {
   }
 
   remove(graphic) {
+    if(!graphic){
+      return;
+    }
     const graphics = this.graphics;
     const index = graphics.indexOf(graphic);
     if (index !== -1) {
       const entities = this._entities;
-      const graphicEntities = graphics._entities;
+      const graphicEntities = graphic._entities;
       for (let j = 0, len = entities.length; j < len; j++) {
-        const index2 = entities.indexOf(graphicEntities[i]);
+        const index2 = entities.indexOf(graphicEntities[j]);
         if (index2 !== -1) {
           entities.splice(index2, 1);
+          this._viewer.entities.remove(graphicEntities[j]);
         }
       }
       graphics.splice(index, 1);
