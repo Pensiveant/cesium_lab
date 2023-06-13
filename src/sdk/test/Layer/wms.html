@@ -53,6 +53,7 @@
   <body>
     <div id="cesiumContainer">
       <div class="tool">
+        <button onclick="zoomTo()">定位</button>
         <button onclick="remove()">移除图层</button>
       </div>
     </div>
@@ -68,19 +69,27 @@
 
       let wmsLayer = new WMSLayer({
         url: "https://nationalmap.gov.au/proxy/http://geoserver.nationalmap.nicta.com.au/geotopo_250k/ows",
-        layers: "Hydrography:bores,Infrastructure:fences", // 需要加载的图层，多个用逗号隔开
+        layers: "Hydrography:bores", // 需要加载的图层，多个用逗号隔开
         parameters: {
           transparent: true,
           format: "image/png",
         },
       });
       viewer.map.add(wmsLayer);
+      wmsLayer.zoomTo();
       window.viewer = viewer;
 
+      // 移除
       function remove() {
         viewer.map.remove(wmsLayer);
       }
       window.remove=remove;
+
+      // 定位
+      function zoomTo() {
+        wmsLayer.zoomTo();
+      }
+      window.zoomTo=zoomTo;
     </script>
   </body>
 </html>

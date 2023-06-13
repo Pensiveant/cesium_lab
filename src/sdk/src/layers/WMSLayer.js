@@ -11,6 +11,7 @@ class WMSLayer extends Layer {
     this._options = options;
     this._viewer = undefined;
     this._data = undefined;
+    this.crs = options?.crs || "EPSG:4326";
   }
 
   _addDataToViewer(viewer) {
@@ -22,8 +23,77 @@ class WMSLayer extends Layer {
     this._data = wmsLayer;
   }
 
+  async _queryLayerExtent() {
+    let resource = new Cesium.Resource({
+      url: this._options.url,
+      queryParameters: {
+        request: "GetCapabilities",
+        service: "WMS",
+      },
+    });
+    const res = await resource.fetch();
+    let parser = new DOMParser();
+    let xmlDoc = parser.parseFromString(res, "text/xml");
+    // 查找layers对应的<Layer>节点
+    const layers = this._options.layers.split(",");
+    const layerNodes = [];
+    let extent = {
+      xmin: undefined,
+      ymin: undefined,
+      xmax: undefined,
+      ymax: undefined,
+    };
+    for (let i = 0, len = layers.length; i < len; i++) {
+      const nameDom = xmlDoc.evaluate(
+        `//*[local-name()="Layer"]/*[local-name()="Name"][contains(., "${layers[i]}")]`,
+        xmlDoc,
+        null,
+        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
+      );
+      const len2 = nameDom.snapshotLength;
+      for (let j = 0; j < len2; j++) {
+        const layerNode = nameDom.snapshotItem(j).parentNode;
+        layerNodes.push(layerNode);
+        const boundingBoxDoms = layerNode.getElementsByTagName("BoundingBox");
+        for (let k = 0, len3 = boundingBoxDoms.length; k < len3; k++) {
+          const item = boundingBoxDoms[k];
+          let crsName = item.getAttribute("SRS") ? "SRS" : "CRS";
+
+          if (item.getAttribute(crsName) === "EPSG:4326") {
+            const itemXmin = Number(item.getAttribute("miny"));
+            const itemXmax = Number(item.getAttribute("maxy"));
+            const itemYmin = Number(item.getAttribute("minx"));
+            const itemYmax = Number(item.getAttribute("maxx"));
+            extent.xmin =
+              !extent.xmin || itemXmin < extent.xmin ? itemXmin : extent.xmin;
+            extent.xmax =
+              !extent.xmax || itemXmax > extent.xmax ? itemXmax : extent.xmax;
+            extent.ymin =
+              !extent.ymin || itemYmin < extent.ymin ? itemYmin : extent.ymin;
+            extent.ymax =
+              !extent.ymax || itemYmax > extent.ymax ? itemYmax : extent.ymax;
+          }
+        }
+      }
+    }
+    this.fullExtent = extent;
+    return extent;
+  }
+
   zoomTo() {
-    
+    const that = this;
+    this._queryLayerExtent().then((extent) => {
+      const { xmin, ymin, xmax, ymax } = extent;
+      let rectangle = new Cesium.Rectangle(
+        Cesium.Math.toRadians(xmin),
+        Cesium.Math.toRadians(ymin),
+        Cesium.Math.toRadians(xmax),
+        Cesium.Math.toRadians(ymax)
+      );
+      that._viewer.camera.setView({
+        destination: rectangle,
+      });
+    });
   }
 
   destroy() {
