@@ -9,22 +9,25 @@ class WMSLayer extends Layer {
     this.layers = options?.layers;
     this.parameters = options?.parameters;
     this._options = options;
+    this._viewer = undefined;
+    this._data = undefined;
   }
 
-  _loadData() {
-    if (this._data) {
-      return this._data;
-    }
+  _addDataToViewer(viewer) {
     const wmsProvider = new Cesium.WebMapServiceImageryProvider({
       ...this._options,
     });
     const wmsLayer = new Cesium.ImageryLayer(wmsProvider);
+    viewer.imageryLayers.add(wmsLayer);
     this._data = wmsLayer;
-    return this._data;
   }
 
   zoomTo() {
     
+  }
+
+  destroy() {
+    this._viewer.imageryLayers.remove(this._data);
   }
 }
 

@@ -14,10 +14,7 @@ class Map {
         this._viewer.dataSources.add(geojsonDataSouce);
       });
     }
-    if (layer.type === "wms") {
-      let data = layer._loadData();
-      this._viewer.imageryLayers.add(data);
-    }
+
     // 调用每个图层的_addDataToViewer() 方法，将数据添加到viewer
     layer._addDataToViewer(this._viewer);
   }

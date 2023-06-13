@@ -39,10 +39,23 @@
       button {
         cursor: pointer;
       }
+      .tool {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        z-index: 2;
+
+        display: flex;
+        justify-content: space-between;
+      }
     </style>
   </head>
   <body>
-    <div id="cesiumContainer"></div>
+    <div id="cesiumContainer">
+      <div class="tool">
+        <button onclick="remove()">移除图层</button>
+      </div>
+    </div>
     <script type="module">
       import SceneView from "../../src/SceneView.js";
       import Map from "../../src/Map.js";
@@ -63,6 +76,11 @@
       });
       viewer.map.add(wmsLayer);
       window.viewer = viewer;
+
+      function remove() {
+        viewer.map.remove(wmsLayer);
+      }
+      window.remove=remove;
     </script>
   </body>
 </html>
