@@ -69,7 +69,7 @@
 
       let wmsLayer = new WMSLayer({
         url: "https://nationalmap.gov.au/proxy/http://geoserver.nationalmap.nicta.com.au/geotopo_250k/ows",
-        layers: "Hydrography:bores", // 需要加载的图层，多个用逗号隔开
+        layers: "Hydrography:bores,Infrastructure:fences", // 需要加载的图层，多个用逗号隔开
         parameters: {
           transparent: true,
           format: "image/png",
