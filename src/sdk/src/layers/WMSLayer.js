@@ -3,15 +3,34 @@ import Layer from "./Layer.js";
 class WMSLayer extends Layer {
   constructor(options) {
     super(options);
-
+    options = this._setDefault(options);
     this.type = "wms";
-    this.url = options?.url;
-    this.layers = options?.layers;
-    this.parameters = options?.parameters;
+    this.url = options.url;
+    this.layers = options.layers;
+    this.parameters = options.parameters;
     this._options = options;
     this._viewer = undefined;
     this._data = undefined;
-    this.crs = options?.crs || "EPSG:4326";
+    this.crs = options.crs;
+  }
+
+  _setDefault(options) {
+    options = {
+      crs: "CRS:84",
+      srs: "EPSG:4326",
+      ...options,
+    };
+    options.parameters = options?.parameters
+      ? {
+          ...Cesium.WebMapServiceImageryProvider.DefaultParameters,
+          version: "1.3.0",
+          ...options?.parameters,
+        }
+      : {
+          ...Cesium.WebMapServiceImageryProvider.DefaultParameters,
+          version: "1.3.0",
+        };
+    return options;
   }
 
   _addDataToViewer(viewer) {
@@ -29,6 +48,7 @@ class WMSLayer extends Layer {
       queryParameters: {
         request: "GetCapabilities",
         service: "WMS",
+        version: this.parameters.version,
       },
     });
     const res = await resource.fetch();
@@ -59,11 +79,26 @@ class WMSLayer extends Layer {
           const item = boundingBoxDoms[k];
           let crsName = item.getAttribute("SRS") ? "SRS" : "CRS";
 
-          if (item.getAttribute(crsName) === "EPSG:4326") {
-            const itemXmin = Number(item.getAttribute("miny"));
-            const itemXmax = Number(item.getAttribute("maxy"));
-            const itemYmin = Number(item.getAttribute("minx"));
-            const itemYmax = Number(item.getAttribute("maxx"));
+          if (item.getAttribute(crsName) === this.crs) {
+            let itemXmin;
+            let itemXmax;
+            let itemYmin;
+            let itemYmax;
+            if (
+              this.parameters.version == "1.3.0" &&
+              this.crs.includes("EPSG")
+            ) {
+              itemXmin = Number(item.getAttribute("miny"));
+              itemXmax = Number(item.getAttribute("maxy"));
+              itemYmin = Number(item.getAttribute("minx"));
+              itemYmax = Number(item.getAttribute("maxx"));
+            } else {
+              itemXmin = Number(item.getAttribute("minx"));
+              itemXmax = Number(item.getAttribute("maxx"));
+              itemYmin = Number(item.getAttribute("miny"));
+              itemYmax = Number(item.getAttribute("maxy"));
+            }
+
             extent.xmin =
               !extent.xmin || itemXmin < extent.xmin ? itemXmin : extent.xmin;
             extent.xmax =
@@ -82,8 +117,8 @@ class WMSLayer extends Layer {
 
   zoomTo() {
     const that = this;
-    this._queryLayerExtent().then((extent) => {
-      const { xmin, ymin, xmax, ymax } = extent;
+    if (this.fullExtent) {
+      const { xmin, ymin, xmax, ymax } = this.fullExtent;
       let rectangle = new Cesium.Rectangle(
         Cesium.Math.toRadians(xmin),
         Cesium.Math.toRadians(ymin),
@@ -93,7 +128,20 @@ class WMSLayer extends Layer {
       that._viewer.camera.setView({
         destination: rectangle,
       });
-    });
+    } else {
+      this._queryLayerExtent().then((extent) => {
+        const { xmin, ymin, xmax, ymax } = extent;
+        let rectangle = new Cesium.Rectangle(
+          Cesium.Math.toRadians(xmin),
+          Cesium.Math.toRadians(ymin),
+          Cesium.Math.toRadians(xmax),
+          Cesium.Math.toRadians(ymax)
+        );
+        that._viewer.camera.setView({
+          destination: rectangle,
+        });
+      });
+    }
   }
 
   destroy() {
