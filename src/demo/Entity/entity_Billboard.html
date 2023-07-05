@@ -61,7 +61,11 @@
       //     },
       //   });
       const billboardGraphics = new Cesium.BillboardGraphics({
-        image: "./img/locate.png",
+        image: Cesium.writeTextToCanvas("成华大道", {
+          font: "30px sans-serif",
+        }),
+        // rotation: Cesium.Math.toRadians(45),
+        // alignedAxis: Cesium.Cartesian3.ONE,
       });
       const wyoming = viewer.entities.add({
         name: "广告牌",
