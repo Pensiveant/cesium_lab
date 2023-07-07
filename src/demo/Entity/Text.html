@@ -64,14 +64,19 @@
         text: "春熙路",
       });
       const labels = viewer.scene.primitives.add(labelCollection);
-      
+
       viewer.camera.changed.addEventListener(() => {
-        // 获取文本点的屏幕坐标
         const length = labelCollection.length;
         for (let i = 0; i < length; ++i) {
           const item = labelCollection.get(i);
+
+          // 获取文本点的屏幕坐标
           const coord = item.computeScreenSpacePosition(viewer.scene);
           console.log(coord);
+
+          // 获取label屏幕坐标上的bbox
+          const bbox = Cesium.Label.getScreenSpaceBoundingBox(item, coord);
+          console.log(bbox);
         }
       });
 
