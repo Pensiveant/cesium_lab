@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <title>Text 使用示例</title>
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      // 初始化view
+      const viewer = new Cesium.Viewer("cesiumContainer", {
+        geocoder: false, // 搜索功能
+        homeButton: false, // home
+        sceneModePicker: false, // 隐藏二三维切换
+        baseLayerPicker: false, //隐藏默认底图选择控件
+        navigationHelpButton: false, // 帮助？saa号
+        animation: false,
+        infoBox: false,
+        timeline: false,
+        fullscreenButton: false,
+        // 使用ArcGIS 底图
+        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        }),
+      });
+      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+
+      const labelCollection = new Cesium.LabelCollection();
+      // Label类不能通过new Cesium.Label()实例化，只能使用LabelCollection.add()
+      labelCollection.add({
+        position: Cesium.Cartesian3.fromDegrees(104.06332657217533, 30.659815046191024, 0),
+        text: "成华大道",
+      });
+
+      labelCollection.add({
+        position: Cesium.Cartesian3.fromDegrees(104.06318118449735, 30.664975695747263, 0),
+        text: "春熙路",
+      });
+      const labels = viewer.scene.primitives.add(labelCollection);
+
+      // 定位到成都
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+        orientation: {
+          heading: Cesium.Math.toRadians(0.0),
+          pitch: Cesium.Math.toRadians(-45.0),
+        },
+      });
+    </script>
+  </body>
+</html>
