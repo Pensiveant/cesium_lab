@@ -72,6 +72,7 @@
                 index: i,
                 entity: item,
                 coord,
+                hide:false,
               });
             }
 
@@ -98,7 +99,7 @@
           // 遮挡检测
           for (let i = 0; i < points.length; i++) {
             const target = points[i];
-            if (points[i].hide) {
+            if (target.hide) {
               continue;
             }
             const bbox = target.coord;
@@ -111,12 +112,10 @@
               bbox.x + text.length * fontSize,
               bbox.y + fontSize * 2
             );
-            const neighborsPoints = [];
             for (let j = 0; j < neighbors.length; j++) {
               const neighborsPoint = points[neighbors[j]];
-              neighborsPoints.push(neighborsPoint);
               neighborsPoint.entity.label.show = false;
-              neighborsPoints.hide = true;
+              neighborsPoint.hide = true;
             }
           }
         });
