@@ -54,6 +54,27 @@
         Cesium.KmlDataSource.load("./facilities/facilities.kml", options)
       );
       dataSourcePromise.then(function (dataSource) {
+        // dataSource.clustering.enabled = true;
+        // dataSource.clustering.pixelRange = 15;
+        // dataSource.clustering.minimumClusterSize = 3;
+
+        // viewer.camera.changed.addEventListener(() => {
+        //   let billboards = dataSource.clustering._billboardCollection;
+
+        //   const len = billboards.length;
+        //   for (let i = 0; i < len; ++i) {
+        //     const b = billboards.get(i);
+        //     b.clusterShow = false;
+        //   }
+
+        //   let labels = dataSource.clustering._labelCollection;
+        //   const len2 = labels.length;
+        //   for (let i = 0; i < len; ++i) {
+        //     const b = labels.get(i);
+        //     b.clusterShow = false;
+        //   }
+        // });
+
         viewer.camera.changed.addEventListener(() => {
           const entities = dataSource.entities.values;
 
