@@ -33,9 +33,9 @@
         sceneModePicker: false, // 隐藏二三维切换
         baseLayerPicker: false, //隐藏默认底图选择控件
         navigationHelpButton: false, // 帮助？号
-        animation: false,
+        animation: true,
         infoBox: false,
-        timeline: false,
+        timeline: true,
         fullscreenButton: false,
         // 使用ArcGIS 底图
         imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
@@ -53,34 +53,55 @@
         },
       });
 
-      const position = Cesium.Cartesian3.fromDegrees(
-        104.06332384053046,
-        30.660781314071173,
-        0
-      );
-      const heading = Cesium.Math.toRadians(0); // 航向角：绕-z旋转
-      const pitch = 0; // 俯仰角：绕-y旋转
-      const roll = 0; // 翻滚角：绕+x旋转
-      const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+      // const position = Cesium.Cartesian3.fromDegrees(
+      //   104.06332384053046,
+      //   30.660781314071173,
+      //   0
+      // );
 
-      // heading：旋转，从局部北（0），正角度，向东旋转
-      // pitch：
-      // roll：
-      const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-        position,
-        hpr
+      const start = Cesium.JulianDate.now();
+      const stop = Cesium.JulianDate.addSeconds(
+        start,
+        120,
+        new Cesium.JulianDate()
       );
+      const position = new Cesium.SampledPositionProperty();
+      const pos1 = Cesium.Cartesian3.fromDegrees(
+        104.06332384053046,
+        30.660781314071173
+      );
+      const pos2 = Cesium.Cartesian3.fromDegrees(
+        104.06861569444413,
+        30.66089444209584
+      );
+      position.addSample(start, pos1);
+      position.addSample(stop, pos2);
+
+      viewer.clock.startTime = start.clone();
+      viewer.clock.stopTime = stop.clone();
+      viewer.clock.currentTime = start.clone();
+      viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
+      viewer.clock.multiplier = 10;
+      viewer.clock.shouldAnimate = true;
+      viewer.timeline.zoomTo(start, stop);
 
       const entity = viewer.entities.add({
         name: "小车",
+        availability: new Cesium.TimeIntervalCollection([
+          new Cesium.TimeInterval({
+            start: start,
+            stop: stop,
+          }),
+        ]),
         position: position,
-        orientation: orientation,
+        orientation: new Cesium.VelocityOrientationProperty(position),
         model: {
           uri: "../../data/models/CesiumMilkTruck/CesiumMilkTruck.glb",
           minimumPixelSize: 128,
           maximumScale: 20000,
         },
       });
+    //  viewer.trackedEntity = entity;
 
       // 绘制点
       let point = new Cesium.Entity({
