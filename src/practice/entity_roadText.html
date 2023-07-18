@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <!-- Include the CesiumJS JavaScript and CSS files -->
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
     <link
       href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
       rel="stylesheet"
@@ -26,6 +27,7 @@
     <div id="cesiumContainer"></div>
     <script type="module">
       import writeTextToCanvas from "./js/writeTextToCanvas.js";
+      import RoadAnnotationLayer from "./js/RoadAnnotationLayer.js";
 
       // 初始化view
       const viewer = new Cesium.Viewer("cesiumContainer", {
@@ -46,216 +48,67 @@
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
       window.viewer = viewer;
 
-      const labels = [
-        {
-          postion: [104.059601277711, 30.660629288334274],
-          label: "成华大道1",
-          angle: 0,
-        },
-        {
-          postion: [104.05774519876911, 30.65573454935787],
-          label: "成华大道2",
-          angle: 30,
-          isColumn: true,
-        },
-        {
-          postion: [104.05925887979879, 30.65604462021341],
-          label: "成华大道3",
-          angle: 43,
-        },
-        {
-          postion: [104.05828151193195, 30.65796827174429],
-          label: "成华大道4",
-          angle: 0,
-          isColumn: true,
-        },
-        {
-          postion: [104.05507534126475, 30.661546528422196],
-          label: "成华大道5",
-          angle: 45,
-        },
-      ];
-
-      for (let i = 0; i < labels.length; i++) {
-        const item = labels[i];
-        const label = addTextToMap(
-          item.label,
-          item.postion,
-          item.angle,
-          item.isColumn
-        );
-        label._roadLabel = item.label;
-        label._roadPosition = item.postion;
-        label._heading = viewer.camera.heading;
-        label._isRoadText = true;
-        label._angle = item.angle;
-        label._isColumn = item.isColumn;
-        viewer.zoomTo(label);
-
-        const position = Cesium.Cartesian3.fromDegrees(
-          item.postion[0],
-          item.postion[1],
-          0
-        );
-        let point = new Cesium.Entity({
-          name: "点",
-          position: position,
-          point: {
-            pixelSize: 5,
-            color: Cesium.Color.RED,
-            outlineColor: Cesium.Color.WHITE,
-            outlineWidth: 2,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // 贴地
+      let layer = new RoadAnnotationLayer({
+        viewer,
+        data: [
+          {
+            name: "蜀都大道人民东路",
+            startPoint: [104.06274057926127, 30.660784741222415],
+            endPoint: [104.0636834976594, 30.660805953478352],
           },
-        });
-        viewer.entities.add(point);
-      }
-
-      viewer.camera.changed.addEventListener(() => {
-        const heading = viewer.camera.heading;
-        const entities = viewer.entities._entities.values;
-        for (let i = 0; i < entities.length; i++) {
-          const item = entities[i];
-          const preHeading = item._heading;
-          if (item._isRoadText) {
-            const angeleDx = Cesium.Math.toDegrees(heading);
-            const preHeadingAngle = Cesium.Math.toDegrees(preHeading);
-            if (
-              ((Math.abs(angeleDx) > 315 && Math.abs(angeleDx) <= 360) ||
-                (Math.abs(angeleDx) > 0 && Math.abs(angeleDx) <= 45)) &&
-              !(
-                (Math.abs(preHeadingAngle) > 315 &&
-                  Math.abs(preHeadingAngle) <= 360) ||
-                (Math.abs(preHeadingAngle) > 0 &&
-                  Math.abs(preHeadingAngle) <= 45)
-              )
-            ) {
-              const label = addTextToMap(
-                item._roadLabel,
-                item._roadPosition,
-                0 + item._angle,
-                item?._isColumn ? item._isColumn : false
-              );
-              label._roadLabel = item._roadLabel;
-              label._roadPosition = item._roadPosition;
-              label._heading = viewer.camera.heading;
-              label._isRoadText = true;
-              label._angle = item._angle;
-              label._isColumn = item?._isColumn;
-              viewer.entities.remove(item);
-            } else if (
-              Math.abs(angeleDx) > 225 &&
-              Math.abs(angeleDx) <= 315 &&
-              !(
-                Math.abs(preHeadingAngle) > 225 &&
-                Math.abs(preHeadingAngle) <= 315
-              )
-            ) {
-              const label = addTextToMap(
-                item._roadLabel,
-                item._roadPosition,
-                270 + item._angle,
-                item?._isColumn ? false : true
-              );
-              label._roadLabel = item._roadLabel;
-              label._roadPosition = item._roadPosition;
-              label._heading = viewer.camera.heading;
-              label._isRoadText = true;
-              label._angle = item._angle;
-              label._isColumn = item?._isColumn;
-              viewer.entities.remove(item);
-            } else if (
-              Math.abs(angeleDx) > 135 &&
-              Math.abs(angeleDx) <= 225 &&
-              !(
-                Math.abs(preHeadingAngle) > 135 &&
-                Math.abs(preHeadingAngle) <= 225
-              )
-            ) {
-              const label = addTextToMap(
-                item._roadLabel,
-                item._roadPosition,
-                180 + item._angle,
-                item?._isColumn ? item._isColumn : false
-              );
-              label._roadLabel = item._roadLabel;
-              label._roadPosition = item._roadPosition;
-              label._heading = viewer.camera.heading;
-              label._isRoadText = true;
-              label._angle = item._angle;
-              label._isColumn = item?._isColumn;
-              viewer.entities.remove(item);
-            } else if (
-              Math.abs(angeleDx) > 45 &&
-              Math.abs(angeleDx) < 135 &&
-              !(
-                Math.abs(preHeadingAngle) > 45 &&
-                Math.abs(preHeadingAngle) <= 135
-              )
-            ) {
-              const label = addTextToMap(
-                item._roadLabel,
-                item._roadPosition,
-                90 + item._angle,
-                item?._isColumn ? false : true
-              );
-              label._roadLabel = item._roadLabel;
-              label._roadPosition = item._roadPosition;
-              label._heading = viewer.camera.heading;
-              label._isRoadText = true;
-              label._angle = item._angle;
-              label._isColumn = item?._isColumn;
-              viewer.entities.remove(item);
-            }
-          }
-        }
+          {
+            name: "人民南路一段",
+            startPoint: [104.06497455852289, 30.660339530713074],
+            endPoint: [104.06499341317208, 30.659889744226255],
+          },
+          {
+            name: "顺城大街",
+            startPoint: [104.06855758765356, 30.6591679435335],
+            endPoint: [104.06860142705055, 30.658694931605385],
+          },
+          {
+            name: "大业路",
+            startPoint: [104.06775303338011, 30.656702163696675],
+            endPoint: [104.06740431884572, 30.656135556376313],
+          },
+          {
+            name: "红照壁街",
+            startPoint: [104.06232181212842, 30.65498397792811],
+            endPoint: [104.0629571973816, 30.654950967513127],
+          },
+          {
+            name: "新光华街",
+            startPoint: [104.06526050764997, 30.655030515494666],
+            endPoint: [104.06472553074944, 30.655023848524397],
+          },
+          {
+            name: "上南大街",
+            startPoint: [104.06093284563244, 30.65421896989701],
+            endPoint: [104.06043299699584, 30.653356975462835],
+          },
+          {
+            name: "金盾路",
+            startPoint: [104.06052941445282, 30.655344751297886],
+            endPoint: [104.059376550354, 30.655952878447984],
+          },
+          {
+            name: "文翁路",
+            startPoint: [104.05820237143355, 30.662096060877246],
+            endPoint: [104.05818316807151, 30.660833320960407],
+          },
+          {
+            name: "蜀都大道少城路",
+            startPoint: [104.0548902558423, 30.66177996911879],
+            endPoint: [104.05538371914867, 30.66129897325941],
+          },
+          {
+            name: "蜀都大道金河路",
+            startPoint: [104.05197080453728, 30.663267162344205],
+            endPoint: [104.05153100443849, 30.66324981175708],
+          },
+        ],
       });
-
-      function addTextToMap(text, location, angle = 0, isColumn = false) {
-        const img = writeTextToCanvas(text, {
-          padding: 2,
-          fill: true,
-          fillColor: Cesium.Color.RED,
-          font: "20px sans-serif",
-          // textBaseline:"top"
-          column: isColumn,
-        });
-        const position = Cesium.Cartesian3.fromDegrees(
-          location[0],
-          location[1],
-          0
-        );
-        var heading = Cesium.Math.toRadians(angle);
-        var pitch = Cesium.Math.toRadians(0.0);
-        var roll = Cesium.Math.toRadians(0.0);
-        var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-        var orientation = Cesium.Transforms.headingPitchRollQuaternion(
-          position,
-          hpr
-        );
-        const label = new Cesium.Entity({
-          position: position,
-          orientation: orientation,
-          plane: {
-            plane: new Cesium.Plane(Cesium.Cartesian3.UNIT_Z, 0.0),
-            dimensions: new Cesium.Cartesian2(img.width, img.height),
-            material: new Cesium.ImageMaterialProperty({
-              image: img,
-              transparent: true,
-            }),
-            outline: false,
-            clampToGround: true,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-            distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
-              100.0,
-              1500.0
-            ), // 与camera距离在100~1500米才显示
-          },
-        });
-        viewer.entities.add(label);
-        return label;
-      }
+      viewer.flyTo(layer._entities);
     </script>
   </body>
 </html>
