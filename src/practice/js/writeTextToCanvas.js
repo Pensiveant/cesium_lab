@@ -175,7 +175,6 @@ function writeTextToCanvas(text, options) {
   // Set canvas.dimensions to be accessed in LabelCollection
   canvas.dimensions = dimensions;
 
-
   // Some characters, such as the letter j, have a non-zero starting position.
   // This value is used for kerning later, but we need to take it into account
   // now in order to draw the text completely on the canvas
@@ -216,7 +215,8 @@ function writeTextToCanvas(text, options) {
           .getComputedStyle(context2D.canvas)
           .getPropertyValue("font-size")
           .replace("px", "");
-        context2D.strokeText(text, x + padding, y + fontSize * i);
+        const itemHeight = (canvas.height - doublePadding) / text.length;
+        context2D.strokeText(text, x + padding, y + itemHeight * i);
       }
     } else {
       context2D.strokeText(text, x + padding, y);
@@ -232,7 +232,8 @@ function writeTextToCanvas(text, options) {
           .getComputedStyle(context2D.canvas)
           .getPropertyValue("font-size")
           .replace("px", "");
-        context2D.fillText(text[i], x + padding, y + fontSize * i);
+        const itemHeight = (canvas.height - doublePadding) / text.length;
+        context2D.fillText(text[i], x + padding, y + itemHeight * i);
       }
     } else {
       context2D.fillText(text, x + padding, y);
