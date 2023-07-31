@@ -20,10 +20,25 @@
         width: 100%;
         height: 100%;
       }
+
+      .btn-box {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        padding: 10px;
+        z-index: 2;
+        background-color: white;
+        display: flex;
+      }
     </style>
   </head>
   <body>
-    <div id="cesiumContainer"></div>
+    <div id="cesiumContainer">
+      <div class="btn-box">
+        <button onclick="locate1()">定位（destination）</button>
+        <button onclick="locate2()">定位（平移）</button>
+      </div>
+    </div>
     <script type="module">
       import {
         getTiandituImgLayer,
@@ -40,16 +55,45 @@
         imageryProvider: getTiandituImgLayer(),
       });
       viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
-
+      const center = [104.06334902696018, 30.65984414086386, 0];
       // 定位到成都
       viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-90.0),
-        },
+        destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
       });
-      console.log(viewer.camera);
+
+      function locate1() {
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
+          orientation: {
+            heading: Cesium.Math.toRadians(0.0),
+            pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
+          },
+        });
+      }
+      window.locate1 = locate1;
+
+      function locate2() {
+        const position = Cesium.Cartesian3.fromDegrees(
+          center[0],
+          center[1],
+          400
+        );
+        const transform = Cesium.Transforms.eastNorthUpToFixedFrame(position);
+        let offsetPosition = Cesium.Matrix4.multiplyByPoint(
+          transform,
+          new Cesium.Cartesian3(0, -400, 0),  // Y负轴平移400，即向南平移400
+          new Cesium.Cartesian3()
+        );
+
+        viewer.camera.flyTo({
+          destination: offsetPosition,
+          orientation: {
+            heading: Cesium.Math.toRadians(0.0),
+            pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
+          },
+        });
+      }
+      window.locate2   = locate2;
     </script>
   </body>
 </html>
