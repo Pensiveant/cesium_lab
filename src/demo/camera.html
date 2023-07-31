@@ -39,6 +39,7 @@
   <body>
     <div id="cesiumContainer">
       <div class="btn-box">
+        <button onclick="locate()">定位（directionUp）</button>
         <button onclick="locate1()">定位（destination）</button>
         <button onclick="locate2()">定位（平移）</button>
         <button onclick="locate3()">定位（setView）</button>
@@ -65,6 +66,23 @@
       viewer.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
       });
+
+      function locate() {
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
+          orientation: {
+            direction: Cesium.Cartesian3.negate(
+              new Cesium.Cartesian3(center[0], center[1], 0),
+              new Cesium.Cartesian3()
+            ), // camera方向，类似于默认的headingPitchRoll的垂直看地面方向取反
+            up: Cesium.Cartesian3.negate(
+              new Cesium.Cartesian3(center[0], 90, 0), // 高度设置为400，显示不正确？？？？？
+              new Cesium.Cartesian3()
+            ), // camera头的方向，类似于默认的headingPitchRoll的heading方向取反
+          },
+        });
+      }
+      window.locate = locate;
 
       function locate1() {
         viewer.camera.flyTo({
