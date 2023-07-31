@@ -81,7 +81,7 @@
         const transform = Cesium.Transforms.eastNorthUpToFixedFrame(position);
         let offsetPosition = Cesium.Matrix4.multiplyByPoint(
           transform,
-          new Cesium.Cartesian3(0, -400, 0),  // Y负轴平移400，即向南平移400
+          new Cesium.Cartesian3(0, -400, 0),  // Y负轴平移400，即向南平移400，由于俯视角为45度，即平移距离恰好等于相机点高度400
           new Cesium.Cartesian3()
         );
 
