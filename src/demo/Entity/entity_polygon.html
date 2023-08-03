@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <title>绘制面</title>
     <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
     <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
+      href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css"
       rel="stylesheet"
     />
     <style>
@@ -26,6 +26,9 @@
   <body>
     <div id="cesiumContainer"></div>
     <script type="module">
+      Cesium.Ion.defaultAccessToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
+
       // 初始化view
       const viewer = new Cesium.Viewer("cesiumContainer", {
         geocoder: false, // 搜索功能
@@ -41,27 +44,22 @@
         imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
           url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
         }),
+        terrain: Cesium.Terrain.fromWorldTerrain(),
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+      viewer.scene.globe.depthTestAgainstTerrain = true;
 
-      //   // 定位到成都
-      //   viewer.camera.flyTo({
-      //     destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-      //     orientation: {
-      //       heading: Cesium.Math.toRadians(0.0),
-      //       pitch: Cesium.Math.toRadians(-45.0),
-      //     },
-      //   });
-
+      //
       let polygonEntity = new Cesium.Entity({
         polygon: {
-          hierarchy: Cesium.Cartesian3.fromDegreesArray([
-            104.06191132017372, 30.660578937208562, 104.0647899580722,
-            30.66057893144176, 104.0648108078706, 30.658975472403927,
-            104.06183042266197, 30.65906414823539,
+          hierarchy: Cesium.Cartesian3.fromDegreesArrayHeights([
+            104.06204432699153, 30.660726592602778, 458.0359123306434,
+            104.06491131775273, 30.660792356429575, 457.5663362739622,
+            104.06488421424214, 30.65902970314711, 462.1401663208093,
+            104.06206037235002, 30.65901615923885, 458.80041016490196,
           ]),
-          // 边界线
-          perPositionHeight: true, // 不设置该值，边界线不起作用
+          perPositionHeight: true,
+          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
           material: new Cesium.Color(1, 0, 0, 0.2),
           outline: true,
           outlineWidth: 2,
@@ -69,7 +67,7 @@
         },
       });
       const wyoming = viewer.entities.add(polygonEntity);
-      viewer.zoomTo(wyoming);
+
       // 三角形
       let triangleEntity = new Cesium.Entity({
         polygon: {
@@ -78,14 +76,16 @@
             30.663102418517475, 104.06216672075426, 30.663083850974235,
           ]),
           material: new Cesium.Color(0, 0, 1, 0.2),
-          perPositionHeight: true, // 不设置该值，边界线不起作用
+          height: 500,
           outline: true,
           outlineWidth: 2,
           outlineColor: new Cesium.Color(0, 1, 0, 1),
           extrudedHeight: 100, // 设置垂直于地表的拉伸高度
+          closeTop:false,
         },
       });
       viewer.entities.add(triangleEntity);
+
       //
       let holeEntity = new Cesium.Entity({
         polygon: {
@@ -108,6 +108,27 @@
         },
       });
       viewer.entities.add(holeEntity);
+
+      // 纹理旋转示例：
+      let stRotationEntity = new Cesium.Entity({
+        polygon: {
+          hierarchy: Cesium.Cartesian3.fromDegreesArray([
+            104.06296283032336, 30.66146423509986, 104.06371460352796,
+            30.661507835647278, 104.063694378712, 30.660984042296295,
+            104.06298332845368, 30.66098879086753,
+          ]),
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          material: new Cesium.StripeMaterialProperty({
+            evenColor: Cesium.Color.WHITE,
+            oddColor: Cesium.Color.BLUE,
+            repeat: 5,
+          }),
+          stRotation: Cesium.Math.toRadians(90), // 纹理逆时针旋转90°
+        },
+      });
+      viewer.entities.add(stRotationEntity);
+
+      viewer.flyTo(viewer.entities);
     </script>
   </body>
 </html>
