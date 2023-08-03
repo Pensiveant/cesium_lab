@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Cesium.js"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
     <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Widgets/widgets.css"
+      href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css"
       rel="stylesheet"
     />
     <style>
@@ -25,8 +25,8 @@
   <body>
     <div id="cesiumContainer"></div>
     <script type="module">
-      // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
-
+      Cesium.Ion.defaultAccessToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
       // 初始化view
       const viewer = new Cesium.Viewer("cesiumContainer", {
         geocoder: false, // 搜索功能
@@ -42,46 +42,62 @@
         imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
           url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
         }),
+        terrain: Cesium.Terrain.fromWorldTerrain(),
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+      viewer.scene.globe.depthTestAgainstTerrain = true;
       window.viewer = viewer;
 
-      // 加载地形
-      getArcGISTiledElevationTerrainProvider().then((terrainProvider) => {
-        viewer.terrainProvider = terrainProvider;
+      // 绘制点-基本用法
+      let pointBase = new Cesium.Entity({
+        position: Cesium.Cartesian3.fromDegrees(
+          103.66553274314929,
+          31.341147649314625,
+          1900
+        ),
+        point: {
+          pixelSize: 5,
+          color: Cesium.Color.RED,
+          outlineColor: Cesium.Color.WHITE,
+          outlineWidth: 2,
+          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND, // 高度相对地面
+        },
+      });
+      viewer.entities.add(pointBase);
+ 
 
-        // 绘制点
-        let point = new Cesium.Entity({
-          name: "点",
-          position: Cesium.Cartesian3.fromDegrees(
-            103.66553274314929,
-            31.341147649314625,
-            0
-          ),
-          point: {
-            pixelSize: 5,
-            color: Cesium.Color.RED,
-            outlineColor: Cesium.Color.WHITE,
-            outlineWidth: 2,
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
-            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // 贴地
-          },
-          // description: `<table border="1">
-          //                 <tr>
-          //                   <th>longitude</th>
-          //                   <th>${point.properties.longitude}</th>
-          //                 </tr>
-          //                 <tr>
-          //                   <td>latitude</td>
-          //                   <td>31.341147649314625</td>
-          //                 </tr>
-          //               </table>`,
-          properties: {
-            longitude: "103.66553274314929",
-            latitude: "31.341147649314625",
-          },
-        });
-        point.description = `<table border="1">
+      // 点： 贴地
+      let point = new Cesium.Entity({
+        name: "点",
+        position: Cesium.Cartesian3.fromDegrees(
+          103.66553274314929,
+          31.341147649314625,
+          0
+        ),
+        point: {
+          pixelSize: 5,
+          color: Cesium.Color.RED,
+          outlineColor: Cesium.Color.WHITE,
+          outlineWidth: 2,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // 贴地
+        },
+        // description: `<table border="1">
+        //                 <tr>
+        //                   <th>longitude</th>
+        //                   <th>${point.properties.longitude}</th>
+        //                 </tr>
+        //                 <tr>
+        //                   <td>latitude</td>
+        //                   <td>31.341147649314625</td>
+        //                 </tr>
+        //               </table>`,
+        properties: {
+          longitude: "103.66553274314929",
+          latitude: "31.341147649314625",
+        },
+      });
+      point.description = `<table border="1">
                           <tr>
                             <th>longitude</th>
                             <th>${point.properties.longitude}</th>
@@ -91,19 +107,8 @@
                             <td>${point.properties.latitude}</td>
                           </tr>
                         </table>`;
-        const wyoming = viewer.entities.add(point);
-
-        viewer.zoomTo(wyoming);
-        
-      });
-
-      async function getArcGISTiledElevationTerrainProvider() {
-        const terrainProvider =
-          await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
-            "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
-          );
-        return terrainProvider;
-      }
+      const wyoming = viewer.entities.add(point);
+      viewer.flyTo(viewer.entities);
     </script>
   </body>
 </html>
