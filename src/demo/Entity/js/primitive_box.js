@@ -46,7 +46,7 @@ let box = new Cesium.BoxGeometry({
   minimum: new Cesium.Cartesian3(-20.0, -40.0, -60.0),  // x,y,z坐标的最小值
 });
 let boxGeometry = Cesium.BoxGeometry.createGeometry(box);
-  
+
 const center = Cesium.Cartesian3.fromDegrees(
   104.06335998805471,
   30.659858531850176,
@@ -54,9 +54,10 @@ const center = Cesium.Cartesian3.fromDegrees(
 );
 const transform = Cesium.Transforms.eastNorthUpToFixedFrame(center);
 let boxPrimitive = new Cesium.Primitive({
-  modelMatrix: transform,   // 模型变换矩阵，将长方体，变换到世界坐标中
+  // modelMatrix: transform,   // 整体定义：模型变换矩阵，将长方体，变换到世界坐标中
   geometryInstances: new Cesium.GeometryInstance({
     geometry: box,
+    modelMatrix: transform, // 单独定义：模型变换矩阵，将长方体，变换到世界坐标中
   }),
   appearance: new Cesium.EllipsoidSurfaceAppearance({
     material: new Cesium.Material.fromType("Color", {
