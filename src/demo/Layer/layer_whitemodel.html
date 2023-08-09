@@ -47,9 +47,14 @@
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
       window.viewer = viewer;
-
+      
+      viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
+      const inspectorViewModel = viewer.cesium3DTilesInspector.viewModel;
       // 加载白模
-      const tileset = await Cesium.Cesium3DTileset.fromIonAssetId(75343);
+      const tileset = await Cesium.Cesium3DTileset.fromIonAssetId(75343, {
+        enableDebugWireframe: true,
+      });
+      tileset.debugColorizeTiles = true;
       const style = new Cesium.Cesium3DTileStyle({
         color: {
           conditions: [
