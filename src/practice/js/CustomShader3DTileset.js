@@ -24,6 +24,7 @@ window.viewer = viewer;
 
 // 加载白模
 const tileset = await Cesium.Cesium3DTileset.fromIonAssetId(75343);
+// const tileset=await Cesium.Cesium3DTileset.fromUrl("http://172.18.80.57/models-rest/rest/models/preview/GDSGZSBMFULL20230217/tileset.json")
 window.tileset = tileset;
 viewer.scene.primitives.add(tileset);
 viewer.zoomTo(tileset);
@@ -39,10 +40,10 @@ function setCustomShader(type) {
 window.setCustomShader = setCustomShader;
 viewer.postProcessStages.bloom.enabled=true,
 //#region 泛光纹理
-class FlowFloodLightShader {
+window.FlowFloodLightShader= class FlowFloodLightShader {
   constructor(options) {
     this.diffuseColor = Cesium.Color.fromCssColorString("#1890ff"); // 漫反射颜色
-    this.floodColor = Cesium.Color.fromCssColorString("yellow"); // 泛光颜色
+    this.floodColor = Cesium.Color.fromCssColorString("red"); // 泛光颜色
     this.flowHeight = 200; // 泛光高度
     this.roughness = 1.0; // 粗糙程度
     this.occlusion = 1.0; // 环境遮蔽光程度
@@ -119,22 +120,28 @@ class FlowFloodLightShader {
         void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
           vec3 positionMC = fsInput.attributes.positionMC;
           vec3 color = u_diffuseColor;
-          float emissiveFactor = czm_lightIntensity;
-          float iTime = fract((czm_frameNumber / 1000.0)*u_speed);
-          if(czm_lightIntensity < 0.6){
-            emissiveFactor=1.0-emissiveFactor;
-            color *= positionMC.z / (u_flowHeight) + color * 0.1;
-          }else{
-            color *= positionMC.z / (u_flowHeight) + color * 0.3;
-          }
+
+          // float emissiveFactor = czm_lightIntensity;
+          // if(czm_lightIntensity < 0.6){
+          //   emissiveFactor=1.0-emissiveFactor;
+          //   color *= positionMC.z / (u_flowHeight) + color * 0.1;
+          // }else{
+          //   color *= positionMC.z / (u_flowHeight) + color * 0.3;
+          // }
+
+          color *= positionMC.z / (u_flowHeight) + color * 0.3;
+
+          // 设置间隔线
           float diff = step(u_hierarchicalLineWidth, mod(positionMC.z, u_dividerLevelHeight));
           color = color + color * (1.0 - diff);
-      
+
+          // 设置泛光线
+          float iTime = fract((czm_frameNumber / 1000.0)*u_speed);
           float floodDiff = step(0.005, abs(clamp(positionMC.z / u_flowHeight, 0.0, 1.0) - iTime));
           color += u_floodColor * (1.0 - floodDiff);
         
           material.diffuse = color;
-          material.emissive = color * emissiveFactor;
+          material.emissive = color * 1.0;
           material.occlusion = u_occlusion;
           material.roughness = u_roughness;                       
           material.emissive = czm_srgbToLinear(material.emissive);
