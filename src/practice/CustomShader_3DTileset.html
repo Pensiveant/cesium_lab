@@ -21,7 +21,7 @@
         height: 100%;
       }
 
-      .btn-box{
+      .btn-box {
         position: absolute;
         right: 20px;
         top: 20px;
@@ -34,7 +34,11 @@
   </head>
   <body>
     <div id="cesiumContainer"></div>
-    <div class="btn-box"><button onclick="setCustomShader('flow')">泛光纹理</button> <button>法线纹理</button> <button>高度分层纹理</button></div>
+    <div class="btn-box">
+      <button onclick="setCustomShader('flow')">泛光纹理</button>
+      <button>法线纹理</button>
+      <button onclick="setCustomShader('height')">高度分层纹理</button>
+    </div>
     <script type="module" src="./js/CustomShader3DTileset.js"></script>
   </body>
 </html>
