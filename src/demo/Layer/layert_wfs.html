@@ -55,15 +55,15 @@
       async function loadWfsLayer() {
         try {
           let geoJson = await Cesium.Resource.fetchJson({
-            url: "https://ahocevar.com/geoserver/wfs",
+            url: "http://gisserver.tianditu.gov.cn/TDTService/wfs?tk=bc583fc978a02e283d437b781f314b51",
             queryParameters: {
               service: "WFS",
               request: "GetFeature",
               version: "1.0.0",
               outputFormat: "application/json",
               // typeName: "topp:states",
-              typeName: "usa:states",
-              
+              typeName: "TDTService:AANP",
+             // filter: `<Filter xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml"><Within><PropertyName>the_geom</PropertyName><gml:Polygon srsName="EPSG:4326"><gml:exterior><gml:LinearRing  srsName="EPSG:4326"><gml:coordinates>113.32532756805877,23.158942526475418 113.37575650270908,23.143292160801547 113.34757117786322,23.10629158606683 113.32591592293876,23.11854632548413 113.32343656188844,23.132618083418652 113.32532756805877,23.158942526475418 </gml:coordinates></gml:LinearRing></gml:exterior></gml:Polygon></Within></Filter>`,
             },
           });
           console.log(geoJson);

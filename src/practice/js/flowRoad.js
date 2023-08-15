@@ -21,6 +21,12 @@ let atLayer = new Cesium.UrlTemplateImageryProvider({
   maximumLevel: 18
 })
 viewer.imageryLayers.addImageryProvider(atLayer);
+
+// var options = {
+//   style: 'elec', // style: img、elec、cva
+//   crs: 'WGS84' // 使用84坐标系，默认为：GCJ02
+// }
+// viewer.imageryLayers.add(new Cesium.ImageryLayer( new AmapImageryProvider(options)))
 modifyMap(viewer, {
     //反色?
     invertColor: true,
@@ -78,7 +84,7 @@ function loadRoad(viewer) {
       let entity = entities[i];
       entity.polyline.width = 1.7;
       entity.polyline.material = new Cesium.Spriteline1MaterialProperty(
-        1000,
+        4000,
         "./img/spriteline1.png"
       );
     }
@@ -184,7 +190,7 @@ Cesium.Material._materialCache.addMaterial(Cesium.Material.Spriteline1Type, {
       color: new Cesium.Color(1, 0, 0, 0.5),
       image: "",
       transparent: true,
-      time: 20,
+      time: 30,
     },
     source: Cesium.Material.Spriteline1Source,
   },
