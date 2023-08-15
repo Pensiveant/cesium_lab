@@ -24,7 +24,7 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
 // viewer.imageryLayers.add(baseMap);
 
 var options = {
-  style: 'cva', // style: img、elec、cva
+  style: 'elec', // style: img、elec、cva
   crs: 'WGS84' // 使用84坐标系，默认为：GCJ02
 }
 viewer.imageryLayers.add(new Cesium.ImageryLayer( new AmapImageryProvider(options)))
