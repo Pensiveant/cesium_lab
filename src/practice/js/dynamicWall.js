@@ -1,4 +1,5 @@
 // const Cesium = require("cesium"); // 智能提示使用
+import {modifyMap} from "./tools.js";
 
 // 初始化view
 Cesium.Ion.defaultAccessToken =
@@ -15,15 +16,26 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
   fullscreenButton: false,
   // terrain: Cesium.Terrain.fromWorldTerrain(),
 });
-let baseMap = Cesium.ImageryLayer.fromProviderAsync(
-  Cesium.ArcGisMapServerImageryProvider.fromUrl(
-    "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
-  )
-);
-viewer.imageryLayers.add(baseMap);
+// let baseMap = Cesium.ImageryLayer.fromProviderAsync(
+//   Cesium.ArcGisMapServerImageryProvider.fromUrl(
+//     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+//   )
+// );
+// viewer.imageryLayers.add(baseMap);
+
+var options = {
+  style: 'cva', // style: img、elec、cva
+  crs: 'WGS84' // 使用84坐标系，默认为：GCJ02
+}
+viewer.imageryLayers.add(new Cesium.ImageryLayer( new AmapImageryProvider(options)))
 viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 window.viewer = viewer;
-
+modifyMap(viewer, {
+  //反色?
+  invertColor: true,
+  //滤镜值
+  filterRGB: [60, 145, 172]
+});
 loadWall(viewer);
 
 async function loadWall(viewer) {
