@@ -36,7 +36,7 @@ loadRoad(viewer);
 
 // https://github.com/ren5927/CesiumDarkMap
 function modifyMap(viewer, options) {
-  const baseLayer = viewer.imageryLayers.get(0)
+  const baseLayer = viewer.imageryLayers.get(1)
   //以下几个参数根据实际情况修改,目前我是参照火星科技的参数,个人感觉效果还不错
   baseLayer.brightness = options.brightness || 0.6
   baseLayer.contrast = options.contrast || 1.8
