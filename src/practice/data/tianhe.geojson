@@ -1,0 +1,1091 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32945341, 23.12415503, 25.55]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠江别墅", "Height": 25.55 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32851097, 23.12610008, 121.51]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "尚东·美御", "Height": 121.51 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32866303, 23.12770605, 122.39]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广州民生大厦", "Height": 122.39 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32911254, 23.12701813, 113.42]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "嘉裕丹顿阳光", "Height": 113.42 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32935664, 23.1284967, 121.9]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "富力盈泰大厦", "Height": 121.9 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33014194, 23.12767617, 35.95]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "冼村小学", "Height": 35.95 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33159113, 23.12749433, 115.94]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "龙胜苑", "Height": 115.94 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33224557, 23.12744622, 115.95]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "凤凰苑", "Height": 115.95 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33024881, 23.12695152, 160.4]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "中国银行", "Height": 160.4 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33027218, 23.12583318, 168.87]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "粤海丽江花园", "Height": 168.87 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.11",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32929052, 23.12622525, 26.15]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "金穗幼儿园", "Height": 26.15 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33356297, 23.12725461, 117]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "新庆花园", "Height": 117 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.13",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33214542, 23.12872389, 111.05]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "奥园大厦", "Height": 111.05 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.14",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33335594, 23.12859857, 117.26]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "勤建大厦", "Height": 117.26 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.15",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33614015, 23.12716201, 77.37]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "东田大厦", "Height": 77.37 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.16",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33432491, 23.12836688, 167.63]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "高志大厦", "Height": 167.63 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.17",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33327271, 23.12806187, 145.66]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "合景睿锋", "Height": 145.66 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.18",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33129672, 23.12853279, 115.04]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "维多利大厦", "Height": 115.04 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.19",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33191604, 23.12828642, 110.65]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "南国公馆", "Height": 110.65 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.20",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33190255, 23.12612579, 46.14]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广州市天河外国语学校", "Height": 46.14 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.21",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33343416, 23.1255081, 161]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "誉峰园", "Height": 161 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.22",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33373128, 23.12673476, 114.7]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "南国会商务中心", "Height": 114.7 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.23",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33313052, 23.12691076, 114.7]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "长胜苑-A座", "Height": 114.7 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.24",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32899321, 23.12337587, 24.75]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠江道商务中心", "Height": 24.75 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.25",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32888887, 23.12212896, 37]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠江道商业广场", "Height": 37 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.26",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33014274, 23.12003703, 208.8]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "尚东柏悦府", "Height": 208.8 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.27",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33275837, 23.11582334, 74.8]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "誉城苑-南区", "Height": 74.8 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.28",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33261234, 23.11713873, 80.91]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "誉城苑-北区", "Height": 80.91 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.29",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33203818, 23.1172806, 23.78]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "猎德幼儿园", "Height": 23.78 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.30",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33231356, 23.11833228, 40.42]
+      },
+      "geometry_name": "the_geom",
+      "properties": {
+        "Id": 0,
+        "NAME": "广州市天河中学猎德实验学校",
+        "Height": 40.42
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.31",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33204213, 23.11968807, 166.57]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠江颐德公馆", "Height": 166.57 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.32",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33418235, 23.11938344, 111.56]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "凯旋新世界枫丹丽舍", "Height": 111.56 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.33",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33425874, 23.11750046, 50.52]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广粤天地", "Height": 50.52 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.34",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33429066, 23.11571874, 111.56]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "凯旋新世界·广粤尊府", "Height": 111.56 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.35",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33606429, 23.11792544, 117.52]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "力迅上筑二期", "Height": 117.52 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.36",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3376072, 23.1180183, 59.77]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "力迅上筑一期", "Height": 59.77 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.37",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33655526, 23.11758962, 24.27]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "力迅上筑幼儿园", "Height": 24.27 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.38",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33710608, 23.11762765, 27.79]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "体育东路小学海明学校", "Height": 27.79 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.39",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33681981, 23.11917657, 140.73]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "金碧华府", "Height": 140.73 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.40",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33740434, 23.11616321, 23.34]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠江新城海滨幼儿园", "Height": 23.34 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.41",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3366106, 23.11699177, 117.34]
+      },
+      "geometry_name": "the_geom",
+      "properties": {
+        "Id": 0,
+        "NAME": "珠江新城海滨花园-北区",
+        "Height": 117.34
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.42",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33662108, 23.11522313, 94.72]
+      },
+      "geometry_name": "the_geom",
+      "properties": {
+        "Id": 0,
+        "NAME": "珠江新城海滨花园-南区",
+        "Height": 94.72
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.43",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33914938, 23.11485013, 168.75]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "侨鑫汇悦台", "Height": 168.75 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.44",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33914799, 23.11819905, 107.73]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "南国花园-A区", "Height": 107.73 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.45",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33908776, 23.11609821, 101.94]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "南国花园-B区", "Height": 101.94 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.46",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34021426, 23.11700706, 47.73]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "南国酒店", "Height": 47.73 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.47",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33877621, 23.11670292, 29.5]
+      },
+      "geometry_name": "the_geom",
+      "properties": {
+        "Id": 0,
+        "NAME": "广州市天河第二实验幼儿园",
+        "Height": 29.5
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.48",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33882679, 23.11949966, 126.3]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "尚东·宏御", "Height": 126.3 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.49",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33903598, 23.11881219, 36]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "南国学校-小学部", "Height": 36 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.50",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34006204, 23.11896346, 36.63]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "南国学校-中学部", "Height": 36.63 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.51",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34132688, 23.11868161, 120.81]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠光·新城御景", "Height": 120.81 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.52",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34116493, 23.11594893, 83.7]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "平月园", "Height": 83.7 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.53",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33765033, 23.12638432, 117.09]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "电信大厦", "Height": 117.09 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.54",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33723815, 23.12642893, 67.56]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "金骏大厦", "Height": 67.56 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.55",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33757595, 23.12577108, 115.09]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "安骏大厦", "Height": 115.09 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.56",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33750188, 23.1250659, 120.47]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "汇豪大厦", "Height": 120.47 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.57",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33634165, 23.12522451, 119.18]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "君怡大厦", "Height": 119.18 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.58",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33620987, 23.12587997, 155.47]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "星汇御府", "Height": 155.47 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.59",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3362013, 23.12645615, 41.27]
+      },
+      "geometry_name": "the_geom",
+      "properties": {
+        "Id": 0,
+        "NAME": "广州市天河区第一实验小学",
+        "Height": 41.27
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.60",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33509003, 23.12514838, 175.82]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "中海观园国际", "Height": 175.82 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.61",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33546862, 23.12595414, 93.27]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "豪居苑", "Height": 93.27 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.62",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3345917, 23.12585316, 102.14]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "迎龙苑-D座", "Height": 102.14 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.63",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33495125, 23.12664817, 115.97]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "逢源苑", "Height": 115.97 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.64",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33546445, 23.12834061, 131.51]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "星辉中心", "Height": 131.51 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.65",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3352284, 23.128014, 131.51]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "伟腾大厦", "Height": 131.51 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.66",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33494916, 23.12733478, 166.09]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "越秀财富世纪广场", "Height": 166.09 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.67",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33745299, 23.12809082, 123.27]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "恒大珺睿", "Height": 123.27 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.68",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33648155, 23.12810054, 117.3]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "云来斯堡酒店", "Height": 117.3 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.69",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33870922, 23.12814194, 121.17]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广东农信大厦", "Height": 121.17 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.70",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33864389, 23.12739768, 116.56]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "裕富公寓", "Height": 116.56 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.71",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33948527, 23.12727151, 120.91]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "裕景大厦", "Height": 120.91 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.72",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33953173, 23.12793421, 122.37]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "联通新时空广场", "Height": 122.37 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.73",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33873559, 23.12617682, 82.24]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "太阳新天地购物中心", "Height": 82.24 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.74",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33882237, 23.12500309, 190.5]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "富力公园28", "Height": 190.5 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.75",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3361319, 23.12110605, 78.46]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "甲子花园", "Height": 78.46 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.76",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3371603, 23.12153233, 123.21]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠光新城国际中心", "Height": 123.21 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.77",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33705478, 23.12074584, 139.03]
+      },
+      "geometry_name": "the_geom",
+      "properties": {
+        "Id": 0,
+        "NAME": "珠光国际翡丽商务大厦",
+        "Height": 139.03
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.78",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33750621, 23.12071122, 139.03]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "美林基业大厦", "Height": 139.03 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.79",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3383485, 23.12114967, 119.8]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "盈盛大厦", "Height": 119.8 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.80",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33913824, 23.12060126, 20.42]
+      },
+      "geometry_name": "the_geom",
+      "properties": {
+        "Id": 0,
+        "NAME": "中国南方电网电动车体验中心",
+        "Height": 20.42
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.81",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33867831, 23.12382512, 292]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广发证券大厦", "Height": 292 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.82",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33850414, 23.12322106, 39.9]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "善品中心", "Height": 39.9 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.83",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34415951, 23.12342099, 100.62]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "星汇雅苑", "Height": 100.62 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.84",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34539376, 23.12365568, 94.92]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广电兰亭荟", "Height": 94.92 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.85",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34603602, 23.12361128, 40.79]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "冼村街道办事处", "Height": 40.79 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.86",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34568436, 23.12320188, 57.86]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "军工大楼", "Height": 57.86 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.87",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34540645, 23.12280195, 49.4]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "通讯大楼", "Height": 49.4 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.88",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34547933, 23.12222097, 79.51]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广电科技大厦", "Height": 79.51 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.89",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34414907, 23.1224529, 50.7]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "骏逸苑", "Height": 50.7 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.90",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34545558, 23.12125679, 126.8]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广电平云广场", "Height": 126.8 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.91",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34412724, 23.12090639, 144.8]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠光·新城御景-2期", "Height": 144.8 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.92",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34091774, 23.12120518, 39.22]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "马会家居", "Height": 39.22 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.93",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34509554, 23.12662316, 126.26]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "跑马地花园", "Height": 126.26 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.94",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34465881, 23.12726078, 128.17]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "跑马地大厦", "Height": 128.17 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.95",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34029081, 23.12608155, 46.63]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "马会酒店", "Height": 46.63 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.96",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34256979, 23.12692633, 21.56]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广州赛马场汽车城", "Height": 21.56 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.97",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34174566, 23.12377559, 24.44]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "七十二杆高尔夫俱乐部", "Height": 24.44 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.98",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34278452, 23.11892805, 120.57]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "和御御公馆", "Height": 120.57 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.99",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34380434, 23.11912602, 106.18]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "珠光御景二期-B区", "Height": 106.18 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.100",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.3444392, 23.11858078, 45.49]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "丰乐苑小区", "Height": 45.49 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.101",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.34414069, 23.11500332, 36.06]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "广州市净水有限公司", "Height": 36.06 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.102",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33145438, 23.11734784, 119.95]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "猎德村复建房-3区", "Height": 119.95 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.103",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.32989283, 23.11623183, 141.45]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "猎德村复建房-1区", "Height": 141.45 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.104",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33183137, 23.11596001, 121]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "猎德村复建房-2区", "Height": 121 }
+    },
+    {
+      "type": "Feature",
+      "id": "天河B区地名标注.105",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.33006526, 23.11806696, 120.37]
+      },
+      "geometry_name": "the_geom",
+      "properties": { "Id": 0, "NAME": "猎德村复建房-5区", "Height": 120.37 }
+    }
+  ],
+  "totalFeatures": 105,
+  "numberMatched": 105,
+  "numberReturned": 105,
+  "timeStamp": "2023-08-16T07:23:09.827Z",
+  "crs": {
+    "type": "name",
+    "properties": { "name": "urn:ogc:def:crs:EPSG::4326" }
+  }
+}
