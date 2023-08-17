@@ -85,6 +85,10 @@ class LabelAvoid {
   }
 
   setAvoidLalelOverlap() {
+    if (this._removeEventListener) {
+      this._removeEventListener();
+    }
+    
     let dataSource = this.dataSource;
     const that = this;
     this._removeEventListener = this.viewer.camera.changed.addEventListener(
