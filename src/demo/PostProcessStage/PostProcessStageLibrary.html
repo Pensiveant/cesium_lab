@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
+
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <title>后期处理（PostProcessStageLibrary）</title>
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+
+      .btn-box {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        padding: 16px;
+        background-color: white;
+
+        display: flex;
+      }
+      .stage-box {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        z-index: 2;
+      }
+      button {
+        margin-right: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cesiumContainer">
+      <div class="stage-box">
+        <button onclick="showBlackAndWhiteStage()">BlackAndWhiteStage</button>
+        <button onclick="showBlurStage()">BlurStage</button>
+        <button onclick="showBrightnessStage()">BrightnessStage</button>
+        <button onclick="showDepthOfFieldStage()">DepthOfFieldStage</button>
+        <button onclick="showEdgeDetectionStage()">EdgeDetectionStage</button>
+        <button onclick="showLensFlareStage()">LensFlareStage</button>
+        <button onclick="showNightVisionStage()">NightVisionStage</button>
+        <button onclick="showSilhouetteStage()">SilhouetteStage</button>
+        <button onclick="clearStages()">clear</button>
+      </div>
+    </div>
+    <script type="module">
+      // 初始化view
+      //   Cesium.Ion.defaultAccessToken =
+      //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
+      const viewer = new Cesium.Viewer("cesiumContainer", {
+        geocoder: false, // 搜索功能
+        homeButton: false, // home
+        sceneModePicker: false, // 隐藏二三维切换
+        baseLayerPicker: false, //隐藏默认底图选择控件
+        navigationHelpButton: false, // 帮助？号
+        animation: false,
+        infoBox: false,
+        timeline: false,
+        fullscreenButton: false,
+        // terrain: Cesium.Terrain.fromWorldTerrain(),
+      });
+      window.viewer = viewer;
+      let baseMap = Cesium.ImageryLayer.fromProviderAsync(
+        Cesium.ArcGisMapServerImageryProvider.fromUrl(
+          "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+        )
+      );
+      viewer.imageryLayers.add(baseMap);
+      // 加载大雁塔
+      Cesium.Cesium3DTileset.fromUrl(
+        "http://earthsdk.com/v/last/Apps/assets/dayanta/tileset.json",
+        {
+          backFaceCulling: true,
+        }
+      ).then((tileset) => {
+        viewer.scene.primitives.add(tileset);
+
+        //#region 位置贴地
+        let heightOffset = -420;
+        var boundingSphere = tileset.boundingSphere;
+        var cartographic = Cesium.Cartographic.fromCartesian(
+          boundingSphere.center
+        );
+        var surface = Cesium.Cartesian3.fromRadians(
+          cartographic.longitude,
+          cartographic.latitude,
+          0.0
+        );
+        var offset = Cesium.Cartesian3.fromRadians(
+          cartographic.longitude,
+          cartographic.latitude,
+          heightOffset
+        );
+        var translation = Cesium.Cartesian3.subtract(
+          offset,
+          surface,
+          new Cesium.Cartesian3()
+        );
+        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+        //#endregion
+
+        viewer.flyTo(tileset);
+      });
+
+      // 黑白效果
+      window.showBlackAndWhiteStage = () => {
+        const blackAndWhiteStage =
+          Cesium.PostProcessStageLibrary.createBlackAndWhiteStage();
+        let collection = viewer.scene.postProcessStages;
+        collection.add(blackAndWhiteStage);
+      };
+      
+      // 模糊效果
+      window.showBlurStage = () => {
+        const blurStage = Cesium.PostProcessStageLibrary.createBlurStage();
+        let collection = viewer.scene.postProcessStages;
+        collection.add(blurStage);
+      };
+
+      // 高亮效果
+      window.showBrightnessStage = () => {
+        const brightnessStage =
+          Cesium.PostProcessStageLibrary.createBrightnessStage();
+        let collection = viewer.scene.postProcessStages;
+        collection.add(brightnessStage);
+      };
+
+      // 
+      window.showDepthOfFieldStage = () => {
+        const depthOfFieldStage =
+          Cesium.PostProcessStageLibrary.createDepthOfFieldStage();
+        let collection = viewer.scene.postProcessStages;
+        collection.add(depthOfFieldStage);
+      };
+
+      // 边缘检测
+      window.showEdgeDetectionStage = () => {
+        const edgeDetectionStage =
+          Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
+        let collection = viewer.scene.postProcessStages;
+        collection.add(edgeDetectionStage);
+      };
+
+      // 
+      window.showLensFlareStage = () => {
+        const lensFlareStage =
+          Cesium.PostProcessStageLibrary.createLensFlareStage();
+        let collection = viewer.scene.postProcessStages;
+        collection.add(lensFlareStage);
+      };
+
+      // 夜视效果
+      window.showNightVisionStage = () => {
+        const nightVisionStage =
+          Cesium.PostProcessStageLibrary.createNightVisionStage();
+        let collection = viewer.scene.postProcessStages;
+        collection.add(nightVisionStage);
+      };
+      
+      // 显示轮廓，即描边效果
+      window.showSilhouetteStage = () => {
+        const yellowEdge = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
+        yellowEdge.uniforms.color = Cesium.Color.YELLOW;
+        // yellowEdge.selected = [feature0];
+
+        const greenEdge = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();
+        greenEdge.uniforms.color = Cesium.Color.LIME;
+        // greenEdge.selected = [feature1];
+
+        const silhouetteStage =
+          Cesium.PostProcessStageLibrary.createSilhouetteStage([yellowEdge, greenEdge]);
+        let collection = viewer.scene.postProcessStages;
+        collection.add(silhouetteStage);
+      };
+
+
+      window.clearStages = () => {
+        viewer.scene.postProcessStages.removeAll();
+      };
+      //
+    </script>
+  </body>
+</html>
