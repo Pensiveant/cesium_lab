@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <title>天气效果</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+
+    .weather-box {
+      position: absolute;
+      top: 100px;
+      right: 100px;
+      z-index: 2;
+    }
+
+    .weather-box button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer">
+    <div class="weather-box">
+      <button>晴</button>
+      <button>雾</button>
+      <button>雨</button>
+      <button>雪</button>
+    </div>
+  </div>
+  <script type="module">
+    import RadarSolidScan from "./js/RadarSolidScan.js";
+
+    // 初始化view
+    //   Cesium.Ion.defaultAccessToken =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      geocoder: false, // 搜索功能
+      homeButton: false, // home
+      sceneModePicker: false, // 隐藏二三维切换
+      baseLayerPicker: false, //隐藏默认底图选择控件
+      navigationHelpButton: false, // 帮助？号
+      animation: false,
+      infoBox: false,
+      timeline: false,
+      fullscreenButton: false,
+      // terrain: Cesium.Terrain.fromWorldTerrain(),
+    });
+    let baseMap = Cesium.ImageryLayer.fromProviderAsync(
+      Cesium.ArcGisMapServerImageryProvider.fromUrl(
+        "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+      )
+    );
+    viewer.imageryLayers.add(baseMap);
+    // 定位到成都
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 1400),
+    });
+    window.viewer = viewer;
+
+    const rainFs = `
+uniform sampler2D colorTexture;
+in vec2 v_textureCoordinates;
+uniform float speed;
+uniform float size;
+float hash(float x) {
+    return fract(sin(x * 133.3) * 13.13);
+}
+void main(void) {
+    float time = (czm_frameNumber / speed);
+    vec2 resolution = czm_viewport.zw;
+    vec2 uv = (gl_FragCoord.xy * 2. - resolution.xy) / min(resolution.x, resolution.y);
+    vec3 c = vec3(.6, .7, .8);
+    float a = -.4;
+    float si = sin(a), co = cos(a);
+    uv *= mat2(co, -si, si, co);
+    uv *= length(uv + vec2(0, 4.9)) * .3 + 1.;
+    float v = 1. - sin(hash(floor(uv.x * 100.)) * 2.);
+    float b = clamp(abs(sin(20. * time * v + uv.y * (5. / (2. + v)))) - .95, 0., 1.) * size;
+    c *= v * b;
+    out_FragColor = mix(texture(colorTexture, v_textureCoordinates), vec4(c, 1), 0.5);
+}
+`;
+    const rainRippleFs = `
+#extension GL_OES_standard_derivatives : enable
+uniform sampler2D colorTexture;
+uniform sampler2D depthTexture;
+in vec2 v_textureCoordinates;
+
+#define MAX_RADIUS 2
+#define DOUBLE_HASH 0
+#define HASHSCALE1 .1031
+#define HASHSCALE3 vec3(.1031, .1030, .0973)
+
+//Field of view
+#define FOV (3.14159/1.)
+
+
+vec4 toEye(in vec2 uv, in float depth){
+    vec2 xy = vec2((uv.x * 2.0 - 1.0),(uv.y * 2.0 - 1.0));
+    vec4 posInCamera =czm_inverseProjection * vec4(xy, depth, 1.0);
+    posInCamera =posInCamera / posInCamera.w;
+    return posInCamera;
+}
+float getDepth(in vec4 depth){
+    float z_window = czm_unpackDepth(depth);
+    z_window = czm_reverseLogDepth(z_window);
+    float n_range = czm_depthRange.near;
+    float f_range = czm_depthRange.far;
+    return (2.0 * z_window - n_range - f_range) / (f_range - n_range);
+}
+
+float hash12(vec2 p)
+{
+	vec3 p3  = fract(vec3(p.xyx) * HASHSCALE1);
+    p3 += dot(p3, p3.yzx + 19.19);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+vec2 hash22(vec2 p)
+{
+	vec3 p3 = fract(vec3(p.xyx) * HASHSCALE3);
+    p3 += dot(p3, p3.yzx+19.19);
+    return fract((p3.xx+p3.yz)*p3.zy);
+
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord,float distance )
+{   
+    vec2 iResolution = czm_viewport.zw;
+    float iTime = (czm_frameNumber / 50.0);
+     float resolution = 200. * exp2(-3./iResolution.x) * distance;
+     resolution = max(resolution,140.0);
+	 vec2 uv = (fragCoord.xy / iResolution.y * resolution);
+     vec2 p0 = floor(uv);
+    vec2 circles = vec2(0.);
+    for (int j = -MAX_RADIUS; j <= MAX_RADIUS; ++j)
+    {
+        for (int i = -MAX_RADIUS; i <= MAX_RADIUS; ++i)
+        {
+			vec2 pi = p0 + vec2(i, j);
+            #if DOUBLE_HASH
+            vec2 hsh = hash22(pi);
+            #else
+            vec2 hsh = pi;
+            #endif
+            vec2 p = pi + hash22(hsh);
+
+            float t = fract(0.3*iTime + hash12(hsh));
+            vec2 v = p - uv;
+            float d = length(v) - (float(MAX_RADIUS) + 1.)*t;
+
+            float h = 1e-3;
+            float d1 = d - h;
+            float d2 = d + h;
+            float p1 = sin(31.*d1) * smoothstep(-0.6, -0.3, d1) * smoothstep(0., -0.3, d1);
+            float p2 = sin(31.*d2) * smoothstep(-0.6, -0.3, d2) * smoothstep(0., -0.3, d2);
+            circles += 0.5 * normalize(v) * ((p2 - p1) / (2. * h) * (1. - t) * (1. - t));
+        }
+    }
+    circles /= float((MAX_RADIUS*2+1)*(MAX_RADIUS*2+1));
+ 
+
+    float intensity = mix(0.01, 0.15, smoothstep(0.1, 0.6, abs(fract(0.05*iTime + 0.5)*2.-1.)));
+    vec3 n = vec3(circles, sqrt(1. - dot(circles, circles)));
+    vec3 color = fragColor.xyz + 5.*pow(clamp(dot(n, normalize(vec3(1., 0.7, 0.5))), 0., 1.), 6.);
+	fragColor.xyz = color;
+}
+void main(void) {
+    vec4 fragColor = texture(colorTexture, v_textureCoordinates);
+    vec4 currD = texture(depthTexture, v_textureCoordinates);//计算深度
+    if(currD.r>=1.0){//深度大于1的不处理
+        out_FragColor = fragColor;
+        return;
+    }
+    float depth = getDepth(currD);
+    vec4 positionEC = toEye(v_textureCoordinates, depth);
+    vec3 dx = dFdx(positionEC.xyz);
+    vec3 dy = dFdy(positionEC.xyz);
+    vec3 nor = normalize(cross(dx,dy));
+    vec4 positionWC = normalize(czm_inverseView * positionEC);
+    vec3 normalWC = normalize(czm_inverseViewRotation * nor);
+    float dotNumWC = dot(positionWC.xyz,normalWC);
+    float distance = length(positionEC);
+    if(dotNumWC < 0.3 || distance >10000.0){
+        out_FragColor = fragColor;
+        return;
+    }
+    distance = distance/300.0;
+    mainImage(fragColor,gl_FragCoord.xy,distance);
+    out_FragColor = fragColor;
+}
+
+`;
+    let rain = new Cesium.PostProcessStage({
+      name: "rain01",
+      fragmentShader: rainFs,
+      uniforms: {
+        speed: 60,
+        size: 5,
+      },
+    });
+    let rainRipple = new Cesium.PostProcessStage({
+      name: "rainRipple",
+      fragmentShader: rainRippleFs,
+      uniforms: {},
+    });
+    let uniforms = {};
+    Object.defineProperties(uniforms, {
+      size: {
+        get() {
+          return rain.uniforms.size;
+        },
+        set(value) {
+          rain.uniforms.size = value;
+        },
+      },
+      speed: {
+        get() {
+          return rain.uniforms.speed;
+        },
+        set(value) {
+          rain.uniforms.speed = value;
+        },
+      },
+    });
+    let stage = new Cesium.PostProcessStageComposite({
+      name: "rain",
+      stages: [rain, rainRipple],
+      inputPreviousStageTexture: true,
+      uniforms: uniforms,
+    });
+    viewer.scene.postProcessStages.add(stage);
+  </script>
+</body>
+
+</html>
