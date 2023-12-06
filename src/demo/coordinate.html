@@ -1,111 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>坐标拾取</title>
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-      Cesium.Ion.defaultAccessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
 
-      // 初始化view
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-        geocoder: false, // 搜索功能
-        homeButton: false, // home
-        sceneModePicker: false, // 隐藏二三维切换
-        baseLayerPicker: false, //隐藏默认底图选择控件
-        navigationHelpButton: false, // 帮助？saa号
-        animation: false,
-        infoBox: true,
-        timeline: false,
-        fullscreenButton: false,
-        // 使用ArcGIS 底图
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        }),
-        terrain: Cesium.Terrain.fromWorldTerrain(),
+<head>
+  <meta charset="utf-8" />
+  <title>坐标拾取</title>
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    Cesium.Ion.defaultAccessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMzVjZDg3Yi0wMjVkLTQ0MzctOTZjOC1jZjMwNjkzZmI5MWUiLCJpZCI6MjU5LCJpYXQiOjE2OTg4NTM0MDl9.L_g01CjNKNVijEJ_8kOxiO02OADnuSjRFLkZWvhupcc";
+
+    // 初始化view
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      geocoder: false, // 搜索功能
+      homeButton: false, // home
+      sceneModePicker: false, // 隐藏二三维切换
+      baseLayerPicker: false, //隐藏默认底图选择控件
+      navigationHelpButton: false, // 帮助？saa号
+      animation: false,
+      infoBox: true,
+      timeline: false,
+      fullscreenButton: false,
+      // 使用ArcGIS 底图
+      imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+      }),
+      terrain: Cesium.Terrain.fromWorldTerrain(),
+    });
+    viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+    viewer.scene.globe.depthTestAgainstTerrain = true;
+    window.viewer = viewer;
+
+    // 定位到成都
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 1000),
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0),
+      },
+    });
+
+    // 鼠标事件
+    const eventHandler = new Cesium.ScreenSpaceEventHandler(
+      viewer.scene.canvas
+    );
+    eventHandler.setInputAction(function (e) {
+      // console.log(e);
+      // const { x, y } = e.position;
+      // const cartesian3 = viewer.scene.pickPosition(
+      //   new Cesium.Cartesian2(x, y)
+      // );
+      // console.log(cartesian3);
+      // const coordinate = Cesium.Cartographic.fromCartesian(cartesian3);
+      // console.log(coordinate);
+      // // 弧度转度
+      // coordinate.latitude = (coordinate.latitude * 180) / Math.PI;
+      // coordinate.longitude = (coordinate.longitude * 180) / Math.PI;
+      // console.log(coordinate);
+
+      var ray = viewer.camera.getPickRay(e.position); // 创建一条光线，起点为相机位置，穿过给定坐标（e.position）的像素
+      var cartesian = viewer.scene.globe.pick(ray, viewer.scene); // 获取光线与椭球体表面的交点，交点的坐标为笛卡尔坐标（Cartesian3）。
+      var cartographic = Cesium.Cartographic.fromCartesian(cartesian); // 笛卡尔坐标转经纬度坐标（单位为弧度）
+      var lng = Cesium.Math.toDegrees(cartographic.longitude); //经度值
+      var lat = Cesium.Math.toDegrees(cartographic.latitude); //纬度值
+      let height = cartographic.height; // 高程
+      // let height=viewer.scene.globe.getHeight(cartographic); // 高程
+      var mapPosition = { lng: lng, lat: lat, z: height };
+      console.log({
+        position: mapPosition,
+        positionArr: [lng, lat],
+        positionArr1: [lng, lat, height],
       });
-      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
-      viewer.scene.globe.depthTestAgainstTerrain = true;
-      window.viewer = viewer;
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-      // 定位到成都
-      viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 1000),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0),
-        },
-      });
+    // 判断两个笛卡尔坐标，只是Z不同，是否经纬度相等---> 不相等
+    const cartesian1 = new Cesium.Cartesian3(
+      -1334359.4095493746,
+      5326730.822167071,
+      3233510.4552113283
+    );
+    const cartesian2 = new Cesium.Cartesian3(
+      -1334359.4095493746,
+      5326730.822167071,
+      0
+    );
+    const cartographic1 = Cesium.Cartographic.fromCartesian(cartesian1);
+    const cartographic2 = Cesium.Cartographic.fromCartesian(cartesian2);
+    console.log({ cartographic1, cartographic2 });
+  </script>
+</body>
 
-      // 鼠标事件
-      const eventHandler = new Cesium.ScreenSpaceEventHandler(
-        viewer.scene.canvas
-      );
-      eventHandler.setInputAction(function (e) {
-        // console.log(e);
-        // const { x, y } = e.position;
-        // const cartesian3 = viewer.scene.pickPosition(
-        //   new Cesium.Cartesian2(x, y)
-        // );
-        // console.log(cartesian3);
-        // const coordinate = Cesium.Cartographic.fromCartesian(cartesian3);
-        // console.log(coordinate);
-        // // 弧度转度
-        // coordinate.latitude = (coordinate.latitude * 180) / Math.PI;
-        // coordinate.longitude = (coordinate.longitude * 180) / Math.PI;
-        // console.log(coordinate);
-
-        var ray = viewer.camera.getPickRay(e.position); // 创建一条光线，起点为相机位置，穿过给定坐标（e.position）的像素
-        var cartesian = viewer.scene.globe.pick(ray, viewer.scene); // 获取光线与椭球体表面的交点，交点的坐标为笛卡尔坐标（Cartesian3）。
-        var cartographic = Cesium.Cartographic.fromCartesian(cartesian); // 笛卡尔坐标转经纬度坐标（单位为弧度）
-        var lng = Cesium.Math.toDegrees(cartographic.longitude); //经度值
-        var lat = Cesium.Math.toDegrees(cartographic.latitude); //纬度值
-        let height = cartographic.height; // 高程
-        // let height=viewer.scene.globe.getHeight(cartographic); // 高程
-        var mapPosition = { lng: lng, lat: lat, z: height };
-        console.log({
-          position: mapPosition,
-          positionArr: [lng, lat],
-          positionArr1: [lng, lat, height],
-        });
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-      // 判断两个笛卡尔坐标，只是Z不同，是否经纬度相等---> 不相等
-      const cartesian1 = new Cesium.Cartesian3(
-        -1334359.4095493746,
-        5326730.822167071,
-        3233510.4552113283
-      );
-      const cartesian2 = new Cesium.Cartesian3(
-        -1334359.4095493746,
-        5326730.822167071,
-        0
-      );
-      const cartographic1 = Cesium.Cartographic.fromCartesian(cartesian1);
-      const cartographic2 = Cesium.Cartographic.fromCartesian(cartesian2);
-      console.log({ cartographic1, cartographic2 });
-    </script>
-  </body>
 </html>
