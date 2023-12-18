@@ -73,7 +73,7 @@
     window.viewer = viewer;
 
     //
-    loadModel(viewer);
+    loadModel1(viewer);
     async function loadModel(viewer) {
 
       const position = Cesium.Cartesian3.fromDegrees(104.06332274677766, 30.65982249608171, 0);
@@ -93,10 +93,37 @@
           uri: "../../data/models/car_1.glb",
           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
           minimumPixelSize: 300,
-          silhouetteColor:Cesium.Color.BLUE
+          silhouetteColor: Cesium.Color.BLUE
         }
       })
       viewer.entities.add(entity);
+    }
+
+    // 第二种加载方式
+    async function loadModel1(viewer) {
+      const position = Cesium.Cartesian3.fromDegrees(
+        104.06332274677766, 30.65982249608171, 450
+      );
+      const headingPositionRoll = new Cesium.HeadingPitchRoll();
+      const fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator(
+        "north",
+        "west"
+      );
+      try {
+        const model = await Cesium.Model.fromGltfAsync({
+          url: "../../data/models/car_1.glb",
+          modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(
+            position,
+            headingPositionRoll,
+            Cesium.Ellipsoid.WGS84,
+            fixedFrameTransform
+          ),
+          minimumPixelSize: 128,
+        });
+        viewer.scene.primitives.add(model);
+      } catch (error) {
+        console.log(`Failed to load model. ${error}`);
+      }
     }
 
 
