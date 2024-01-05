@@ -88,7 +88,7 @@
 
       let entity = new Cesium.Entity({
         position,
-        orientation: orientation,
+        orientation: orientation,  // 默认情况下，模型是直立的并面向东。可以通过当前属性，控制模型的航向、俯仰和翻滚。
         model: {
           uri: "../../data/models/car_1.glb",
           heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
