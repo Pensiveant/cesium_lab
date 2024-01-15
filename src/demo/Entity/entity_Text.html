@@ -54,11 +54,13 @@
 
 
       const labelGraphics = new Cesium.LabelGraphics({
-        text:"成华大道"
+        text:"成华大道",
+        distanceDisplayCondition :new Cesium.DistanceDisplayCondition(10.0, 220.0)  //  到camera的距离在10m~220m范围内才显示
       });
       const wyoming = viewer.entities.add({
         position: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 0),
         label: labelGraphics,
+       
       });
 
       viewer.zoomTo(wyoming);

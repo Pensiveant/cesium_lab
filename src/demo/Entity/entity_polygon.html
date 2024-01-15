@@ -44,7 +44,7 @@
         imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
           url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
         }),
-        terrain: Cesium.Terrain.fromWorldTerrain(),
+        // terrain: Cesium.Terrain.fromWorldTerrain(),
       });
       viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
       viewer.scene.globe.depthTestAgainstTerrain = true;
