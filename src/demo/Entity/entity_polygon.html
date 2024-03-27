@@ -1,134 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>绘制面</title>
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-      Cesium.Ion.defaultAccessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
 
-      // 初始化view
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-        geocoder: false, // 搜索功能
-        homeButton: false, // home
-        sceneModePicker: false, // 隐藏二三维切换
-        baseLayerPicker: false, //隐藏默认底图选择控件
-        navigationHelpButton: false, // 帮助？saa号
-        animation: false,
-        infoBox: false,
-        timeline: false,
-        fullscreenButton: false,
-        // 使用ArcGIS 底图
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        }),
-        // terrain: Cesium.Terrain.fromWorldTerrain(),
-      });
-      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
-      viewer.scene.globe.depthTestAgainstTerrain = true;
+<head>
+  <meta charset="utf-8" />
+  <title>绘制面</title>
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
 
-      //
-      let polygonEntity = new Cesium.Entity({
-        polygon: {
-          hierarchy: Cesium.Cartesian3.fromDegreesArrayHeights([
-            104.06204432699153, 30.660726592602778, 458.0359123306434,
-            104.06491131775273, 30.660792356429575, 457.5663362739622,
-            104.06488421424214, 30.65902970314711, 462.1401663208093,
-            104.06206037235002, 30.65901615923885, 458.80041016490196,
-          ]),
-          perPositionHeight: true,
-          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-          material: new Cesium.Color(1, 0, 0, 0.2),
-          outline: true,
-          outlineWidth: 2,
-          outlineColor: new Cesium.Color(0, 1, 0, 1),
-        },
-      });
-      const wyoming = viewer.entities.add(polygonEntity);
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
 
-      // 三角形
-      let triangleEntity = new Cesium.Entity({
-        polygon: {
-          hierarchy: Cesium.Cartesian3.fromDegreesArray([
-            104.06323070997296, 30.664859231902437, 104.06447156563476,
-            30.663102418517475, 104.06216672075426, 30.663083850974235,
-          ]),
-          material: new Cesium.Color(0, 0, 1, 0.2),
-          height: 500,
-          outline: true,
-          outlineWidth: 2,
-          outlineColor: new Cesium.Color(0, 1, 0, 1),
-          extrudedHeight: 100, // 设置垂直于地表的拉伸高度
-          closeTop:false,
-        },
-      });
-      viewer.entities.add(triangleEntity);
+<body>
+  <div id="cesiumContainer"></div>
+</body>
+<script type="module" src="../js/config.js"></script>
+<script type="module">
+  Cesium.Ion.defaultAccessToken = defaultAccessToken;
+  // 初始化view
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    geocoder: false, // 搜索功能
+    homeButton: false, // home
+    sceneModePicker: false, // 隐藏二三维切换
+    baseLayerPicker: false, //隐藏默认底图选择控件
+    navigationHelpButton: false, // 帮助？saa号
+    animation: false,
+    infoBox: false,
+    timeline: false,
+    fullscreenButton: false,
+    // 使用ArcGIS 底图
+    imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+      url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+    }),
+    // terrain: Cesium.Terrain.fromWorldTerrain(),
+  });
+  viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+  viewer.scene.globe.depthTestAgainstTerrain = true;
 
-      //
-      let holeEntity = new Cesium.Entity({
-        polygon: {
-          hierarchy: {
-            positions: Cesium.Cartesian3.fromDegreesArray([
-              104.06520496581112, 30.660551607385386, 104.06624013406136,
-              30.660572590247572, 104.0662198895377, 30.65965616350186,
-              104.06522032461255, 30.659597547644264,
-            ]),
-            holes: [
-              new Cesium.PolygonHierarchy(
-                Cesium.Cartesian3.fromDegreesArray([
-                  104.06576266477147, 30.660233507702728, 104.06597736705955,
-                  30.659875123894466, 104.06551790399301, 30.659882881849438,
-                ])
-              ),
-            ],
-          },
-          material: new Cesium.Color(1, 0, 0, 0.2),
-        },
-      });
-      viewer.entities.add(holeEntity);
+  //
+  let polygonEntity = new Cesium.Entity({
+    polygon: {
+      hierarchy: Cesium.Cartesian3.fromDegreesArrayHeights([
+        104.06204432699153, 30.660726592602778, 458.0359123306434,
+        104.06491131775273, 30.660792356429575, 457.5663362739622,
+        104.06488421424214, 30.65902970314711, 462.1401663208093,
+        104.06206037235002, 30.65901615923885, 458.80041016490196,
+      ]),
+      perPositionHeight: true,
+      heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+      material: new Cesium.Color(1, 0, 0, 0.2),
+      outline: true,
+      outlineWidth: 2,
+      outlineColor: new Cesium.Color(0, 1, 0, 1),
+    },
+  });
+  const wyoming = viewer.entities.add(polygonEntity);
 
-      // 纹理旋转示例：
-      let stRotationEntity = new Cesium.Entity({
-        polygon: {
-          hierarchy: Cesium.Cartesian3.fromDegreesArray([
-            104.06296283032336, 30.66146423509986, 104.06371460352796,
-            30.661507835647278, 104.063694378712, 30.660984042296295,
-            104.06298332845368, 30.66098879086753,
-          ]),
-          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-          material: new Cesium.StripeMaterialProperty({
-            evenColor: Cesium.Color.WHITE,
-            oddColor: Cesium.Color.BLUE,
-            repeat: 5,
-          }),
-          stRotation: Cesium.Math.toRadians(90), // 纹理逆时针旋转90°
-        },
-      });
-      viewer.entities.add(stRotationEntity);
+  // 三角形
+  let triangleEntity = new Cesium.Entity({
+    polygon: {
+      hierarchy: Cesium.Cartesian3.fromDegreesArray([
+        104.06323070997296, 30.664859231902437, 104.06447156563476,
+        30.663102418517475, 104.06216672075426, 30.663083850974235,
+      ]),
+      material: new Cesium.Color(0, 0, 1, 0.2),
+      height: 500,
+      outline: true,
+      outlineWidth: 2,
+      outlineColor: new Cesium.Color(0, 1, 0, 1),
+      extrudedHeight: 100, // 设置垂直于地表的拉伸高度
+      closeTop: false,
+    },
+  });
+  viewer.entities.add(triangleEntity);
 
-      viewer.flyTo(viewer.entities);
-    </script>
-  </body>
+  //
+  let holeEntity = new Cesium.Entity({
+    polygon: {
+      hierarchy: {
+        positions: Cesium.Cartesian3.fromDegreesArray([
+          104.06520496581112, 30.660551607385386, 104.06624013406136,
+          30.660572590247572, 104.0662198895377, 30.65965616350186,
+          104.06522032461255, 30.659597547644264,
+        ]),
+        holes: [
+          new Cesium.PolygonHierarchy(
+            Cesium.Cartesian3.fromDegreesArray([
+              104.06576266477147, 30.660233507702728, 104.06597736705955,
+              30.659875123894466, 104.06551790399301, 30.659882881849438,
+            ])
+          ),
+        ],
+      },
+      material: new Cesium.Color(1, 0, 0, 0.2),
+    },
+  });
+  viewer.entities.add(holeEntity);
+
+  // 纹理旋转示例：
+  let stRotationEntity = new Cesium.Entity({
+    polygon: {
+      hierarchy: Cesium.Cartesian3.fromDegreesArray([
+        104.06296283032336, 30.66146423509986, 104.06371460352796,
+        30.661507835647278, 104.063694378712, 30.660984042296295,
+        104.06298332845368, 30.66098879086753,
+      ]),
+      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+      material: new Cesium.StripeMaterialProperty({
+        evenColor: Cesium.Color.WHITE,
+        oddColor: Cesium.Color.BLUE,
+        repeat: 5,
+      }),
+      stRotation: Cesium.Math.toRadians(90), // 纹理逆时针旋转90°
+    },
+  });
+  viewer.entities.add(stRotationEntity);
+
+  viewer.flyTo(viewer.entities);
+</script>
+
 </html>

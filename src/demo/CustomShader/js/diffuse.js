@@ -1,8 +1,7 @@
 // const Cesium = require("cesium"); // 智能提示使用
 
 // 初始化view
-Cesium.Ion.defaultAccessToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
+Cesium.Ion.defaultAccessToken = defaultAccessToken;
 const viewer = new Cesium.Viewer("cesiumContainer", {
   geocoder: false, // 搜索功能
   homeButton: false, // home
@@ -24,7 +23,7 @@ window.viewer = viewer;
 
 // 加载白模
 let customShader = new Cesium.CustomShader({
-  // 
+  //
   fragmentShaderText: `                
   void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
     material.diffuse = vec3(255,0,0)+ vec3(255,0,0)*1.0;     // 只设置入反射为红色，则模型显示为红色
