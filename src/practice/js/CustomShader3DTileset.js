@@ -1,8 +1,7 @@
 // const Cesium = require("cesium"); // 智能提示使用
 
 // 初始化view
-Cesium.Ion.defaultAccessToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
+Cesium.Ion.defaultAccessToken = defaultAccessToken;
 const viewer = new Cesium.Viewer("cesiumContainer", {
   geocoder: false, // 搜索功能
   homeButton: false, // home
