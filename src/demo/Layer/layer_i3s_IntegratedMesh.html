@@ -38,48 +38,48 @@
   <div id="cesiumContainer">
 
   </div>
-  <script type="module">
 
-    // 初始化view
-    Cesium.Ion.defaultAccessToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMzVjZDg3Yi0wMjVkLTQ0MzctOTZjOC1jZjMwNjkzZmI5MWUiLCJpZCI6MjU5LCJpYXQiOjE2OTg4NTM0MDl9.L_g01CjNKNVijEJ_8kOxiO02OADnuSjRFLkZWvhupcc";
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      geocoder: false, // 搜索功能
-      homeButton: false, // home
-      sceneModePicker: false, // 隐藏二三维切换
-      baseLayerPicker: false, //隐藏默认底图选择控件
-      navigationHelpButton: false, // 帮助？号
-      animation: false,
-      infoBox: false,
-      timeline: false,
-      fullscreenButton: false,
-      // terrain: Cesium.Terrain.fromWorldTerrain(),
-    });
-    let baseMap = Cesium.ImageryLayer.fromProviderAsync(
-      Cesium.ArcGisMapServerImageryProvider.fromUrl(
-        "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
-      )
-    );
-    viewer.imageryLayers.add(baseMap);
-    loadI3sData(viewer);
-
-    async function loadI3sData(viewer) {
-      try {
-        const i3sData = await Cesium.I3SDataProvider.fromUrl(
-          "https://tiles.arcgis.com/tiles/cFEFS0EWrhfDeVw9/arcgis/rest/services/Buildings_Frankfurt_2021/SceneServer"
-        );
-        viewer.scene.primitives.add(i3sData);
-        viewer.flyTo(i3sData)
-      } catch (error) {
-        console.log(`There was an error creating the I3S Data Provider: ${error}`);
-      }
-    }
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(8.672005683912701, 50.109854089128035, 1400),
-    });
-
-
-  </script>
 </body>
+<script type="module" src="../js/config.js"></script>
+<script type="module">
+  // 初始化view
+  Cesium.Ion.defaultAccessToken = defaultAccessToken;
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    geocoder: false, // 搜索功能
+    homeButton: false, // home
+    sceneModePicker: false, // 隐藏二三维切换
+    baseLayerPicker: false, //隐藏默认底图选择控件
+    navigationHelpButton: false, // 帮助？号
+    animation: false,
+    infoBox: false,
+    timeline: false,
+    fullscreenButton: false,
+    // terrain: Cesium.Terrain.fromWorldTerrain(),
+  });
+  let baseMap = Cesium.ImageryLayer.fromProviderAsync(
+    Cesium.ArcGisMapServerImageryProvider.fromUrl(
+      "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+    )
+  );
+  viewer.imageryLayers.add(baseMap);
+  loadI3sData(viewer);
+
+  async function loadI3sData(viewer) {
+    try {
+      const i3sData = await Cesium.I3SDataProvider.fromUrl(
+        "https://tiles.arcgis.com/tiles/cFEFS0EWrhfDeVw9/arcgis/rest/services/Buildings_Frankfurt_2021/SceneServer"
+      );
+      viewer.scene.primitives.add(i3sData);
+      viewer.flyTo(i3sData)
+    } catch (error) {
+      console.log(`There was an error creating the I3S Data Provider: ${error}`);
+    }
+  }
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(8.672005683912701, 50.109854089128035, 1400),
+  });
+
+
+</script>
 
 </html>
