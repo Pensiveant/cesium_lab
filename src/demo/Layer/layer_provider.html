@@ -108,7 +108,7 @@
     infoBox: false,
     timeline: false,
     fullscreenButton: false,
-    // 使用ArcGIS 底图
+    // 使用ArcGIS 底图  
     imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
       url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
     }),
@@ -118,7 +118,9 @@
   window.viewer = viewer;
 
 
-  let myProvider = new Cesium.ImageryLayer(new CustomProvider());
+  let myProvider = new Cesium.ImageryLayer(new CustomProvider(),{
+    alpha:.7,
+  });
   viewer.imageryLayers.add(myProvider);
 
 
