@@ -29,7 +29,7 @@ viewer.scene.primitives.add(tileset);
 viewer.zoomTo(tileset);
 
 function setCustomShader(type) {
-  let customShader;
+  let customShader = new Cesium.CustomShader();
   if (type === "flow") {
     customShader = new FlowFloodLightShader();
   } else if (type === "height") {
@@ -39,85 +39,85 @@ function setCustomShader(type) {
 }
 
 window.setCustomShader = setCustomShader;
-(viewer.postProcessStages.bloom.enabled = true),
-  //#region 泛光纹理
-  (window.FlowFloodLightShader = class FlowFloodLightShader {
-    constructor(options) {
-      this.diffuseColor = Cesium.Color.fromCssColorString("#1890ff"); // 漫反射颜色
-      this.floodColor = Cesium.Color.fromCssColorString("red"); // 泛光颜色
-      this.flowHeight = 200; // 泛光高度
-      this.roughness = 1.0; // 粗糙程度
-      this.occlusion = 1.0; // 环境遮蔽光程度
-      this.speed = 7; // 速度
-      this.bloom = {
-        sigma: 2,
-        brightness: 0.1,
-        contrast: 128,
-      }; // 泛光
-      this.hierarchicalLineWidth = 0.4; //分层线宽，单位米
-      this.dividerLevelHeight = 10; // 分层线间隔，单位米
-      let customShade = this._init(this);
-      return customShade;
-    }
+// viewer.postProcessStages.bloom.enabled = true;
+//#region 泛光纹理
+window.FlowFloodLightShader = class FlowFloodLightShader {
+  constructor(options) {
+    this.diffuseColor = Cesium.Color.fromCssColorString("#1890ff"); // 漫反射颜色
+    this.floodColor = Cesium.Color.fromCssColorString("red"); // 泛光颜色
+    this.flowHeight = 200; // 泛光高度
+    this.roughness = 1.0; // 粗糙程度
+    this.occlusion = 1.0; // 环境遮蔽光程度
+    this.speed = 7; // 速度
+    this.bloom = {
+      sigma: 2,
+      brightness: 0.1,
+      contrast: 128,
+    }; // 泛光
+    this.hierarchicalLineWidth = 0.4; //分层线宽，单位米
+    this.dividerLevelHeight = 10; // 分层线间隔，单位米
+    let customShade = this._init(this);
+    return customShade;
+  }
 
-    _init(options) {
-      let {
-        diffuseColor,
-        speed,
-        floodColor,
-        flowHeight,
-        hierarchicalLineWidth,
-        dividerLevelHeight,
-        roughness,
-        occlusion,
-        bloom,
-      } = options;
+  _init(options) {
+    let {
+      diffuseColor,
+      speed,
+      floodColor,
+      flowHeight,
+      hierarchicalLineWidth,
+      dividerLevelHeight,
+      roughness,
+      occlusion,
+      bloom,
+    } = options;
 
-      let customShader = new Cesium.CustomShader({
-        lightingModel: 1,
-        translucencyMode: 0,
-        uniforms: {
-          u_speed: {
-            type: Cesium.UniformType.FLOAT,
-            value: speed,
-          },
-          //填充颜色
-          u_diffuseColor: {
-            type: Cesium.UniformType.VEC3,
-            value: diffuseColor,
-          },
-          u_floodColor: {
-            type: Cesium.UniformType.VEC3,
-            value: floodColor,
-          },
-          //建筑高度
-          u_flowHeight: {
-            type: Cesium.UniformType.FLOAT,
-            value: flowHeight,
-          },
-          //
-          u_hierarchicalLineWidth: {
-            type: Cesium.UniformType.FLOAT,
-            value: hierarchicalLineWidth,
-          },
-          //
-          u_dividerLevelHeight: {
-            type: Cesium.UniformType.FLOAT,
-            value: dividerLevelHeight,
-          },
-          //粗糙程度
-          u_roughness: {
-            type: Cesium.UniformType.FLOAT,
-            value: roughness,
-          },
-          //环境遮蔽开启
-          u_occlusion: {
-            type: Cesium.UniformType.FLOAT,
-            value: occlusion,
-          },
+    let customShader = new Cesium.CustomShader({
+      lightingModel: 1,
+      translucencyMode: 0,
+      uniforms: {
+        u_speed: {
+          type: Cesium.UniformType.FLOAT,
+          value: speed,
         },
-        fragmentShaderText: [
-          `                
+        //填充颜色
+        u_diffuseColor: {
+          type: Cesium.UniformType.VEC3,
+          value: diffuseColor,
+        },
+        u_floodColor: {
+          type: Cesium.UniformType.VEC3,
+          value: floodColor,
+        },
+        //建筑高度
+        u_flowHeight: {
+          type: Cesium.UniformType.FLOAT,
+          value: flowHeight,
+        },
+        //
+        u_hierarchicalLineWidth: {
+          type: Cesium.UniformType.FLOAT,
+          value: hierarchicalLineWidth,
+        },
+        //
+        u_dividerLevelHeight: {
+          type: Cesium.UniformType.FLOAT,
+          value: dividerLevelHeight,
+        },
+        //粗糙程度
+        u_roughness: {
+          type: Cesium.UniformType.FLOAT,
+          value: roughness,
+        },
+        //环境遮蔽开启
+        u_occlusion: {
+          type: Cesium.UniformType.FLOAT,
+          value: occlusion,
+        },
+      },
+      fragmentShaderText: [
+        `                
         void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
           vec3 positionMC = fsInput.attributes.positionMC;
           vec3 color = u_diffuseColor;
@@ -149,11 +149,11 @@ window.setCustomShader = setCustomShader;
           material.diffuse = czm_srgbToLinear(material.diffuse);     
       }
        `,
-        ],
-      });
-      return customShader;
-    }
-  });
+      ],
+    });
+    return customShader;
+  }
+};
 window.FlowFloodLightShader = FlowFloodLightShader;
 //#endregion
 
