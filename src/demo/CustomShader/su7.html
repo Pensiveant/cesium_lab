@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <title>小米su7</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+
+    .weather-box {
+      position: absolute;
+      top: 100px;
+      right: 100px;
+      z-index: 2;
+    }
+
+    .weather-box button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer">
+
+  </div>
+
+</body>
+<script type="module" src="../js/config.js"></script>
+<script type="module">
+  // 初始化view
+  Cesium.Ion.defaultAccessToken = defaultAccessToken;
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    geocoder: false, // 搜索功能
+    homeButton: false, // home
+    sceneModePicker: false, // 隐藏二三维切换
+    baseLayerPicker: false, //隐藏默认底图选择控件
+    navigationHelpButton: false, // 帮助？号
+    animation: false,
+    infoBox: false,
+    timeline: false,
+    fullscreenButton: false,
+  });
+  let baseMap = Cesium.ImageryLayer.fromProviderAsync(
+    Cesium.ArcGisMapServerImageryProvider.fromUrl(
+      "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+    )
+  );
+  viewer.imageryLayers.add(baseMap);
+
+  // 定位到成都
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(104.06332274677766, 30.65982249608171, 1000),
+    // orientation: {
+    //   heading: Cesium.Math.toRadians(0.0),
+    //   pitch: Cesium.Math.toRadians(-45.0),
+    // },
+  });
+  window.viewer = viewer;
+
+  //
+  loadSu7Model(viewer);
+
+  async function loadSu7Model(viewer) {
+    const position = Cesium.Cartesian3.fromDegrees(
+      104.06332274677766, 30.65982249608171, 0
+    );
+    const headingPositionRoll = new Cesium.HeadingPitchRoll();
+    const fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator(
+      "north",
+      "west"
+    );
+    try {
+      let shader=new Cesium.CustomShader({
+        fragmentShaderText:` void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+            material.alpha = 0.1;
+        }`
+      })
+      const model = await Cesium.Model.fromGltfAsync({
+        url: "../../data/models/su7/SU7.glb",
+        modelMatrix: Cesium.Transforms.headingPitchRollToFixedFrame(
+          position,
+          headingPositionRoll,
+          Cesium.Ellipsoid.WGS84,
+          fixedFrameTransform
+        ),
+        minimumPixelSize: 128,
+        customShader:shader     
+      });
+      viewer.scene.primitives.add(model);
+    } catch (error) {
+      console.log(`Failed to load model. ${error}`);
+    }
+  }
+
+
+
+</script>
+
+</html>
