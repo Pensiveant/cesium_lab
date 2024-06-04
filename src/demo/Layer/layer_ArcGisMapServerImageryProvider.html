@@ -51,9 +51,15 @@
   window.viewer = viewer;
   initLayer();
   async function initLayer() {
+
+    // 加载影像服务：MapImageLayer
     let provider = await Cesium.ArcGisMapServerImageryProvider.fromUrl('https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer', {
       layers: '0,1,2'
     })
+
+    // 加载影像切片服务：TileLayer
+    // let provider = await Cesium.ArcGisMapServerImageryProvider.fromUrl('https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer')
+
     // let provider = await Cesium.ArcGisMapServerImageryProvider.fromBasemapType(
     //   // Cesium.ArcGisBaseMapType.SATELLITE
     //   // Cesium.ArcGisBaseMapType.OCEANS
