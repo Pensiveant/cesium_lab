@@ -27,6 +27,12 @@ const tileset = await Cesium.Cesium3DTileset.fromIonAssetId(75343);
 window.tileset = tileset;
 viewer.scene.primitives.add(tileset);
 viewer.zoomTo(tileset);
+tileset.customShader = new Cesium.CustomShader({
+  fragmentShaderText: ` void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+    
+    material.diffuse = vec3(1.0,0.2,0.5);
+ }`,
+});
 
 function setCustomShader(type) {
   let customShader = new Cesium.CustomShader();
