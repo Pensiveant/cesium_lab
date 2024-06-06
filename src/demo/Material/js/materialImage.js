@@ -48,10 +48,7 @@ viewer.scene.primitives.add(
     appearance: new Cesium.EllipsoidSurfaceAppearance({
       material: new Cesium.Material.fromType("Image", {
         image: "./img/wood.jpg",
-        repeat: {
-          x: 1,
-          y: 1,
-        },
+        repeat: new Cesium.Cartesian2(4, 1),
       }),
     }),
   })
