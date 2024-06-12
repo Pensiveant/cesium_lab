@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <title>Path(路径)</title>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import {
+      getTiandituImgLayer,
+      getTiandituImgMarkLayer,
+      getTiandituVecLayer,
+      getTiandituVecMarkLayer,
+    } from "../../utils/basemap.js";
+    import Point from "../../utils/Geometry/point.js";
+    // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
+
+    // 初始化view
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      geocoder: false, // 搜索功能
+      homeButton: false, // home
+      sceneModePicker: false, // 隐藏二三维切换
+      baseLayerPicker: false, //隐藏默认底图选择控件
+      navigationHelpButton: false, // 帮助？saa号
+      animation: true,
+      infoBox: false,
+      timeline: true,
+      fullscreenButton: false,
+      // 使用ArcGIS 底图
+      imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+      }),
+    });
+    viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+
+    // 定位到成都
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0),
+      },
+    });
+
+    const route = [{
+      Longitude: 104.06204432699153, Latitude: 30.660726592602778, Altitude: 0,
+
+    }, {
+      Longitude: 104.06491131775273, Latitude: 30.660792356429575, Altitude: 0,
+
+    }, {
+      Longitude: 104.06488421424214, Latitude: 30.65902970314711, Altitude: 0,
+    }, {
+      Longitude: 104.06206037235002, Latitude: 30.65901615923885, Altitude: 0,
+    }, {
+      Longitude: 104.06204432699153, Latitude: 30.660726592602778, Altitude: 0,
+
+    }]
+    const { property, startTime, stopTime } = computePositionProperty(route);
+    viewer.clock.startTime = startTime; //开始时间
+    viewer.clock.stopTime = stopTime; //停止时间
+    viewer.clock.currentTime = startTime; //当前时间
+    viewer.timeline.zoomTo(startTime, stopTime); //将视图设置为提供的时间。
+
+    viewer.clock.multiplier = 15; //加快播放速度
+    viewer.clock.shouldAnimate = true; //时针向前走
+    const pathGraphics = new Cesium.PathGraphics({
+      width: 5,
+      leadTime: 10,
+      trailTime: 30,
+      material: Cesium.Color.RED,
+    });
+    const pathEntity = viewer.entities.add({
+      name: "路径",
+      availability: new Cesium.TimeIntervalCollection([
+        new Cesium.TimeInterval({ start: startTime, stop: stopTime }),
+      ]),
+      position: property,
+      path: pathGraphics,
+    });
+
+    viewer.zoomTo(pathEntity);
+
+    function computePositionProperty(routePoints) {
+      let startTime = Cesium.JulianDate.fromDate(new Date());
+      let property = new Cesium.SampledPositionProperty();
+      let stopTime;
+      for (let i = 0, len = routePoints.length, time = 0; i < len; i++) {
+        let item = routePoints[i];
+
+        let currentPoint = new Cesium.Cartesian3.fromDegrees(
+          item.Longitude,
+          item.Latitude,
+          item.Altitude
+        );
+        if (i == 0) {
+          time = 0;
+        } else {
+          let preItem = routePoints[i - 1];
+          let prePoint = new Cesium.Cartesian3.fromDegrees(
+            preItem.Longitude,
+            preItem.Latitude,
+            preItem.Altitude
+          );
+          let distance = Cesium.Cartesian3.distance(currentPoint, prePoint);
+          time += distance;
+        }
+
+        property.addSample(
+          Cesium.JulianDate.addSeconds(startTime, time, new Cesium.JulianDate()),
+          currentPoint
+        );
+
+        if (i == routePoints.length - 1) {
+          stopTime = Cesium.JulianDate.addSeconds(
+            startTime,
+            time,
+            new Cesium.JulianDate()
+          );
+        }
+      }
+      return {
+        property,
+        startTime,
+        stopTime,
+      };
+    }
+  </script>
+</body>
+
+</html>
