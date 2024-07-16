@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <!-- Include the CesiumJS JavaScript and CSS files -->
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="./js/importCesium.js"></script>
   <style>
-    html, body {
+    html,
+    body {
       height: 100vh;
       width: 100vw;
       margin: 0;
       padding: 0;
     }
-    #cesiumContainer{
+
+    #cesiumContainer {
       width: 100%;
       height: 100%;
     }
   </style>
 </head>
+
 <body>
   <div id="cesiumContainer"></div>
   <script type="module">
-    import {getTiandituImgLayer,getTiandituImgMarkLayer,getTiandituVecLayer,getTiandituVecMarkLayer} from "../utils/basemap.js";
-    import SceneView from "../utils/SceneView.js";
-      // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
+    import createViewer from "./js/initViewer.js"
+    import { getTiandituImgLayer, getTiandituImgMarkLayer, getTiandituVecLayer, getTiandituVecMarkLayer } from "../utils/basemap.js";
+    const viewer = createViewer();
 
-      let viewer = new SceneView({
-        container: "cesiumContainer",
-              // 叠加天地图
-      imageryProvider : getTiandituImgLayer(),
-      });
-    viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
+    // viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+    // viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
+
+    viewer.imageryLayers.addImageryProvider(getTiandituVecLayer()); // 加载影像
+    viewer.imageryLayers.addImageryProvider(getTiandituVecMarkLayer()); // 加载注记
   </script>
- </div>
+  </div>
 </body>
+
 </html>
