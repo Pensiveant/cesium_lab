@@ -4,8 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- Include the CesiumJS JavaScript and CSS files -->
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="./js/importCesium.js"></script>
   <style>
     html,
     body {
@@ -45,126 +44,123 @@
       <button onclick="locate3()">定位（setView）</button>
     </div>
   </div>
-  <script type="module">
-    import {
-      getTiandituImgLayer,
-      getTiandituImgMarkLayer,
-      getTiandituVecLayer,
-      getTiandituVecMarkLayer,
-    } from "../utils/basemap.js";
-    import SceneView from "../utils/SceneView.js";
-    // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
+</body>
+<script type="module">
+  import createViewer from "./js/initViewer.js"
+  import { getTiandituImgLayer, getTiandituImgMarkLayer, getTiandituVecLayer, getTiandituVecMarkLayer } from "../utils/basemap.js";
+  const viewer = createViewer({
+    showTerrain: false
+  });
+  viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+  viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
 
-    let viewer = new SceneView({
-      container: "cesiumContainer",
-      // 叠加天地图
-      imageryProvider: getTiandituImgLayer(),
-    });
-    viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
-    const center = [104.06334902696018, 30.65984414086386, 0];
-    // 定位到成都
+
+
+
+
+  const center = [104.06334902696018, 30.65984414086386, 0];
+  // 定位到成都
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 900),
+  });
+
+  // 添加camera效果显示
+  let prePrimitives;
+  viewer.camera.moveEnd.addEventListener(() => {
+    if (prePrimitives) {
+      viewer.scene.primitives.remove(prePrimitives);
+      prePrimitives = undefined;
+    }
+    prePrimitives = new Cesium.DebugCameraPrimitive({
+      camera: Cesium.Camera.clone(viewer.camera),
+      color: Cesium.Color.YELLOW
+    })
+
+    viewer.scene.primitives.add(prePrimitives);
+  });
+
+
+  function locate() {
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
+      orientation: {
+        direction: Cesium.Cartesian3.negate(
+          new Cesium.Cartesian3(center[0], center[1], 0),
+          new Cesium.Cartesian3()
+        ), // camera方向，类似于默认的headingPitchRoll的垂直看地面方向取反
+        up: Cesium.Cartesian3.negate(
+          new Cesium.Cartesian3(center[0], 90, 0), // 高度设置为400，显示不正确？？？？？
+          new Cesium.Cartesian3()
+        ), // camera头的方向，类似于默认的headingPitchRoll的heading方向取反
+      },
+    });
+  }
+  window.locate = locate;
+
+  function locate1() {
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
+      },
+    });
+  }
+  window.locate1 = locate1;
+
+  function locate2() {
+    const position = Cesium.Cartesian3.fromDegrees(
+      center[0],
+      center[1],
+      400
+    );
+    const transform = Cesium.Transforms.eastNorthUpToFixedFrame(position);
+    let offsetPosition = Cesium.Matrix4.multiplyByPoint(
+      transform,
+      new Cesium.Cartesian3(0, -400, 0), // Y负轴平移400，即向南平移400，由于俯视角为45度，即平移距离恰好等于相机点高度400
+      new Cesium.Cartesian3()
+    );
+
+    viewer.camera.flyTo({
+      destination: offsetPosition,
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
+      },
     });
 
-    // 添加camera效果显示
-    let prePrimitives;
-    viewer.camera.moveEnd.addEventListener(() => {
-      if (prePrimitives) {
-        viewer.scene.primitives.remove(prePrimitives);
-        prePrimitives = undefined;
-      }
-      prePrimitives = new Cesium.DebugCameraPrimitive({
-        camera: Cesium.Camera.clone(viewer.camera),
-        color: Cesium.Color.YELLOW
+    // 绘制局部坐标系
+    let referenceFramePrimitive = viewer.scene.primitives.add(
+      new Cesium.DebugModelMatrixPrimitive({
+        modelMatrix: transform,
+        length: 100000.0,
       })
+    );
+  }
+  window.locate2 = locate2;
 
-      viewer.scene.primitives.add(prePrimitives);
+  function locate3() {
+    const position = Cesium.Cartesian3.fromDegrees(
+      center[0],
+      center[1],
+      400
+    );
+    const transform = Cesium.Transforms.eastNorthUpToFixedFrame(position); // 计算地方坐标系east-north-up（origin为原点，x轴：正东，y轴正北，z轴垂直地面向上）到笛卡尔坐标系的仿射变换矩阵
+    let offsetPosition = Cesium.Matrix4.multiplyByPoint(
+      transform,
+      new Cesium.Cartesian3(0, -400, 0),
+      new Cesium.Cartesian3()
+    ); // 坐标点：(0, -400, 0) ，乘以变换矩阵，进行变换。
+
+    viewer.camera.setView({
+      destination: offsetPosition,
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
+      },
     });
-
-
-    function locate() {
-      viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
-        orientation: {
-          direction: Cesium.Cartesian3.negate(
-            new Cesium.Cartesian3(center[0], center[1], 0),
-            new Cesium.Cartesian3()
-          ), // camera方向，类似于默认的headingPitchRoll的垂直看地面方向取反
-          up: Cesium.Cartesian3.negate(
-            new Cesium.Cartesian3(center[0], 90, 0), // 高度设置为400，显示不正确？？？？？
-            new Cesium.Cartesian3()
-          ), // camera头的方向，类似于默认的headingPitchRoll的heading方向取反
-        },
-      });
-    }
-    window.locate = locate;
-
-    function locate1() {
-      viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(center[0], center[1], 400),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
-        },
-      });
-    }
-    window.locate1 = locate1;
-
-    function locate2() {
-      const position = Cesium.Cartesian3.fromDegrees(
-        center[0],
-        center[1],
-        400
-      );
-      const transform = Cesium.Transforms.eastNorthUpToFixedFrame(position);
-      let offsetPosition = Cesium.Matrix4.multiplyByPoint(
-        transform,
-        new Cesium.Cartesian3(0, -400, 0), // Y负轴平移400，即向南平移400，由于俯视角为45度，即平移距离恰好等于相机点高度400
-        new Cesium.Cartesian3()
-      );
-
-      viewer.camera.flyTo({
-        destination: offsetPosition,
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
-        },
-      });
-
-      // 绘制局部坐标系
-      let referenceFramePrimitive = viewer.scene.primitives.add(
-        new Cesium.DebugModelMatrixPrimitive({
-          modelMatrix: transform,
-          length: 100000.0,
-        })
-      );
-    }
-    window.locate2 = locate2;
-
-    function locate3() {
-      const position = Cesium.Cartesian3.fromDegrees(
-        center[0],
-        center[1],
-        400
-      );
-      const transform = Cesium.Transforms.eastNorthUpToFixedFrame(position); // 计算地方坐标系east-north-up（origin为原点，x轴：正东，y轴正北，z轴垂直地面向上）到笛卡尔坐标系的仿射变换矩阵
-      let offsetPosition = Cesium.Matrix4.multiplyByPoint(
-        transform,
-        new Cesium.Cartesian3(0, -400, 0),
-        new Cesium.Cartesian3()
-      ); // 坐标点：(0, -400, 0) ，乘以变换矩阵，进行变换。
-
-      viewer.camera.setView({
-        destination: offsetPosition,
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0), // 俯仰角：45
-        },
-      });
-    }
-    window.locate3 = locate3;
-  </script>
-</body>
+  }
+  window.locate3 = locate3;
+</script>
 
 </html>
