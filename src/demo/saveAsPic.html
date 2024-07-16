@@ -1,100 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-      .draw-box {
-        position: absolute;
-        right: 20px;
-        top: 20px;
-        padding: 16px;
-        width: 200px;
-        z-index: 2;
 
-        border: 1px solid black;
-        background-color: #ddd;
-        border-radius: 5px;
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="./js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
 
-        display: flex;
-        justify-content: space-between;
-      }
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
 
-      button {
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer">
-      <div class="draw-box">
-        <button onclick="savePic()">保存</button>
-      </div>
+    .draw-box {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      padding: 16px;
+      width: 200px;
+      z-index: 2;
+
+      border: 1px solid black;
+      background-color: #ddd;
+      border-radius: 5px;
+
+      display: flex;
+      justify-content: space-between;
+    }
+
+    button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer">
+    <div class="draw-box">
+      <button onclick="savePic()">保存</button>
     </div>
-    <script type="module">
-      import SceneView from "../utils/SceneView.js";
-      // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
+  </div>
 
-      let viewer = new SceneView({
-        container: "cesiumContainer",
-      });
+</body>
+<script type="module">
+  import createViewer from "./js/initViewer.js"
+  const viewer = createViewer();
 
-      // 定位到成都
-      viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0),
-        },
-      });
 
-      function savePic() {
-        // 或viewer.scene.render()
-        viewer.render();        // 必须调用，不然为转换后为黑乎乎的图片
-        var canvas = viewer.scene.canvas;
-        var image = canvas
-          .toDataURL("image/png")
-          .replace("image/png", "image/octet-stream");
+  // 定位到成都
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 1400),
+    orientation: {
+      heading: Cesium.Math.toRadians(0.0),
+      pitch: Cesium.Math.toRadians(-45.0),
+    },
+  });
 
-        var link = document.createElement("a");
-        var strDataURI = image.substr(22, image.length);
-        var blob = dataURLtoBlob(image);
-        var objurl = URL.createObjectURL(blob);
-        link.download = "pic.png";
-        link.href = objurl;
-        link.click();
+  function savePic() {
+    // 或viewer.scene.render()
+    viewer.render();        // 必须调用，不然为转换后为黑乎乎的图片
+    var canvas = viewer.scene.canvas;
+    var image = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
 
-        function dataURLtoBlob(dataurl) {
-          var arr = dataurl.split(","),
-            mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[1]),
-            n = bstr.length,
-            u8arr = new Uint8Array(n);
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-          }
-          return new Blob([u8arr], { type: mime });
-        }
+    var link = document.createElement("a");
+    var strDataURI = image.substr(22, image.length);
+    var blob = dataURLtoBlob(image);
+    var objurl = URL.createObjectURL(blob);
+    link.download = "pic.png";
+    link.href = objurl;
+    link.click();
+
+    function dataURLtoBlob(dataurl) {
+      var arr = dataurl.split(","),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
       }
+      return new Blob([u8arr], { type: mime });
+    }
+  }
 
-      window.savePic = savePic;
-      window.destroy = destroy;
-    </script>
-  </body>
+  window.savePic = savePic;
+  window.destroy = destroy;
+</script>
+
 </html>
