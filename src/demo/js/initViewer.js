@@ -18,6 +18,7 @@ function createViewer(options = {}) {
         "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
       )
     ),
+    ...options,
   };
 
   // 设置容器：
