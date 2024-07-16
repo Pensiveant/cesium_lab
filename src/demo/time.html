@@ -1,73 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <title>时间系统</title>
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-      // 初始化view
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-        geocoder: false,
-        homeButton: false,
-        sceneModePicker: false,
-        baseLayerPicker: false,
-        navigationHelpButton: false,
-        infoBox: false,
-        fullscreenButton: false,
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        }),
 
-        animation: true,
-        timeline: true,
-      });
-      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="./js/importCesium.js"></script>
+  <title>时间系统</title>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
 
-      // 定位到成都
-      viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0),
-        },
-      });
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
 
-      let startTime = Cesium.JulianDate.now();
-      let stopTime = Cesium.JulianDate.addDays(
-        start,
-        1,
-        new Cesium.JulianDate()
-      );
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import createViewer from "./js/initViewer.js"
+    const viewer = createViewer({
+      animation: true,
+      timeline: true,
+    });
 
-      viewer.clock.currentTime = startTime.clone(); // clock 起始时间
-      viewer.clock.stopTime = stopTime.clone(); // clock 结束时间
-      viewer.clock.currentTime = startTime.clone(); // clock 当前时间
+    // 定位到成都
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 1400),
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0),
+      },
+    });
 
-      viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //
-      viewer.clock.multiplier = 1;
-      viewer.clock.shouldAnimate = true;
-      viewer.timeline.zoomTo(start.clone(), stop.clone());
-    </script>
-  </body>
+    let startTime = Cesium.JulianDate.now();
+    let stopTime = Cesium.JulianDate.addDays(
+      start,
+      1,
+      new Cesium.JulianDate()
+    );
+
+    viewer.clock.currentTime = startTime.clone(); // clock 起始时间
+    viewer.clock.stopTime = stopTime.clone(); // clock 结束时间
+    viewer.clock.currentTime = startTime.clone(); // clock 当前时间
+
+    viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //
+    viewer.clock.multiplier = 1;
+    viewer.clock.shouldAnimate = true;
+    viewer.timeline.zoomTo(start.clone(), stop.clone());
+  </script>
+</body>
+
 </html>
