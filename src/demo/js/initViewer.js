@@ -13,9 +13,11 @@ function createViewer(contanier = "cesiumContainer", showTerrain = true) {
     timeline: false,
     fullscreenButton: false,
     // 使用ArcGIS 底图
-    imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-      url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-    }),
+    baseLayer: Cesium.ImageryLayer.fromProviderAsync(
+      Cesium.ArcGisMapServerImageryProvider.fromUrl(
+        "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+      )
+    ),
   };
   if (showTerrain) {
     config = {
