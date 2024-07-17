@@ -5,8 +5,7 @@
   <meta charset="utf-8" />
   <!-- Include the CesiumJS JavaScript and CSS files -->
   <title>小米su7</title>
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.117/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../js/importCesium.js"></script>
   <style>
     html,
     body {
@@ -40,27 +39,12 @@
   </div>
 
 </body>
-<script type="module" src="../js/config.js"></script>
 <script type="module">
-  // 初始化view
-  Cesium.Ion.defaultAccessToken = defaultAccessToken;
-  const viewer = new Cesium.Viewer("cesiumContainer", {
-    geocoder: false, // 搜索功能
-    homeButton: false, // home
-    sceneModePicker: false, // 隐藏二三维切换
-    baseLayerPicker: false, //隐藏默认底图选择控件
-    navigationHelpButton: false, // 帮助？号
-    animation: false,
-    infoBox: false,
-    timeline: false,
-    fullscreenButton: false,
+  import createViewer from "../js/initViewer.js"
+  const viewer = createViewer({
+    showTerrain: false,
   });
-  let baseMap = Cesium.ImageryLayer.fromProviderAsync(
-    Cesium.ArcGisMapServerImageryProvider.fromUrl(
-      "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
-    )
-  );
-  viewer.imageryLayers.add(baseMap);
+
 
   // 定位到成都
   viewer.camera.flyTo({
@@ -85,8 +69,8 @@
       "west"
     );
     try {
-      let shader=new Cesium.CustomShader({
-        fragmentShaderText:` void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+      let shader = new Cesium.CustomShader({
+        fragmentShaderText: ` void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
             material.alpha = 0.1;
         }`
       })
@@ -99,7 +83,7 @@
           fixedFrameTransform
         ),
         minimumPixelSize: 128,
-        customShader:shader     
+        customShader: shader
       });
       viewer.scene.primitives.add(model);
     } catch (error) {

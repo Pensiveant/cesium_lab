@@ -3,11 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
+    <script src="../js/importCesium.js"></script>
     <title>白模-自定义shader</title>
     <style>
       html,
@@ -41,6 +37,5 @@
       <button onclick="setCustomShader('height')">高度分层纹理</button>
     </div>
   </body>
-  <script type="module" src="../js/config.js"></script>
   <script type="module" src="./js/CustomShader3DTileset.js"></script>
 </html>
