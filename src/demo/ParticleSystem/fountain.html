@@ -1,75 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>喷泉效果</title>
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-      import {
-        getTiandituImgLayer,
-        getTiandituImgMarkLayer,
-        getTiandituVecLayer,
-        getTiandituVecMarkLayer,
-      } from "../../utils/basemap.js";
-      import Point from "../../utils/Geometry/point.js";
-      // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
-      import { FountainEffect } from "./FountainEffect.js";
-      // 初始化view
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-        geocoder: false, // 搜索功能
-        homeButton: false, // home
-        sceneModePicker: false, // 隐藏二三维切换
-        baseLayerPicker: false, //隐藏默认底图选择控件
-        navigationHelpButton: false, // 帮助？saa号
-        animation: false,
-        infoBox: false,
-        timeline: false,
-        fullscreenButton: false,
-        // 使用ArcGIS 底图
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        }),
-      });
-      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
 
-      // 定位到成都
-      viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-        orientation: {
-          heading: Cesium.Math.toRadians(0.0),
-          pitch: Cesium.Math.toRadians(-45.0),
-        },
-      });
+<head>
+  <meta charset="utf-8" />
+  <title>喷泉效果</title>
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="../js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
 
-      // 添加喷泉效果
-      const data = new FountainEffect(viewer, [
-        {
-          lon: 104.06335998805471,
-          lat: 30.659858531850176,
-          heigh: 0,
-        },
-      ]);
-    </script>
-  </body>
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import { FountainEffect } from "./FountainEffect.js";
+    import createViewer from "../js/initViewer.js";
+    const viewer = createViewer({
+      showTerrain: false
+    });
+
+    // 定位到成都
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
+      orientation: {
+        heading: Cesium.Math.toRadians(0.0),
+        pitch: Cesium.Math.toRadians(-45.0),
+      },
+    });
+
+    // 添加喷泉效果
+    const data = new FountainEffect(viewer, [
+      {
+        lon: 104.06335998805471,
+        lat: 30.659858531850176,
+        heigh: 0,
+      },
+    ]);
+  </script>
+</body>
+
 </html>
