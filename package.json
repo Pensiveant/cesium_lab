@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cesium": "^1.107.2"
+    "cesium": "^1.119.0"
   }
 }
