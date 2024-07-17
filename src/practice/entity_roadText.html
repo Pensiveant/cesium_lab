@@ -1,114 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
-    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-      import writeTextToCanvas from "./js/writeTextToCanvas.js";
-      import RoadAnnotationLayer from "./js/RoadAnnotationLayer.js";
 
-      // 初始化view
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-        geocoder: false, // 搜索功能
-        homeButton: false, // home
-        sceneModePicker: false, // 隐藏二三维切换
-        baseLayerPicker: false, //隐藏默认底图选择控件
-        navigationHelpButton: false, // 帮助？saa号
-        animation: false,
-        infoBox: false,
-        timeline: false,
-        fullscreenButton: false,
-        // 使用ArcGIS 底图
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        }),
-      });
-      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
-      window.viewer = viewer;
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+  <script src="../demo/js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
 
-      let layer = new RoadAnnotationLayer({
-        viewer,
-        data: [
-          {
-            name: "蜀都大道人民东路",
-            startPoint: [104.06274057926127, 30.660784741222415],
-            endPoint: [104.0636834976594, 30.660805953478352],
-          },
-          {
-            name: "人民南路一段",
-            startPoint: [104.06497455852289, 30.660339530713074],
-            endPoint: [104.06499341317208, 30.659889744226255],
-          },
-          {
-            name: "顺城大街",
-            startPoint: [104.06855758765356, 30.6591679435335],
-            endPoint: [104.06860142705055, 30.658694931605385],
-          },
-          {
-            name: "大业路",
-            startPoint: [104.06775303338011, 30.656702163696675],
-            endPoint: [104.06740431884572, 30.656135556376313],
-          },
-          {
-            name: "红照壁街",
-            startPoint: [104.06232181212842, 30.65498397792811],
-            endPoint: [104.0629571973816, 30.654950967513127],
-          },
-          {
-            name: "新光华街",
-            startPoint: [104.06526050764997, 30.655030515494666],
-            endPoint: [104.06472553074944, 30.655023848524397],
-          },
-          {
-            name: "上南大街",
-            startPoint: [104.06093284563244, 30.65421896989701],
-            endPoint: [104.06043299699584, 30.653356975462835],
-          },
-          {
-            name: "金盾路",
-            startPoint: [104.06052941445282, 30.655344751297886],
-            endPoint: [104.059376550354, 30.655952878447984],
-          },
-          {
-            name: "文翁路",
-            startPoint: [104.05820237143355, 30.662096060877246],
-            endPoint: [104.05818316807151, 30.660833320960407],
-          },
-          {
-            name: "蜀都大道少城路",
-            startPoint: [104.0548902558423, 30.66177996911879],
-            endPoint: [104.05538371914867, 30.66129897325941],
-          },
-          {
-            name: "蜀都大道金河路",
-            startPoint: [104.05197080453728, 30.663267162344205],
-            endPoint: [104.05153100443849, 30.66324981175708],
-          },
-        ],
-      });
-      viewer.flyTo(layer._entities);
-    </script>
-  </body>
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import writeTextToCanvas from "./js/writeTextToCanvas.js";
+    import RoadAnnotationLayer from "./js/RoadAnnotationLayer.js";
+
+    import createViewer from "../demo/js/initViewer.js";
+    const viewer = createViewer({
+      showTerrain: false,
+    });
+    window.viewer = viewer;
+
+    let layer = new RoadAnnotationLayer({
+      viewer,
+      data: [
+        {
+          name: "蜀都大道人民东路",
+          startPoint: [104.06274057926127, 30.660784741222415],
+          endPoint: [104.0636834976594, 30.660805953478352],
+        },
+        {
+          name: "人民南路一段",
+          startPoint: [104.06497455852289, 30.660339530713074],
+          endPoint: [104.06499341317208, 30.659889744226255],
+        },
+        {
+          name: "顺城大街",
+          startPoint: [104.06855758765356, 30.6591679435335],
+          endPoint: [104.06860142705055, 30.658694931605385],
+        },
+        {
+          name: "大业路",
+          startPoint: [104.06775303338011, 30.656702163696675],
+          endPoint: [104.06740431884572, 30.656135556376313],
+        },
+        {
+          name: "红照壁街",
+          startPoint: [104.06232181212842, 30.65498397792811],
+          endPoint: [104.0629571973816, 30.654950967513127],
+        },
+        {
+          name: "新光华街",
+          startPoint: [104.06526050764997, 30.655030515494666],
+          endPoint: [104.06472553074944, 30.655023848524397],
+        },
+        {
+          name: "上南大街",
+          startPoint: [104.06093284563244, 30.65421896989701],
+          endPoint: [104.06043299699584, 30.653356975462835],
+        },
+        {
+          name: "金盾路",
+          startPoint: [104.06052941445282, 30.655344751297886],
+          endPoint: [104.059376550354, 30.655952878447984],
+        },
+        {
+          name: "文翁路",
+          startPoint: [104.05820237143355, 30.662096060877246],
+          endPoint: [104.05818316807151, 30.660833320960407],
+        },
+        {
+          name: "蜀都大道少城路",
+          startPoint: [104.0548902558423, 30.66177996911879],
+          endPoint: [104.05538371914867, 30.66129897325941],
+        },
+        {
+          name: "蜀都大道金河路",
+          startPoint: [104.05197080453728, 30.663267162344205],
+          endPoint: [104.05153100443849, 30.66324981175708],
+        },
+      ],
+    });
+    viewer.flyTo(layer._entities);
+  </script>
+</body>
+
 </html>

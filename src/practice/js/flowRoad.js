@@ -1,20 +1,9 @@
 // const Cesium = require("cesium"); // 智能提示使用
-
-// 初始化view
-Cesium.Ion.defaultAccessToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
-const viewer = new Cesium.Viewer("cesiumContainer", {
-  geocoder: false, // 搜索功能
-  homeButton: false, // home
-  sceneModePicker: false, // 隐藏二三维切换
-  baseLayerPicker: false, //隐藏默认底图选择控件
-  navigationHelpButton: false, // 帮助？号
-  animation: false,
-  infoBox: false,
-  timeline: false,
-  fullscreenButton: false,
-  // terrain: Cesium.Terrain.fromWorldTerrain(),
+import createViewer from "../../demo/js/initViewer.js";
+const viewer = createViewer({
+  showTerrain: false,
 });
+
 let atLayer = new Cesium.UrlTemplateImageryProvider({
   url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
   minimumLevel: 3,

@@ -5,8 +5,7 @@
   <meta charset="utf-8" />
   <!-- Include the CesiumJS JavaScript and CSS files -->
   <title>天空盒</title>
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../demo/js/importCesium.js"></script>
   <style>
     html,
     body {
@@ -39,53 +38,25 @@
 
   </div>
   <script type="module">
-     import SkyBoxOnGround from "./js/SkyBoxOnGround.js";
-
+    import SkyBoxOnGround from "./js/SkyBoxOnGround.js";
     // 初始化view
-    //   Cesium.Ion.defaultAccessToken =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      geocoder: false, // 搜索功能
-      homeButton: false, // home
-      sceneModePicker: false, // 隐藏二三维切换
-      baseLayerPicker: false, //隐藏默认底图选择控件
-      navigationHelpButton: false, // 帮助？号
-      animation: false,
-      infoBox: false,
-      timeline: false,
-      fullscreenButton: false,
-      // terrain: Cesium.Terrain.fromWorldTerrain(),
-      // skyBox: new Cesium.SkyBox({
-      //   sources: {
-      //     positiveX: "./img/px.png",
-      //     negativeX: "./img/nx.png",
-      //     positiveY: "./img/pz.png",
-      //     negativeY: "./img/nz.png",
-      //     positiveZ: "./img/py.png",
-      //     negativeZ: "./img/ny.png",
-      //   }
-      // }),
-    });
-    let baseMap = Cesium.ImageryLayer.fromProviderAsync(
-      Cesium.ArcGisMapServerImageryProvider.fromUrl(
-        "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
-      )
-    );
-    viewer.imageryLayers.add(baseMap);
+    import createViewer from "../demo/js/initViewer.js";
+    const viewer = createViewer();
+
 
 
     // 设置内天空盒
     let groundSkybox = new SkyBoxOnGround({
-        sources: {
-          positiveX: "./img/px.png",
-          negativeX: "./img/nx.png",
-          positiveY: "./img/pz.png",
-          negativeY: "./img/nz.png",
-          positiveZ: "./img/py.png",
-          negativeZ: "./img/ny.png",
-       }
+      sources: {
+        positiveX: "./img/px.png",
+        negativeX: "./img/nx.png",
+        positiveY: "./img/pz.png",
+        negativeY: "./img/nz.png",
+        positiveZ: "./img/py.png",
+        negativeZ: "./img/ny.png",
+      }
     })
- 
+
     groundSkybox.setSkyBox(viewer)
 
     // 定位到成都

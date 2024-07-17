@@ -1,27 +1,10 @@
 // const Cesium = require("cesium"); // 智能提示使用
 import {modifyMap} from "./tools.js";
 
-// 初始化view
-Cesium.Ion.defaultAccessToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYzVkMTc1ZS00NTRhLTRjY2QtYTQwZS01YmU2Mjg1ODAwN2YiLCJpZCI6MjU5LCJpYXQiOjE2ODgzOTgwMjl9.MZC_HUBRd0y5HJeB-F5QSpT-fEgTM6mI5gMaSND9FHc";
-const viewer = new Cesium.Viewer("cesiumContainer", {
-  geocoder: false, // 搜索功能
-  homeButton: false, // home
-  sceneModePicker: false, // 隐藏二三维切换
-  baseLayerPicker: false, //隐藏默认底图选择控件
-  navigationHelpButton: false, // 帮助？号
-  animation: false,
-  infoBox: false,
-  timeline: false,
-  fullscreenButton: false,
-  // terrain: Cesium.Terrain.fromWorldTerrain(),
+import createViewer from "../../demo/js/initViewer.js";
+const viewer = createViewer({
+  showTerrain: false,
 });
-// let baseMap = Cesium.ImageryLayer.fromProviderAsync(
-//   Cesium.ArcGisMapServerImageryProvider.fromUrl(
-//     "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
-//   )
-// );
-// viewer.imageryLayers.add(baseMap);
 
 var options = {
   style: 'elec', // style: img、elec、cva
