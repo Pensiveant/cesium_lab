@@ -5,8 +5,7 @@
   <meta charset="utf-8" />
   <!-- Include the CesiumJS JavaScript and CSS files -->
   <title>glb</title>
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../js/importCesium.js"></script>
   <style>
     html,
     body {
@@ -39,28 +38,10 @@
 
   </div>
   <script type="module">
-
-    // 初始化view
-    Cesium.Ion.defaultAccessToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMzVjZDg3Yi0wMjVkLTQ0MzctOTZjOC1jZjMwNjkzZmI5MWUiLCJpZCI6MjU5LCJpYXQiOjE2OTg4NTM0MDl9.L_g01CjNKNVijEJ_8kOxiO02OADnuSjRFLkZWvhupcc";
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      geocoder: false, // 搜索功能
-      homeButton: false, // home
-      sceneModePicker: false, // 隐藏二三维切换
-      baseLayerPicker: false, //隐藏默认底图选择控件
-      navigationHelpButton: false, // 帮助？号
-      animation: false,
-      infoBox: false,
-      timeline: false,
-      fullscreenButton: false,
-      terrain: Cesium.Terrain.fromWorldTerrain(),
+    import createViewer from "../js/initViewer.js";
+    const viewer = createViewer({
+      showTerrain: false,
     });
-    let baseMap = Cesium.ImageryLayer.fromProviderAsync(
-      Cesium.ArcGisMapServerImageryProvider.fromUrl(
-        "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
-      )
-    );
-    viewer.imageryLayers.add(baseMap);
 
     // 定位到成都
     viewer.camera.flyTo({
