@@ -1,25 +1,10 @@
 // const Cesium = require("cesium"); // 智能提示使用
 
-Cesium.Ion.defaultAccessToken = defaultAccessToken;
-// 初始化view
-const viewer = new Cesium.Viewer("cesiumContainer", {
-  geocoder: false, // 搜索功能
-  homeButton: false, // home
-  sceneModePicker: false, // 隐藏二三维切换
-  baseLayerPicker: false, //隐藏默认底图选择控件
-  navigationHelpButton: false, // 帮助？号
+import createViewer from "../../js/initViewer.js";
+const viewer = createViewer({
   animation: true,
-  infoBox: false,
   timeline: true,
-  fullscreenButton: false,
-  // 使用ArcGIS 底图
-  imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-    url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-  }),
-  terrain: Cesium.Terrain.fromWorldTerrain(),
 });
-viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
-viewer.scene.globe.depthTestAgainstTerrain = true;
 
 const centerPoint = [104.06335998805471, 30.659858531850176, 800]; // 中心点的经度、纬度、高程
 const point = new Cesium.Entity({
@@ -39,16 +24,10 @@ viewer.entities.add(point);
 
 //
 let startTime = Cesium.JulianDate.fromIso8601("2024-06-14T00:00:00.00Z");
-let stopTime =Cesium.JulianDate.fromIso8601("2024-06-17T00:00:00.00Z")
+let stopTime = Cesium.JulianDate.fromIso8601("2024-06-17T00:00:00.00Z");
 var property = new Cesium.SampledProperty(Cesium.Cartesian3);
-property.addSample(
-  startTime,
-  new Cesium.Cartesian3(100.0, 100.0, 100.0)
-);
-property.addSample(
-  stopTime,
-  new Cesium.Cartesian3(100.0, 100.0, 800.0)
-);
+property.addSample(startTime, new Cesium.Cartesian3(100.0, 100.0, 100.0));
+property.addSample(stopTime, new Cesium.Cartesian3(100.0, 100.0, 800.0));
 
 viewer.clock.startTime = startTime.clone();
 viewer.clock.stopTime = stopTime.clone();
