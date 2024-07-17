@@ -1,27 +1,6 @@
 // const Cesium = require("cesium"); // 智能提示使用
-
-Cesium.Ion.defaultAccessToken = defaultAccessToken;
-// 初始化view
-const viewer = new Cesium.Viewer("cesiumContainer", {
-  geocoder: false, // 搜索功能
-  homeButton: false, // home
-  sceneModePicker: false, // 隐藏二三维切换
-  baseLayerPicker: false, //隐藏默认底图选择控件
-  navigationHelpButton: false, // 帮助？号
-  animation: false,
-  infoBox: false,
-  timeline: false,
-  fullscreenButton: false,
-  // 使用ArcGIS 底图
-  imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-    url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-  }),
-  terrain: Cesium.Terrain.fromWorldTerrain({
-    requestVertexNormals: true, //Needed to visualize slope
-  }),
-});
-viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
-viewer.scene.globe.depthTestAgainstTerrain = true;
+import createViewer from "../../js/initViewer.js";
+const viewer = createViewer();
 
 viewer.camera.flyTo({
   destination: Cesium.Cartesian3.fromDegrees(
@@ -67,7 +46,7 @@ function getColorRamp(selectedShading) {
   return ramp;
 }
 
-let material = new Cesium.Material.fromType("SlopeRamp", {
+let material = Cesium.Material.fromType("SlopeRamp", {
   image: getColorRamp("slope"),
   // image: "./img/snow.webp",
 });
