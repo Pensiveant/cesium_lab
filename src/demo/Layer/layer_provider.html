@@ -5,8 +5,7 @@
   <meta charset="utf-8" />
   <!-- Include the CesiumJS JavaScript and CSS files -->
   <title>自定义provider</title>
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../js/importCesium.js"></script>
   <style>
     html,
     body {
@@ -26,8 +25,10 @@
 <body>
   <div id="cesiumContainer"></div>
 </body>
-<script type="module" src="../js/config.js"></script>
 <script type="module">
+  import createViewer from "../js/initViewer.js";
+  const viewer = createViewer();
+
   class CustomProvider {
     constructor(options) {
       options = Cesium.defaultValue(options, Cesium.defaultValue.EMPTY_OBJECT);
@@ -62,7 +63,7 @@
     }
 
     getTileCredits(x, y, level) {
-      let credit=[];
+      let credit = [];
       credit.push(new Cesium.Credit(`<span>${x},${y}</span>`));
       credit.push(new Cesium.Credit('<a href="https://cesium.com/" target="_blank"><img src="https://www.baidu.com/img/flexible/logo/pc/result.png" title="Cesium"/></a>'))
       return credit;
@@ -96,30 +97,9 @@
 
   }
 
-  // 初始化view
-  Cesium.Ion.defaultAccessToken = defaultAccessToken;
-  const viewer = new Cesium.Viewer("cesiumContainer", {
-    geocoder: false, // 搜索功能
-    homeButton: false, // home
-    sceneModePicker: false, // 隐藏二三维切换
-    baseLayerPicker: false, //隐藏默认底图选择控件
-    navigationHelpButton: false, // 帮助？号
-    animation: false,
-    infoBox: false,
-    timeline: false,
-    fullscreenButton: false,
-    // 使用ArcGIS 底图  
-    imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-      url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-    }),
-    terrain: Cesium.Terrain.fromWorldTerrain(),
-  });
-  // viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
-  window.viewer = viewer;
 
-
-  let myProvider = new Cesium.ImageryLayer(new CustomProvider(),{
-    alpha:.7,
+  let myProvider = new Cesium.ImageryLayer(new CustomProvider(), {
+    alpha: .7,
   });
   viewer.imageryLayers.add(myProvider);
 

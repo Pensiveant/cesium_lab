@@ -5,8 +5,7 @@
   <meta charset="utf-8" />
   <!-- Include the CesiumJS JavaScript and CSS files -->
   <title>白模</title>
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.106/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <script src="../js/importCesium.js"></script>
   <style>
     html,
     body {
@@ -26,27 +25,9 @@
 <body>
   <div id="cesiumContainer"></div>  
 </body>
-<script type="module" src="../js/config.js"></script>
 <script type="module">
-  // 初始化view
-  Cesium.Ion.defaultAccessToken = defaultAccessToken;
-  const viewer = new Cesium.Viewer("cesiumContainer", {
-    geocoder: false, // 搜索功能
-    homeButton: false, // home
-    sceneModePicker: false, // 隐藏二三维切换
-    baseLayerPicker: false, //隐藏默认底图选择控件
-    navigationHelpButton: false, // 帮助？号
-    animation: false,
-    infoBox: false,
-    timeline: false,
-    fullscreenButton: false,
-    // 使用ArcGIS 底图
-    imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-      url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-    }),
-    terrain: Cesium.Terrain.fromWorldTerrain(),
-  });
-  viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+  import createViewer from "../js/initViewer.js";
+  const viewer = createViewer();
   window.viewer = viewer;
 
   viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);

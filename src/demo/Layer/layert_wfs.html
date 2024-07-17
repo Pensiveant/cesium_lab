@@ -1,87 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.103/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-      import {
-        getTiandituImgLayer,
-        getTiandituImgMarkLayer,
-        getTiandituVecLayer,
-        getTiandituVecMarkLayer,
-      } from "../../utils/basemap.js";
-      // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
-      // 初始化view
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-        geocoder: false, // 搜索功能
-        homeButton: false, // home
-        sceneModePicker: false, // 隐藏二三维切换
-        baseLayerPicker: false, //隐藏默认底图选择控件
-        navigationHelpButton: false, // 帮助？号
-        animation: false,
-        infoBox: false,
-        timeline: false,
-        fullscreenButton: false,
-        // 使用ArcGIS 底图
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        }),
-      });
-      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="../js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
 
-      loadWfsLayer();
-      async function loadWfsLayer() {
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import createViewer from "../js/initViewer.js";
+    const viewer = createViewer();
+
+    loadWfsLayer();
+    async function loadWfsLayer() {
+      try {
+        let geoJson = await Cesium.Resource.fetchJson({
+          url: "http://gisserver.tianditu.gov.cn/TDTService/wfs?tk=bc583fc978a02e283d437b781f314b51",
+          queryParameters: {
+            service: "WFS",
+            request: "GetFeature",
+            version: "1.0.0",
+            outputFormat: "application/json",
+            // typeName: "topp:states",
+            typeName: "TDTService:AANP",
+            // filter: `<Filter xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml"><Within><PropertyName>the_geom</PropertyName><gml:Polygon srsName="EPSG:4326"><gml:exterior><gml:LinearRing  srsName="EPSG:4326"><gml:coordinates>113.32532756805877,23.158942526475418 113.37575650270908,23.143292160801547 113.34757117786322,23.10629158606683 113.32591592293876,23.11854632548413 113.32343656188844,23.132618083418652 113.32532756805877,23.158942526475418 </gml:coordinates></gml:LinearRing></gml:exterior></gml:Polygon></Within></Filter>`,
+          },
+        });
+        console.log(geoJson);
         try {
-          let geoJson = await Cesium.Resource.fetchJson({
-            url: "http://gisserver.tianditu.gov.cn/TDTService/wfs?tk=bc583fc978a02e283d437b781f314b51",
-            queryParameters: {
-              service: "WFS",
-              request: "GetFeature",
-              version: "1.0.0",
-              outputFormat: "application/json",
-              // typeName: "topp:states",
-              typeName: "TDTService:AANP",
-             // filter: `<Filter xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml"><Within><PropertyName>the_geom</PropertyName><gml:Polygon srsName="EPSG:4326"><gml:exterior><gml:LinearRing  srsName="EPSG:4326"><gml:coordinates>113.32532756805877,23.158942526475418 113.37575650270908,23.143292160801547 113.34757117786322,23.10629158606683 113.32591592293876,23.11854632548413 113.32343656188844,23.132618083418652 113.32532756805877,23.158942526475418 </gml:coordinates></gml:LinearRing></gml:exterior></gml:Polygon></Within></Filter>`,
-            },
+          let dataSource = await Cesium.GeoJsonDataSource.load(geoJson, {
+            stroke: Cesium.Color.BLUE,
+            fill: Cesium.Color.RED.withAlpha(0.7),
+            strokeWidth: 3,
+            clampToGround: true,
           });
-          console.log(geoJson);
-          try {
-            let dataSource = await Cesium.GeoJsonDataSource.load(geoJson, {
-              stroke: Cesium.Color.BLUE,
-              fill: Cesium.Color.RED.withAlpha(0.7),
-              strokeWidth: 3,
-              clampToGround: true,
-            });
-            viewer.dataSources.add(dataSource);
-          } catch (error) {
-            throw new Error('"GeoJson加载失败"');
-          }
+          viewer.dataSources.add(dataSource);
         } catch (error) {
-          throw new Error("图层查询失败");
+          throw new Error('"GeoJson加载失败"');
         }
+      } catch (error) {
+        throw new Error("图层查询失败");
       }
-    </script>
-  </body>
+    }
+  </script>
+</body>
+
 </html>

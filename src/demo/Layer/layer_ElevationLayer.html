@@ -1,79 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <!-- Include the CesiumJS JavaScript and CSS files -->
-    <title>Arcgis ElevationLayer</title>
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.104/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
-    <style>
-      html,
-      body {
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        padding: 0;
-      }
-      #cesiumContainer {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cesiumContainer"></div>
-    <script type="module">
-      import {
-        getTiandituImgLayer,
-        getTiandituImgMarkLayer,
-        getTiandituVecLayer,
-        getTiandituVecMarkLayer,
-      } from "../../utils/basemap.js";
-      // Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5N2NlNDIwZi00OWYwLTQzMjgtYmMxMC0wYThkYzYwYTQ4ZTUiLCJpZCI6NDMzMywiaWF0IjoxNjc4NTAyNTczfQ.MVl1ovCxZQgb_yb29h7Ezc7VBasj7CziUZYY9sbubJo';
 
-      // 初始化view
-      const viewer = new Cesium.Viewer("cesiumContainer", {
-        geocoder: false, // 搜索功能
-        homeButton: false, // home
-        sceneModePicker: false, // 隐藏二三维切换
-        baseLayerPicker: false, //隐藏默认底图选择控件
-        navigationHelpButton: false, // 帮助？号
-        animation: false,
-        infoBox: false,
-        timeline: false,
-        fullscreenButton: false,
-        // 使用ArcGIS 底图
-        imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-        }),
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <title>Arcgis ElevationLayer</title>
+  <script src="../js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import createViewer from "../js/initViewer.js";
+    const viewer = createViewer({
+      showTerrain:false
+    });
+
+    // 加载地形
+    getArcGISTiledElevationTerrainProvider().then((terrainProvider) => {
+      viewer.terrainProvider = terrainProvider;
+
+      // 定位到成都
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 1400),
+        orientation: {
+          heading: Cesium.Math.toRadians(0.0),
+          pitch: Cesium.Math.toRadians(-45.0),
+        },
       });
+    });
 
-      viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
+    async function getArcGISTiledElevationTerrainProvider() {
+      const terrainProvider =
+        await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+          "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+        );
+      return terrainProvider;
+    }
+  </script>
+</body>
 
-      // 加载地形
-      getArcGISTiledElevationTerrainProvider().then((terrainProvider) => {
-        viewer.terrainProvider = terrainProvider;
-
-        // 定位到成都
-        viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 400),
-          orientation: {
-            heading: Cesium.Math.toRadians(0.0),
-            pitch: Cesium.Math.toRadians(-45.0),
-          },
-        });
-      });
-
-      async function getArcGISTiledElevationTerrainProvider() {
-        const terrainProvider =
-          await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
-            "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
-          );
-        return terrainProvider;
-      }
-    </script>
-  </body>
 </html>
