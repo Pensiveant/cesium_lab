@@ -25,7 +25,8 @@
   <div id="cesiumContainer"></div>
 </body>
 <script type="module">
-  import createViewer from "./js/initViewer.js"
+  import createViewer from "./js/initViewer.js";
+  import wrapLogMessage from "../utils/wrapLogMessage.js";
   const viewer = createViewer();
 
   // 定位到成都
@@ -36,5 +37,22 @@
       pitch: Cesium.Math.toRadians(-45.0),
     },
   });
+  console.log(...wrapLogMessage({
+    message: '加载成功'
+  }));
+  console.log(...wrapLogMessage({
+    type: 'success',
+    message: '我成功了耶'
+  }));
+  console.log(...wrapLogMessage({
+    type: 'Warning',
+    message: '小心哦！'
+  }));
+  console.log(...wrapLogMessage({
+    type: 'erRor',
+    title: 'v1.0',
+    message: '不好意思，加载出错了'
+  }));
 </script>
+
 </html>
