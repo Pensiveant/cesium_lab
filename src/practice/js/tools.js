@@ -62,6 +62,7 @@ export class FloatInfoBox {
       _this.refreshPosition(_opt);
     };
     _this.viewer.scene.postRender.addEventListener(this.listen);
+    this.dom = dom;
   }
   /**
    * 更新点在地图里的位置
@@ -99,5 +100,12 @@ export class FloatInfoBox {
   remove() {
     this.viewer.scene.postRender.removeEventListener(this.listen);
   }
-}
 
+  setVisible(visible) {
+    if (visible) {
+      this.dom.style.display = "flex";
+    } else {
+      this.dom.style.display = "none";
+    }
+  }
+}

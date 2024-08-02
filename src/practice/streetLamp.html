@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <title>路灯远近效果</title>
+  <script src="../demo/js/importCesium.js"></script>
+  <script src="./lib/vue3.js"></script>
+  <link rel="stylesheet" href="./lib/element-plus/index.css" />
+  <script src="./lib/element-plus/index.js"></script>
+  <script src="./lib/element-plus/icons-vue.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #app,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+
+    #tools {
+      width: 110px;
+      position: absolute;
+      z-index: 99;
+      right: 10px;
+      top: 10px;
+      background: #080b124d;
+
+      font-size: 30px;
+      color: white;
+      padding: 8px;
+      border-radius: 16px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      & .item {
+        cursor: pointer;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="cesiumContainer"></div>
+    <div id="tools">
+      <span class="item"><el-icon><goblet-square-full /></el-icon></span>
+      <span class="item"> <el-icon>
+          <Camera />
+        </el-icon></span>
+      <span class="item"><el-icon><milk-tea /></el-icon></span>
+      <span class="item"><el-icon><ice-cream-square /></el-icon></span>
+    </div>
+  </div>
+</body>
+<script type="module">
+  import createViewer from "../demo/js/initViewer.js"
+  import { getTiandituImgLayer, getTiandituImgMarkLayer, getTiandituVecLayer, getTiandituVecMarkLayer } from "../utils/basemap.js";
+  import { FloatInfoBox } from "./js/tools.js";
+
+  let toolTips;
+  const { createApp } = Vue
+  const App = {
+    data() {
+      return {
+      }
+    },
+    mounted() {
+      this.init();
+    },
+    methods: {
+      init() {
+        const viewer = createViewer();
+        viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(113.32890406, 23.10434888, 800),
+        });
+        window.viewer = viewer;
+
+        this.addModelToMap();
+        this.cameraWatch();
+      },
+      addModelToMap() {
+        const position = Cesium.Cartesian3.fromDegrees(
+          113.32890406, 23.10434888,
+          0
+        );
+        const heading = Cesium.Math.toRadians(90); // 航向角：绕-z旋转
+        const pitch = 0; // 俯仰角：绕-y旋转
+        const roll = 0; // 翻滚角：绕+x旋转
+        const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+
+        // heading：旋转，从局部北（0），正角度，向东旋转
+        // pitch：
+        // roll：
+        const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+          position,
+          hpr
+        );
+
+        const entity = viewer.entities.add({
+          name: "路灯",
+          position: position,
+          orientation: orientation,
+          model: {
+            uri: "./data/model/Street Lamp.glb",
+            minimumPixelSize: 18,
+            scale: .02,
+            color: Cesium.Color.RED,
+            distanceDisplayCondition: new Cesium.DistanceDisplayCondition(100.0, 200.0)
+          },
+        });
+        window.entity = entity;
+      },
+      cameraWatch() {
+        viewer.scene.camera.changed.addEventListener(() => {
+          if (this.isModelVisible(entity)) {
+            if (!toolTips) {
+              let divlayer2 = new FloatInfoBox(viewer);
+              divlayer2.add(
+                document.getElementById("tools"),
+                Cesium.Cartesian3.fromDegrees(
+                  113.32890406, 23.10434888,
+                  22
+                ),
+                { yoffset: 0 }
+              );
+              toolTips = divlayer2;
+            } else {
+              toolTips.setVisible(true);
+            }
+
+          } else {
+            if(toolTips)
+            toolTips.setVisible(false);
+          }
+        });
+      },
+      isModelVisible(model) {
+        let isVisible = true;
+        var cameraPosition = viewer.camera.positionWC; // 获取相机位置
+        var entityPosition = model.position._value;
+        var distance = Cesium.Cartesian3.distance(cameraPosition, entityPosition);
+        var displayCondition = entity.model.distanceDisplayCondition._value; // 获取实体的 DistanceDisplayCondition
+        // 检查当前距离是否在显示条件范围内
+        if (displayCondition._near <= distance && distance <= displayCondition._far) {
+          // 实体处于显示范围内
+          console.log('Entity is visible.');
+          isVisible = true;
+        } else {
+          // 实体处于隐藏范围内
+          console.log('Entity is hidden.');
+          isVisible = false;
+        }
+        return isVisible;
+      }
+
+    }
+  };
+  const app = createApp(App);
+  app.use(ElementPlus);
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component);
+  }
+  app.mount('#app')
+</script>
+
+</html>
