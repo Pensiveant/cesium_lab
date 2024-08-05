@@ -79,7 +79,9 @@
     },
     methods: {
       init() {
-        const viewer = createViewer();
+        const viewer = createViewer({
+          isPositionPick: true,
+        });
         viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
         viewer.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(113.32890406, 23.10434888, 800),
@@ -90,69 +92,76 @@
         this.cameraWatch();
       },
       addModelToMap() {
-        const position = Cesium.Cartesian3.fromDegrees(
-          113.32890406, 23.10434888,
-          0
-        );
-        const heading = Cesium.Math.toRadians(90); // 航向角：绕-z旋转
-        const pitch = 0; // 俯仰角：绕-y旋转
-        const roll = 0; // 翻滚角：绕+x旋转
-        const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+        let positions = [[113.32890406, 23.10434888], [113.3293318572977, 23.10437590957963], [113.32884180863095, 23.10501575554353],
+        [113.32924235777239, 23.105061064936034], [113.32898306600265, 23.10385810526824], [113.3294335594321, 23.103908627599242]];
 
-        // heading：旋转，从局部北（0），正角度，向东旋转
-        // pitch：
-        // roll：
-        const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-          position,
-          hpr
-        );
+        for (let i = 0; i < positions.length; i++) {
+          const item = positions[i];
+          const position = Cesium.Cartesian3.fromDegrees(
+            item[0], item[1]
+          );
+          let angle=i%2==0?90:-90;
+          const heading = Cesium.Math.toRadians(angle); // 航向角：绕-z旋转
+          const pitch = 0; // 俯仰角：绕-y旋转
+          const roll = 0; // 翻滚角：绕+x旋转
+          const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
 
-        const entity = viewer.entities.add({
-          name: "路灯",
-          position: position,
-          orientation: orientation,
-          model: {
-            uri: "./data/model/Street Lamp.glb",
-            minimumPixelSize: 18,
-            scale: .02,
-            color: Cesium.Color.RED,
-            distanceDisplayCondition: new Cesium.DistanceDisplayCondition(100.0, 200.0)
-          },
-        });
-        window.entity = entity;
+          const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+            position,
+            hpr
+          );
+
+          const entity = viewer.entities.add({
+            name: "路灯",
+            position: position,
+            orientation: orientation,
+            model: {
+              uri: "./data/model/Street Lamp.glb",
+              minimumPixelSize: 18,
+              scale: .02,
+              color: Cesium.Color.RED,
+              distanceDisplayCondition: new Cesium.DistanceDisplayCondition(100.0, 200.0)
+            },
+          });
+        }
       },
       cameraWatch() {
-        viewer.scene.camera.changed.addEventListener(() => {
-          if (this.isModelVisible(entity)) {
-            if (!toolTips) {
+        let entities = viewer.entities.values;
+        viewer.scene.camera.moveEnd.addEventListener(() => {
+          for (let i = 0, length = entities.length; i < length; i++) {
+            const entity = entities[i];
+            if (this.isModelVisible(entity)) {
+              if (toolTips) {
+                toolTips.remove();
+              }
               let divlayer2 = new FloatInfoBox(viewer);
+              let position = entity.position._value;
+              let { longitude, latitude } = Cesium.Cartographic.fromCartesian(position);
               divlayer2.add(
                 document.getElementById("tools"),
                 Cesium.Cartesian3.fromDegrees(
-                  113.32890406, 23.10434888,
+                  Cesium.Math.toDegrees(longitude), Cesium.Math.toDegrees(latitude),
                   22
                 ),
                 { yoffset: 0 }
               );
               toolTips = divlayer2;
-            } else {
               toolTips.setVisible(true);
             }
-
-          } else {
-            if(toolTips)
-            toolTips.setVisible(false);
           }
+
         });
       },
-      isModelVisible(model) {
+      isModelVisible(entity) {
         let isVisible = true;
         var cameraPosition = viewer.camera.positionWC; // 获取相机位置
-        var entityPosition = model.position._value;
+        var entityPosition = entity.position._value;
         var distance = Cesium.Cartesian3.distance(cameraPosition, entityPosition);
         var displayCondition = entity.model.distanceDisplayCondition._value; // 获取实体的 DistanceDisplayCondition
-        // 检查当前距离是否在显示条件范围内
-        if (displayCondition._near <= distance && distance <= displayCondition._far) {
+        let viewerCenter = this.getCanvasCenter();
+        let distance1 = Cesium.Cartesian3.distance(viewerCenter, entityPosition);
+        // 检查当前距离是否在显示条件范围内以及实体距离屏幕中心位置<20
+        if (displayCondition._near <= distance && distance <= displayCondition._far && distance1 < 20) {
           // 实体处于显示范围内
           console.log('Entity is visible.');
           isVisible = true;
@@ -163,7 +172,18 @@
         }
         return isVisible;
       }
+      ,
+      getCanvasCenter() {
+        // let rectangle = viewer.camera.computeViewRectangle();
+        // let viewerCenter = Cesium.Rectangle.center(rectangle);
+        // viewerCenter = Cesium.Cartographic.toCartesian(viewerCenter)
 
+        var scene = viewer.scene;
+        var canvas = viewer.canvas;
+        var centerPixel = new Cesium.Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2);
+        var centerWorldPosition = scene.pickPosition(centerPixel);
+        return centerWorldPosition
+      }
     }
   };
   const app = createApp(App);
