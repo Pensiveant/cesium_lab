@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <title>无人机飞行效果</title>
+  <script src="../demo/js/importCesium.js"></script>
+  <script src="./lib/vue3.js"></script>
+  <link rel="stylesheet" href="./lib/element-plus/index.css" />
+  <script src="./lib/element-plus/index.js"></script>
+  <script src="./lib/element-plus/icons-vue.js"></script>
+  <script src="./lib/html2canvas.min.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #app,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+
+    #text-container {
+      opacity: 0;
+      z-index: 99;
+      position: absolute;
+      top: 100px;
+      right: 100px;
+      background-color: white;
+      padding: 24px;
+
+      #start1 {
+        width: 209px;
+        height: 44px;
+        border-radius: 100px;
+        border: 1px solid #fff8d6;
+        background: #080b124d;
+        backdrop-filter: blur(8px);
+
+        color: #fff8d6;
+        font-size: 24px;
+        font-weight: 400;
+        font-family: "DingTalk JinBuTi";
+        text-align: left;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        margin-bottom: 20px;
+      }
+
+      #start2 {
+        width: 209px;
+        height: 44px;
+        border-radius: 100px;
+        background: #080b124d;
+        backdrop-filter: blur(8px);
+        border: 1px solid #d1fafe;
+
+        color: #d1fafe;
+        font-size: 24px;
+        font-weight: 400;
+        font-family: "DingTalk JinBuTi";
+        text-align: left;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #billboard {
+        width: 346px;
+        height: 212px;
+        border-radius: 10px;
+        border: 1px solid #f76560;
+        background: #080b1280;
+        backdrop-filter: blur(8px);
+        /* box-shadow: inset 0 0 25px 0 #f76560b3; */
+
+        padding: 23px 17px;
+
+        .title {
+          height: 44px;
+          background: linear-gradient(90deg, #f7656000 0%, #f76560cc 48%, #f7656000 100%);
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          color: #ffffff;
+          font-size: 28px;
+          font-weight: 400;
+          font-family: "DingTalk JinBuTi";
+          text-align: left;
+        }
+
+        .content {
+          display: flex;
+
+          .item {
+            flex: 1;
+            margin-top: 37px;
+
+            .text {
+              color: #ffffff;
+              font-size: 18px;
+              font-weight: 400;
+              font-family: "DingTalk JinBuTi";
+              text-align: left;
+            }
+
+            .time {
+              margin-top: 17px;
+              color: #ffffff;
+              font-size: 28px;
+              font-weight: 400;
+              font-family: "DingTalk JinBuTi";
+              text-align: left;
+            }
+          }
+
+          .item:first-child {
+            padding-left: 17px;
+
+            .text {
+              margin-left: 4px;
+            }
+          }
+        }
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="cesiumContainer"></div>
+    <div id="text-container">
+      <div id="start1">起飞：11:52:14</div>
+      <div id="start2">起飞：11:52:14</div>
+      <div id="billboard">
+        <div class="title">碰撞预警</div>
+        <div class="content">
+          <div class="item">
+            <div class="text">预计碰撞时间：</div>
+            <div class="time">12:05:12</div>
+          </div>
+          <div class="item">
+            <div class="text">剩余时间：</div>
+            <div class="time">00:00:12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script type="module">
+  import createViewer from "../demo/js/initViewer.js"
+  import { getTiandituImgLayer, getTiandituImgMarkLayer, getTiandituVecLayer, getTiandituVecMarkLayer } from "../utils/basemap.js";
+
+  const route1Data = [
+    {
+      "Longitude": 113.32935196564094,
+      "Latitude": 23.108685049755852,
+      "Altitude": 10.000000000196412
+    },
+    {
+      "Longitude": 113.32958610032682,
+      "Latitude": 23.108711847757835,
+      "Altitude": 79.99999999862328
+    },
+    {
+      "Longitude": 113.33040935661393,
+      "Latitude": 23.10852344051637,
+      "Altitude": 49.99999999889961
+    },
+    {
+      "Longitude": 113.33132554961412,
+      "Latitude": 23.108516615609926,
+      "Altitude": 19.999999999521044
+    },
+    {
+      "Longitude": 113.33196504943105,
+      "Latitude": 23.108475519561875,
+      "Altitude": 70.00000000104556
+    },
+    {
+      "Longitude": 113.33264203336076,
+      "Latitude": 23.10865681645851,
+      "Altitude": 79.99999999978421
+    },
+    {
+      "Longitude": 113.33195385323894,
+      "Latitude": 23.107619181715638,
+      "Altitude": 249.99999999973298
+    },
+    {
+      "Longitude": 113.33399498307249,
+      "Latitude": 23.10778167221235,
+      "Altitude": 100.00000000004235
+    },
+    {
+      "Longitude": 113.3350071756929,
+      "Latitude": 23.107560851065724,
+      "Altitude": 9.999999998952557
+    }
+  ];
+  const route2Data = [
+    {
+      "Longitude": 113.32942501518447,
+      "Latitude": 23.106998577461148,
+      "Altitude": 9.999999999392184
+    },
+    {
+      "Longitude": 113.32940818364763,
+      "Latitude": 23.106954604476297,
+      "Altitude": 70.00000000116205
+    },
+    {
+      "Longitude": 113.33033835540323,
+      "Latitude": 23.107476056995136,
+      "Altitude": 40.000000002301434
+    },
+    {
+      "Longitude": 113.33117582010749,
+      "Latitude": 23.10771849365396,
+      "Altitude": 20.00000000075602
+    },
+    {
+      "Longitude": 113.33151234329702,
+      "Latitude": 23.10778678964586,
+      "Altitude": 60.00000000026982
+    },
+    {
+      "Longitude": 113.33175524116656,
+      "Latitude": 23.107717900135274,
+      "Altitude": 110.00000000097945
+    },
+    {
+      "Longitude": 113.33198368470214,
+      "Latitude": 23.107619064060067,
+      "Altitude": 189.99999999993997
+    },
+    {
+      "Longitude": 113.33262670571838,
+      "Latitude": 23.10820216107875,
+      "Altitude": 79.99999999886674
+    },
+    {
+      "Longitude": 113.3334211100129,
+      "Latitude": 23.10822987255083,
+      "Altitude": 10.000000000685818
+    }
+  ];
+
+  let toolTips;
+  const { createApp } = Vue
+  const App = {
+    data() {
+      return {
+      }
+    },
+    mounted() {
+      this.init();
+    },
+    methods: {
+      init() {
+        const viewer = createViewer({
+          isPositionPick: true,
+        });
+        viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(113.32942501518447, 23.106998577461148, 800),
+        });
+        window.viewer = viewer;
+        this.initRoute(route1Data, '#FFF8D6');
+        this.initRoute(route2Data, '#61DFFF');
+        this.initText();
+        this.initBillboard();
+      },
+      initRoute(data, color) {
+        const positions = [];
+        for (let i = 0, len = data.length; i < len; i++) {
+          const { Longitude, Latitude, Altitude } = data[i];
+          positions.push(Longitude)
+          positions.push(Latitude)
+          positions.push(Altitude)
+        }
+        let routeEntity = new Cesium.Entity({
+          polyline: {
+            positions: Cesium.Cartesian3.fromDegreesArrayHeights(positions.slice(0, 3 * 4)),
+            width: 3,
+            material: Cesium.Color.fromCssColorString(color),
+
+          }
+        })
+        viewer.entities.add(routeEntity);
+
+        let routeEntity1 = new Cesium.Entity({
+          polyline: {
+            positions: Cesium.Cartesian3.fromDegreesArrayHeights(positions.slice(3 * 3, positions.length)),
+            width: 3,
+            material: new Cesium.PolylineDashMaterialProperty({
+              color: Cesium.Color.fromCssColorString(color),
+              dashLength: 20 //短划线长度
+            }),
+
+          }
+        })
+        viewer.entities.add(routeEntity1);
+      }
+      ,
+      initText() {
+        html2canvas(document.querySelector("#start1"), {
+          backgroundColor: null
+        }).then(canvas => {
+          let textEntity = new Cesium.Entity({
+            position: Cesium.Cartesian3.fromDegrees(113.32935196564094,
+              23.108685049755852,
+              10.000000000196412),
+            billboard: {
+              image: canvas,
+              width: canvas.width,
+              height: canvas.height
+            }
+          })
+          viewer.entities.add(textEntity);
+        });
+
+        let pointEntity = new Cesium.Entity({
+          position: Cesium.Cartesian3.fromDegrees(113.32935196564094,
+            23.108685049755852,
+            10.000000000196412),
+          billboard: {
+            image: './img/point1.png',
+            width: 64,
+            height: 64,
+            pixelOffset: new Cesium.Cartesian2(0, -74)
+          }
+        })
+        viewer.entities.add(pointEntity);
+
+        html2canvas(document.querySelector("#start2"), {
+          backgroundColor: null
+        }).then(canvas => {
+          let textEntity = new Cesium.Entity({
+            position: Cesium.Cartesian3.fromDegrees(113.32942501518447,
+              23.106998577461148,
+              9.999999999392184),
+            billboard: {
+              image: canvas,
+              width: canvas.width,
+              height: canvas.height
+            }
+          })
+          viewer.entities.add(textEntity);
+        });
+
+        let pointEntity1 = new Cesium.Entity({
+          position: Cesium.Cartesian3.fromDegrees(113.32942501518447,
+            23.106998577461148,
+            9.999999999392184),
+          billboard: {
+            image: './img/point2.png',
+            width: 64,
+            height: 64,
+            pixelOffset: new Cesium.Cartesian2(0, -74)
+          }
+        })
+        viewer.entities.add(pointEntity1);
+      },
+      initBillboard() {
+        html2canvas(document.querySelector("#billboard"), {
+          backgroundColor: null
+        }).then(canvas => {
+          let textEntity = new Cesium.Entity({
+            position: Cesium.Cartesian3.fromDegrees(113.33198368470214,
+              23.107619064060067,
+              189.99999999993997),
+            billboard: {
+              image: canvas,
+              width: canvas.width,
+              height: canvas.height,
+              pixelOffset: new Cesium.Cartesian2(0, -canvas.height / 2 - 60)
+            }
+          })
+          viewer.entities.add(textEntity);
+        });
+        let pointEntity = new Cesium.Entity({
+          position: Cesium.Cartesian3.fromDegrees(113.33198368470214,
+              23.107619064060067,
+              189.99999999993997),
+          billboard: {
+            image: './img/danger.png',
+            width: 89,
+            height: 119,
+          }
+        })
+        viewer.entities.add(pointEntity);
+      }
+    }
+  };
+  const app = createApp(App);
+  app.use(ElementPlus);
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component);
+  }
+  app.mount('#app')
+</script>
+
+</html>
