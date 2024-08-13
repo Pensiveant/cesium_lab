@@ -55,7 +55,7 @@
       url: "http://localhost:600/directionlite/v1/walking",
 
       //url: "https://restapi.amap.com/v3/direction/walking",
-      speed: 1, // 1m/s
+      speed: 1.3, // 1m/s
     },
   };
   let toolTips;
@@ -80,7 +80,7 @@
         });
         window.viewer = viewer;
         let center = Cesium.Cartesian3.fromDegrees(113.32808410432803, 23.12526565917225);
-        this.trafficSpaceCircle(center, 15 * 60, 'drive', 'gDj78D43YLYfBZhk4bc8m9Vjv2WsEakc')
+        this.trafficSpaceCircle(center, 15 * 60, 'ride', 'gDj78D43YLYfBZhk4bc8m9Vjv2WsEakc')
         //this.trafficSpaceCircle(center, 5 * 60, 'walk', '10b2a8717cffb112c247ded3071d265d')
       },
 
@@ -92,7 +92,7 @@
        * @param {*} type      驾车|骑行|步行
        * @returns polygon
        */
-      async trafficSpaceCircle(center, time, type, key, cellSide, timeTolerance = 30) {
+      async trafficSpaceCircle(center, time, type, key, cellSide, timeTolerance = 10) {
 
         let { longitude, latitude } = Cesium.Cartographic.fromCartesian(center);
         longitude = Cesium.Math.toDegrees(longitude);
@@ -147,19 +147,20 @@
           {
             clampToGround: true,
             strokeWidth: 1,
-            stroke: Cesium.Color.RED
+            stroke: Cesium.Color.RED,
+            fill: Cesium.Color.RED.withAlpha(.5),
           }
         ).then((polygonGeojson) => {
           viewer.dataSources.add(polygonGeojson);
-          var entities = polygonGeojson.entities.values;
-          for (var i = 0; i < entities.length; i++) {
-            var entity = entities[i];
-            entity.polygon.outline = true;
-            entity.polygon.outlineWidth = 2;
-            entity.polygon.outlineColor = new Cesium.Color(1, 0, 0, 1);
-            entity.polygon.material = new Cesium.Color(1, 0, 0, 0.1);
-            entity.polygon.perPositionHeight = true;
-          }
+          // var entities = polygonGeojson.entities.values;
+          // for (var i = 0; i < entities.length; i++) {
+          //   var entity = entities[i];
+          //   entity.polygon.outline = true;
+          //   entity.polygon.outlineWidth = 2;
+          //   entity.polygon.outlineColor = new Cesium.Color(1, 0, 0, 1);
+          //   entity.polygon.material = new Cesium.Color(1, 0, 0, 0.1);
+          //   entity.polygon.perPositionHeight = true;
+          // }
         });
 
         // 加载生成的网格
