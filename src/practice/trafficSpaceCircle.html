@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <title>城市交通时空圈</title>
+  <script src="../demo/js/importCesium.js"></script>
+  <script src="./lib/vue3.js"></script>
+  <link rel="stylesheet" href="./lib/element-plus/index.css" />
+  <script src="./lib/element-plus/index.js"></script>
+  <script src="./lib/element-plus/icons-vue.js"></script>
+  <script src="./lib/turf.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #app,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="cesiumContainer"></div>
+  </div>
+</body>
+<script type="module">
+  import createViewer from "../demo/js/initViewer.js"
+  import { getTiandituImgLayer, getTiandituImgMarkLayer, getTiandituVecLayer, getTiandituVecMarkLayer } from "../utils/basemap.js";
+
+  const TYPE = {
+    drive: {
+      // url: "https://api.map.baidu.com/directionlite/v1/driving",
+      url: "http://localhost:600/directionlite/v1/driving",
+      // url: "https://restapi.amap.com/v3/direction/driving",
+      speed: 11.11, //  城市道路限定限速大多数是在40至60公里每小时，取40
+    },
+    ride: {
+      // url: "https://api.map.baidu.com/directionlite/v1/riding",
+      url: "http://localhost:600/directionlite/v1/riding",
+      // url: "https://restapi.amap.com/v4/direction/bicycling",
+      speed: 4.17,  // 一般自行车的速度在15km/h，相当于0.25km/min
+    },
+    walk: {
+      // url: "https://api.map.baidu.com/directionlite/v1/walking",
+      url: "http://localhost:600/directionlite/v1/walking",
+
+      //url: "https://restapi.amap.com/v3/direction/walking",
+      speed: 1, // 1m/s
+    },
+  };
+  let toolTips;
+  const { createApp } = Vue
+  const App = {
+    data() {
+      return {
+      }
+    },
+    mounted() {
+      this.init();
+    },
+    methods: {
+      init() {
+        const viewer = createViewer({
+          isPositionPick: true,
+          showTerrain: false,
+        });
+        viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(113.32808410432803, 23.12526565917225, 800),
+        });
+        window.viewer = viewer;
+        let center = Cesium.Cartesian3.fromDegrees(113.32808410432803, 23.12526565917225);
+        this.trafficSpaceCircle(center, 15 * 60, 'drive', 'gDj78D43YLYfBZhk4bc8m9Vjv2WsEakc')
+        //this.trafficSpaceCircle(center, 5 * 60, 'walk', '10b2a8717cffb112c247ded3071d265d')
+      },
+
+      /**
+       * 生成城市交通时空圈
+       * @param {Carace} center    中心点坐标
+       * @param {*} time      单位s
+       * @param {*} key       百度key
+       * @param {*} type      驾车|骑行|步行
+       * @returns polygon
+       */
+      async trafficSpaceCircle(center, time, type, key, cellSide, timeTolerance = 30) {
+
+        let { longitude, latitude } = Cesium.Cartographic.fromCartesian(center);
+        longitude = Cesium.Math.toDegrees(longitude);
+        latitude = Cesium.Math.toDegrees(latitude);
+
+        // 生成网格
+        let speed = TYPE[type].speed;
+        let bufferDistance = speed * time;
+        let bufferCenter = turf.point([longitude, latitude]);
+        let range = turf.buffer(bufferCenter, bufferDistance / 1000);
+        let bbox = turf.bbox(range);
+        if (!cellSide) {
+          cellSide = bufferDistance / 15 / 1000;  // 30*30个网格
+        }
+        let grid = turf.hexGrid(bbox, cellSide, { mask: range });
+        console.log(grid)
+
+        // 计算1/4出行时间的缓冲区
+        let excludRange = turf.buffer(bufferCenter, speed * (time * 1 / 4) / 1000);
+
+
+
+        // 计算起点到网格中心的出行时间
+        const { features } = grid;
+        let polygon = undefined;
+        let newFeatures = [];
+        for (let i = 0, len = features.length; i < len; i++) {
+          const item = features[i];
+          const itemCenter = turf.center(item.geometry);
+          const itemCenterCoor = itemCenter.geometry.coordinates;
+          // if (turf.booleanDisjoint(excludRange, item.geometry)) {
+            let itemTime = await this.queryRouteTime(type, key, `${latitude},${longitude}`, `${itemCenterCoor[1]},${itemCenterCoor[0]}`);
+            //let itemTime = await this.queryRouteTime(type, key, `${longitude.toFixed(6)},${latitude.toFixed(6)}`, `${itemCenterCoor[0].toFixed(6)},${itemCenterCoor[1].toFixed(6)}`);
+            if (itemTime < time + timeTolerance) {
+
+              // polygon.push(itemCenterCoor[0]);
+              // polygon.push(itemCenterCoor[1]);
+              if (polygon) {
+                polygon = turf.union(polygon, item.geometry)
+              } else {
+                polygon = item.geometry
+              }
+
+            }
+            newFeatures.push(item)
+          // }
+        }
+
+        // 加载生成的边界
+        Cesium.GeoJsonDataSource.load(
+          polygon,
+          {
+            clampToGround: true,
+            strokeWidth: 1,
+            stroke: Cesium.Color.RED
+          }
+        ).then((polygonGeojson) => {
+          viewer.dataSources.add(polygonGeojson);
+          var entities = polygonGeojson.entities.values;
+          for (var i = 0; i < entities.length; i++) {
+            var entity = entities[i];
+            entity.polygon.outline = true;
+            entity.polygon.outlineWidth = 2;
+            entity.polygon.outlineColor = new Cesium.Color(1, 0, 0, 1);
+            entity.polygon.material = new Cesium.Color(1, 0, 0, 0.1);
+            entity.polygon.perPositionHeight = true;
+          }
+        });
+
+        // 加载生成的网格
+        grid.features = newFeatures;
+        Cesium.GeoJsonDataSource.load(
+          grid,
+          {
+            clampToGround: true,
+            strokeWidth: 1,
+            stroke: Cesium.Color.RED
+          }
+        ).then((polygonGeojson) => {
+          var entities = polygonGeojson.entities.values;
+          for (var i = 0; i < entities.length; i++) {
+            var entity = entities[i];
+            entity.polygon.material = new Cesium.Color(0, 1, 0, 0.2);
+            entity.polyline = new Cesium.PolylineGraphics({
+              positions: entity.polygon.hierarchy._value.positions,
+              material: new Cesium.Color(0, 1, 0, 1),
+              clampToGround: true
+            })
+            // entity.polygon.perPositionHeight = true;
+          }
+          viewer.dataSources.add(polygonGeojson);
+        });
+
+        console.log(polygon)
+
+        return polygon;
+      },
+      async queryRouteTime(type, key, origin, destination) {
+        let url = TYPE[type].url;
+        const resource = new Cesium.Resource({
+          url,
+          queryParameters: {
+            ak: key,
+            key,
+            origin,
+            destination,
+            coord_type: 'wgs84',
+            steps_info: 0,
+          }
+        });
+        const res = await resource.fetchJson();
+        let time = 0;
+        if (res?.result) {
+          time = res.result.routes[0].duration;
+        }
+        // if (res?.route) {
+        //   time = res.route.paths[0].duration;
+        // }
+        return Number(time);
+      }
+    }
+  };
+  const app = createApp(App);
+  app.use(ElementPlus);
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component);
+  }
+  app.mount('#app')
+</script>
+
+</html>
