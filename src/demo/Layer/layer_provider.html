@@ -92,6 +92,24 @@
       context.fillText(`X: ${x}`, 124, 136);
       context.fillText(`Y: ${y}`, 124, 186);
 
+      // 加载实体
+      if (x === 25 && y === 5 && level === 4) {
+        const rectangle = this._tilingScheme.tileXYToRectangle(x, y, level);
+        let entity = new Cesium.Entity({
+          position:Cesium.Cartographic.toCartesian(Cesium.Rectangle.center(rectangle)),
+          rectangle: {
+            coordinates: rectangle,
+            material: Cesium.Color.RED.withAlpha(.2)
+          },
+          point: {
+            pixelSize: 15,
+            color: Cesium.Color.RED,
+          }
+        })
+        viewer.entities.add(entity);
+      }
+
+
       return Promise.resolve(canvas);
     }
 
