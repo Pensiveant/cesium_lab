@@ -96,7 +96,11 @@
       if (x === 25 && y === 5 && level === 4) {
         const rectangle = this._tilingScheme.tileXYToRectangle(x, y, level);
         let entity = new Cesium.Entity({
-          position:Cesium.Cartographic.toCartesian(Cesium.Rectangle.center(rectangle)),
+          //position:Cesium.Cartographic.toCartesian(Cesium.Rectangle.center(rectangle)),  // 中心点
+           position:Cesium.Cartographic.toCartesian(Cesium.Rectangle.northwest(rectangle)), // 左上角
+          // position:Cesium.Cartographic.toCartesian(Cesium.Rectangle.northeast(rectangle)), // 右上角
+          // position:Cesium.Cartographic.toCartesian(Cesium.Rectangle.southwest(rectangle)), // 左下角
+          //position:Cesium.Cartographic.toCartesian(Cesium.Rectangle.southeast(rectangle)), // 右下角
           rectangle: {
             coordinates: rectangle,
             material: Cesium.Color.RED.withAlpha(.2)
