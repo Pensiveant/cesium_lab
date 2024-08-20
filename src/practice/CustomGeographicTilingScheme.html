@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <title>自定义GeographicTilingScheme</title>
+  <script src="../demo/js/importCesium.js"></script>
+  <script src="./lib/vue3.js"></script>
+  <link rel="stylesheet" href="./lib/element-plus/index.css" />
+  <script src="./lib/element-plus/index.js"></script>
+  <script src="./lib/element-plus/icons-vue.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #app,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="cesiumContainer"></div>
+  </div>
+</body>
+<script type="module">
+  import createViewer from "../demo/js/initViewer.js"
+  import { getTiandituImgLayer, getTiandituImgMarkLayer, getTiandituVecLayer, getTiandituVecMarkLayer } from "../utils/basemap.js";
+
+
+  let toolTips;
+  const { createApp } = Vue
+  const App = {
+    data() {
+      return {
+      }
+    },
+    mounted() {
+      this.init();
+    },
+    methods: {
+      init() {
+        const viewer = createViewer({
+          isPositionPick: true,
+        });
+        viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(113.32942501518447, 23.106998577461148, 800),
+        });
+        window.viewer = viewer;
+        this.addWmts();
+      },
+
+      addWmts() {
+        let wmts = new Cesium.WebMapTileServiceImageryProvider({
+          url: "http://172.18.80.51/agserver/gwc/service/wmts",
+          layer: "topp:天河海珠房普建筑底面",
+          style: "default",
+          format: "image/png",
+          tileMatrixSetID: "EPSG:4326",
+          tileMatrixLabels: [
+            "EPSG:4326:0",
+            "EPSG:4326:1",
+            "EPSG:4326:2",
+            "EPSG:4326:3",
+            "EPSG:4326:4",
+            "EPSG:4326:5",
+            "EPSG:4326:6",
+            "EPSG:4326:7",
+            "EPSG:4326:8",
+            "EPSG:4326:9",
+            "EPSG:4326:10",
+            "EPSG:4326:11",
+            "EPSG:4326:12",
+            "EPSG:4326:13",
+            "EPSG:4326:14",
+            "EPSG:4326:15",
+            "EPSG:4326:16",
+            "EPSG:4326:17",
+            "EPSG:4326:18",
+            "EPSG:4326:19",
+            "EPSG:4326:20",
+            "EPSG:4326:21"
+          ],
+          tilingScheme:new Cesium.GeographicTilingScheme()
+        });
+        viewer.imageryLayers.addImageryProvider(wmts);
+      }
+
+    }
+  };
+  const app = createApp(App);
+  app.use(ElementPlus);
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component);
+  }
+  app.mount('#app')
+</script>
+
+</html>
