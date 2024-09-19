@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <title>自定义billboard</title>
+    <script src="../demo/js/importCesium.js"></script>
+    <script src="./lib/vue3.js"></script>
+    <link rel="stylesheet" href="./lib/element-plus/index.css" />
+    <script src="./lib/element-plus/index.js"></script>
+    <script src="./lib/element-plus/icons-vue.js"></script>
+    <script src="./lib/turf.js"></script>
+    <style>
+      @font-face {
+        font-family: "PangMenZhengDao";
+        src: url("./font/PangMenZhengDaoCuShuTi-2.ttf") format("truetype");
+      }
+
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        font-family: 'PangMenZhengDao';
+      }
+
+      #app,
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div id="cesiumContainer"></div>
+    </div>
+  </body>
+  <script type="module">
+    import createViewer from "../demo/js/initViewer.js";
+    import {
+      getTiandituImgLayer,
+      getTiandituImgMarkLayer,
+      getTiandituVecLayer,
+      getTiandituVecMarkLayer,
+    } from "../utils/basemap.js";
+
+    const config = {
+      nameField: "简称",
+      color: "rgba(255, 235, 144, 1)",
+      icon: ["./img/标签-n.png", "./img/标签-n.png"],
+      stopcolor: ["#FFFFFF", "#A1CDFF"],
+      imgWidth: 88,
+      imgOffset: [45, 53],
+      fontx: [23, 35],
+    };
+
+    const { createApp } = Vue;
+    const App = {
+      data() {
+        return {};
+      },
+      mounted() {
+        this.init();
+      },
+      methods: {
+        init() {
+          const viewer = createViewer({
+            isPositionPick: true,
+          });
+          viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+          window.viewer = viewer;
+          this.initLayer();
+        },
+        initLayer() {
+          // 加载Geojson：点
+          let pointGeojson = Cesium.GeoJsonDataSource.load(
+            "./data/history.json",
+            { clampToGround: true }
+          ).then((dataSource) => {
+            viewer.dataSources.add(dataSource);
+            viewer.flyTo(dataSource);
+
+            const entities = dataSource.entities.values;
+            for (let i = 0; i < entities.length; i++) {
+              const entity = entities[i];
+              let positions = entity.polygon.hierarchy._value.positions;
+              // let boundingSphere = Cesium.BoundingSphere.fromPoints(positions);
+              // let center = boundingSphere.center;
+              let center = this.calculateCenter(positions);
+              entity.position = center;
+              entity.layerConfig = config;
+              this.changeEntityHightlight(entity);
+            }
+          });
+        },
+        calculateCenter(positions) {
+          let coordinate = [[]];
+          for (let i = 0; i < positions.length; i++) {
+            let item = positions[i];
+            let { longitude, latitude, height } =
+              Cesium.Cartographic.fromCartesian(item);
+            coordinate[0].push([
+              Cesium.Math.toDegrees(longitude),
+              Cesium.Math.toDegrees(latitude),
+              height,
+            ]);
+          }
+          var polygon = turf.polygon(coordinate);
+
+          let point = turf.centerOfMass(polygon);
+          if (!turf.booleanContains(polygon, point)) {
+            point = turf.pointOnFeature(polygon);
+          }
+          let { coordinates } = point.geometry;
+          let center = Cesium.Cartesian3.fromDegrees(
+            coordinates[0],
+            coordinates[1]
+          );
+          return center;
+        },
+        changeEntityHightlight(entity, isHightlight = false) {
+          // const entity = pickedLabel.id;
+          const { layerConfig } = entity;
+          let name = entity.properties[layerConfig.nameField]._value;
+          name = name.split("");
+          this.drawText(
+            name,
+            layerConfig.icon,
+            layerConfig.stopcolor,
+            layerConfig.imgWidth,
+            layerConfig.imgOffset,
+            layerConfig.fontx,
+            (canvas) => {
+              entity.billboard = new Cesium.BillboardGraphics({
+                image: canvas,
+                width: canvas.width,
+                height: canvas.height,
+                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                scale: 0.7,
+                distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
+                  0.0,
+                  40000
+                ),
+                heightReference: Cesium.HeightReference.RELATIVE_TO_TERRAIN,
+              });
+            },
+            isHightlight
+          );
+        },
+        async drawText(
+          textLines,
+          icons,
+          stopcolor,
+          imgWidth,
+          imgOffset,
+          fontx,
+          callback,
+          isHightlight = false
+        ) {
+          const canvas = document.createElement("canvas");
+          canvas.width = imgWidth;
+          canvas.height = textLines.length * 28 + imgOffset[0] + imgOffset[1];
+          const ctx = canvas.getContext("2d");
+
+          const image = new Image();
+          image.src = isHightlight ? icons[1] : icons[0];
+          image.onload = () => {
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            // 创建线性渐变
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, stopcolor[0]);
+            gradient.addColorStop(1, stopcolor[1]);
+
+            // 设置渐变色作为填充文字的颜色
+            ctx.fillStyle = gradient;
+
+            // 设置文字样式
+            ctx.font = "bold 24px PangMenZhengDao";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+
+            // 绘制多行文字
+            // const textLines = ["回", "龙", "窝"];
+
+            let y = imgOffset[0];
+            let startx = isHightlight ? fontx[1] : fontx[0];
+            for (let line of textLines) {
+              ctx.fillText(line, startx, y); // 绘制位置
+              y += 24; // 下一行的垂直偏移量
+            }
+            callback(canvas);
+          };
+        },
+      },
+    };
+    const app = createApp(App);
+    app.use(ElementPlus);
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount("#app");
+  </script>
+</html>
