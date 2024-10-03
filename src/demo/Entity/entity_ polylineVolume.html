@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <title>polylineVolume</title>
+    <script src="../js/importCesium.js"></script>
+    <style>
+      html,
+      body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+      }
+
+      #cesiumContainer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="cesiumContainer"></div>
+    <script type="module">
+      import createViewer from "../js/initViewer.js";
+      const viewer = createViewer({
+        showTerrain: false,
+        isPositionPick: true,
+      });
+
+      function computeCircle(radius) {
+        const positions = [];
+        for (let i = 0; i < 360; i++) {
+          const radians = Cesium.Math.toRadians(i);
+          positions.push(
+            new Cesium.Cartesian2(
+              radius * Math.cos(radians),
+              radius * Math.sin(radians)
+            )
+          );
+        }
+        return positions;
+      }
+
+      const polylineVolumeGraphic = new Cesium.PolylineVolumeGraphics({
+        positions: Cesium.Cartesian3.fromDegreesArray(
+          [
+            104.05840213978989, 30.660710197196195, 104.06489477780019,
+            30.660744489868755,
+          ],
+          viewer.scene.globe.ellipsoid
+        ),
+        shape: computeCircle(10),
+        material: Cesium.Color.RED.withAlpha(0.3),
+      });
+      viewer.entities.add({
+        name: "polylineVolume",
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArray(
+            [
+              104.05840213978989, 30.660710197196195, 104.06489477780019,
+              30.660744489868755,
+            ],
+            viewer.scene.globe.ellipsoid
+          ),
+          width: 5,
+          material: Cesium.Color.RED,
+        },
+        polylineVolume: polylineVolumeGraphic,
+      });
+
+      viewer.zoomTo(viewer.entities);
+
+      // 垂直线生成不了
+      const polylineVolumeGraphic1 = new Cesium.PolylineVolumeGraphics({
+        positions: Cesium.Cartesian3.fromDegreesArrayHeights(
+            [
+              104.06461869887296, 30.665726325792743, -0.009090648193504894,
+              104.06461869887296, 30.665726325792743, 100,
+            ],
+            viewer.scene.globe.ellipsoid
+          ),
+        shape: computeCircle(10),
+        material: Cesium.Color.RED.withAlpha(0.3),
+      });
+      viewer.entities.add({
+        name: "polylineVolume",
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArrayHeights(
+            [
+              104.06461869887296, 30.665726325792743, -0.009090648193504894,
+              104.06461869887296, 30.665726325792743, 100,
+            ],
+            viewer.scene.globe.ellipsoid
+          ),
+          width: 5,
+          material: Cesium.Color.RED,
+        },
+        polylineVolume: polylineVolumeGraphic1,
+      });
+    </script>
+  </body>
+</html>
