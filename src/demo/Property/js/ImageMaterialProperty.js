@@ -68,4 +68,51 @@ let polygonEntity1 = new Cesium.Entity({
 });
 viewer.entities.add(polygonEntity1);
 
+function getCloumTextCanvas() {
+  let text = "已批准";
+  const canvas = document.createElement("canvas");
+  canvas.width = 1000;
+  canvas.height = 1000;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "rgba(255,255,255,0.2)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "#f00";
+  ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+  const fontSize = 100;
+  ctx.font = `${fontSize}px Arial`;
+  ctx.fillStyle = "#f00";
+  ctx.textBaseline = "middle";
+  for (let i = 0; i < text.length; i++) {
+    const word = text[i];
+    ctx.fillText(
+      word,
+      canvas.width / 2 - fontSize / 2,
+      canvas.height / 2 - ((text.length - 1) * fontSize) / 2 + i * fontSize
+    );
+  }
+
+  return canvas;
+}
+
+let canvas1 = getCloumTextCanvas();
+let material2 = new Cesium.ImageMaterialProperty({
+  image: canvas1,
+  //   repeat: new Cesium.Cartesian2(2.0, 2.0),
+  //   transparent: true
+});
+let polygonEntity2 = new Cesium.Entity({
+  polygon: {
+    hierarchy: Cesium.Cartesian3.fromDegreesArrayHeights([
+      104.06495537453209, 30.662727976891475, 460.11044151699093,
+      104.06631385515385, 30.662799752724027, 460.15565140155036,
+      104.06630474079266, 30.661836739031397, 459.04821894355575,
+      104.06505255300254, 30.661840883655643, 459.5638014324808,
+    ]),
+    material: material2,
+  },
+});
+viewer.entities.add(polygonEntity2);
+
 viewer.flyTo(viewer.entities);
