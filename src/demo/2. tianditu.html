@@ -28,11 +28,11 @@
     import { getTiandituImgLayer, getTiandituImgMarkLayer, getTiandituVecLayer, getTiandituVecMarkLayer } from "../utils/basemap.js";
     const viewer = createViewer();
 
-    // viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
-    // viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
+    viewer.imageryLayers.addImageryProvider(getTiandituImgLayer()); // 加载影像
+    viewer.imageryLayers.addImageryProvider(getTiandituImgMarkLayer()); // 加载注记
 
-    viewer.imageryLayers.addImageryProvider(getTiandituVecLayer()); // 加载影像
-    viewer.imageryLayers.addImageryProvider(getTiandituVecMarkLayer()); // 加载注记
+    // viewer.imageryLayers.addImageryProvider(getTiandituVecLayer()); // 加载影像
+    // viewer.imageryLayers.addImageryProvider(getTiandituVecMarkLayer()); // 加载注记
   </script>
   </div>
 </body>
