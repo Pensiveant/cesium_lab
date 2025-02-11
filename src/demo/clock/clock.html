@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="../js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+</body>
+<script type="module">
+  import createViewer from "../js/initViewer.js";
+
+  const viewer = createViewer({
+    animation: true,
+    timeline: true,
+  });
+
+  // 定位到成都
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 800),
+    orientation: {
+      heading: Cesium.Math.toRadians(0.0),
+      pitch: Cesium.Math.toRadians(-45.0),
+    },
+  });
+
+
+
+  // 设置时间轴
+  const start = Cesium.JulianDate.fromIso8601('2025-02-11T10:00:00');
+  const stop = Cesium.JulianDate.fromIso8601('2025-02-11T11:00:00');
+  viewer.clock.startTime = start.clone();
+  viewer.clock.stopTime = stop.clone();
+  viewer.clock.currentTime = start.clone();
+  viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+  viewer.clock.multiplier = 1000;
+  viewer.clock.shouldAnimate = true;
+  viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+  //viewer.clock.clockStep = Cesium.ClockStep.SYSTEM_CLOCK;
+  // viewer.clock.clockStep = Cesium.ClockStep.TICK_DEPENDENT;
+  viewer.timeline.zoomTo(start, stop);
+
+  let previewTime;
+  viewer.clock.onTick.addEventListener((e) => {
+    let currentTime = e.currentTime;
+    if (previewTime) {
+      // 计算时间间隔（s）：SYSTEM_CLOCK=16.67ms≈0s；SYSTEM_CLOCK_MULTIPLIER=16.67ms*multiplier；TICK_DEPENDENT=multiplier秒
+      let step = Cesium.JulianDate.secondsDifference(currentTime, previewTime); 
+      console.log(step);
+    }
+    previewTime = currentTime
+  })
+</script>
+
+</html>
