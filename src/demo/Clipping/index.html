@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="../js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+</body>
+<script type="module">
+  import createViewer from "../js/initViewer.js";
+  import wrapLogMessage from "../../utils/wrapLogMessage.js";
+
+  const clipObjects = ["BIM", "Point Cloud", "Instanced", "Model"];
+  const viewModel = {
+    debugBoundingVolumesEnabled: false,
+    edgeStylingEnabled: true,
+    exampleTypes: clipObjects,
+    currentExampleType: clipObjects[0],
+  };
+  let clippingPlanes;
+  let targetY = 0.0;
+  let planeEntities = [];
+  let selectedPlane;
+
+  const viewer = createViewer();
+  const scene = viewer.scene;
+
+  const bimUrl = Cesium.IonResource.fromAssetId(2464651);
+  loadTileset(bimUrl);
+  viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
+  const inspectorViewModel = viewer.cesium3DTilesInspector.viewModel;
+  function createPlaneUpdateFunction(plane) {
+    return function () {
+      plane.distance = targetY;
+      return plane;
+    };
+  }
+
+  let tileset;
+  async function loadTileset(resource, modelMatrix) {
+    const currentExampleType = viewModel.currentExampleType;
+
+    clippingPlanes = new Cesium.ClippingPlaneCollection({
+      planes: [
+        new Cesium.ClippingPlane(new Cesium.Cartesian3(0.0, 0.0, -1.0), 0.0), // 法线+ 距离，构建剖切平面
+      ],
+      edgeWidth: viewModel.edgeStylingEnabled ? 1.0 : 0.0,
+      edgeColor: Cesium.Color.RED,  // 裁剪边的颜色
+      unionClippingRegions: false
+    });
+
+    try {
+      const url = await Promise.resolve(resource);
+      tileset = await Cesium.Cesium3DTileset.fromUrl(url, {
+        clippingPlanes: clippingPlanes,
+      });
+
+      if (currentExampleType !== viewModel.currentExampleType) {
+        // Another tileset was loaded, discard the current result
+        return;
+      }
+
+      if (Cesium.defined(modelMatrix)) {
+        tileset.modelMatrix = modelMatrix;
+      }
+
+      viewer.scene.primitives.add(tileset);
+
+      tileset.debugShowBoundingVolume = viewModel.debugBoundingVolumesEnabled;
+      const boundingSphere = tileset.boundingSphere;
+      const radius = boundingSphere.radius;
+
+      viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.5, -0.2, radius * 4.0));
+
+      if (!Cesium.Matrix4.equals(tileset.root.transform, Cesium.Matrix4.IDENTITY)) {
+        // The clipping plane is initially positioned at the tileset's root transform.
+        // Apply an additional matrix to center the clipping plane on the bounding sphere center.
+        const transformCenter = Cesium.Matrix4.getTranslation(
+          tileset.root.transform,
+          new Cesium.Cartesian3(),
+        );
+        const transformCartographic =
+          Cesium.Cartographic.fromCartesian(transformCenter);
+        const boundingSphereCartographic = Cesium.Cartographic.fromCartesian(
+          tileset.boundingSphere.center,
+        );
+        const height =
+          boundingSphereCartographic.height - transformCartographic.height;
+        clippingPlanes.modelMatrix = Cesium.Matrix4.fromTranslation(
+          new Cesium.Cartesian3(0.0, 0.0, height),
+        );
+      }
+
+      for (let i = 0; i < clippingPlanes.length; ++i) {
+        const plane = clippingPlanes.get(i);
+        const planeEntity = viewer.entities.add({
+          position: boundingSphere.center,
+          plane: {
+            dimensions: new Cesium.Cartesian2(radius * 2.5, radius * 2.5),  // 平面的宽度和高度
+            material: Cesium.Color.WHITE.withAlpha(0.1),
+            plane: new Cesium.CallbackProperty(
+              createPlaneUpdateFunction(plane),
+              false,
+            ),                  // 法线和距离定义平面方程
+            outline: true,
+            outlineColor: Cesium.Color.WHITE,
+          },
+        });
+
+        planeEntities.push(planeEntity);
+      }
+      return tileset;
+    } catch (error) {
+      console.log(`Error loading  tileset: ${error}`);
+    }
+  }
+
+
+  // 按下鼠标，选中平面
+  const downHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  downHandler.setInputAction(function (movement) {
+    const pickedObject = scene.pick(movement.position);
+    if (
+      Cesium.defined(pickedObject) &&
+      Cesium.defined(pickedObject.id) &&
+      Cesium.defined(pickedObject.id.plane)
+    ) {
+      selectedPlane = pickedObject.id.plane;
+      selectedPlane.material = Cesium.Color.WHITE.withAlpha(0.05);
+      selectedPlane.outlineColor = Cesium.Color.RED;
+      scene.screenSpaceCameraController.enableInputs = false;
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+  // 释放鼠标，取消选中平面
+  const upHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  upHandler.setInputAction(function () {
+    if (Cesium.defined(selectedPlane)) {
+      selectedPlane.material = Cesium.Color.WHITE.withAlpha(0.1);
+      selectedPlane.outlineColor = Cesium.Color.WHITE;
+      selectedPlane = undefined;
+    }
+
+    scene.screenSpaceCameraController.enableInputs = true;
+  }, Cesium.ScreenSpaceEventType.LEFT_UP);
+
+  // 移动时，更新剖切平面
+  const moveHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  moveHandler.setInputAction(function (movement) {
+    if (Cesium.defined(selectedPlane)) {
+      const deltaY = movement.startPosition.y - movement.endPosition.y;
+      targetY += deltaY;
+    }
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+</script>
+
+</html>
