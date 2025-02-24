@@ -32,12 +32,24 @@ function createPointEntities(points) {
 }
 
 const centerPoint = [104.06335998805471, 30.659858531850176, 500]; // 中心点的经度、纬度、高程
+const heading = Cesium.Math.toRadians(0); // 绕Z轴旋转0度
+const pitch = Cesium.Math.toRadians(0);   // 绕Y轴旋转0度
+const roll = Cesium.Math.toRadians(30);     // 绕X轴旋转30度
+
+// 创建四元数表示方向
+const orientation = Cesium.Transforms.headingPitchRollQuaternion(Cesium.Cartesian3.fromDegrees(
+  centerPoint[0],
+  centerPoint[1],
+  centerPoint[2]
+), new Cesium.HeadingPitchRoll(heading, pitch, roll));
+
 const plane = new Cesium.Entity({
   position: Cesium.Cartesian3.fromDegrees(
     centerPoint[0],
     centerPoint[1],
     centerPoint[2]
   ), // 定义本地坐标系原点
+  orientation: orientation, // 整个平面，绕X轴旋转30度
   plane: {
     plane: new Cesium.Plane(new Cesium.Cartesian3(0, 0, 1), -50), // 垂直于Z轴，距离原点为-50
     dimensions: new Cesium.Cartesian2(100, 50),
@@ -67,3 +79,10 @@ createPointEntities([
   centerPoint1,
 ]);
 viewer.flyTo(viewer.entities);
+
+
+const debugModelMatrix = new Cesium.DebugModelMatrixPrimitive({
+  modelMatrix: plane.computeModelMatrix(viewer.clock.currentTime),
+  length: 100.0
+});
+viewer.scene.primitives.add(debugModelMatrix);
