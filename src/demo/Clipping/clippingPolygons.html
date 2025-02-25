@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <script src="../js/importCesium.js"></script>
+    <title>裁剪多边形</title>
+    <style>
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-box {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            padding: 16px;
+            background-color: white;
+
+            display: flex;
+        }
+
+        .stage-box {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 2;
+        }
+
+        button {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer">
+    </div>
+    <script type="module">
+        import createViewer from "../js/initViewer.js"
+        const viewer = createViewer({
+            showTerrain: false,
+            isPositionPick: true
+        });
+
+        let coordinates = [
+            108.95915467009141, 34.22007658350828,
+            108.9597831760603, 34.220068970070336,
+            108.95979302053162, 34.21954935314882,
+            108.95909506305938, 34.219550340173114
+        ];
+        let coordinates1 = [
+            108.95915467009141, 34.22007658350828,
+            108.9597831760603, 34.220068970070336,
+            108.95979302053162, 34.21954935314882,
+            108.95909506305938, 34.219550340173114
+        ];
+        let clippingPolygon = new Cesium.ClippingPolygon({
+            positions: Cesium.Cartesian3.fromDegreesArray(coordinates)
+        })
+        // 加载大雁塔
+        const tileset = await Cesium.Cesium3DTileset.fromUrl(
+            "http://earthsdk.com/v/last/Apps/assets/dayanta/tileset.json",
+            {
+                // 裁剪大雁塔
+                clippingPolygons: new Cesium.ClippingPolygonCollection({
+                    polygons: [clippingPolygon],
+                    enabled: true,
+                    inverse: false, // 
+                }),
+
+            }
+        );
+        viewer.scene.primitives.add(tileset);
+
+        //#region 位置贴地
+        let heightOffset = -420;
+        var boundingSphere = tileset.boundingSphere;
+        var cartographic = Cesium.Cartographic.fromCartesian(
+            boundingSphere.center
+        );
+        var surface = Cesium.Cartesian3.fromRadians(
+            cartographic.longitude,
+            cartographic.latitude,
+            0.0
+        );
+        var offset = Cesium.Cartesian3.fromRadians(
+            cartographic.longitude,
+            cartographic.latitude,
+            heightOffset
+        );
+        var translation = Cesium.Cartesian3.subtract(
+            offset,
+            surface,
+            new Cesium.Cartesian3()
+        );
+        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+        //#endregion
+
+        viewer.flyTo(tileset);
+
+
+
+    </script>
+</body>
+
+</html>
