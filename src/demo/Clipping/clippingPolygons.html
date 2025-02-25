@@ -24,27 +24,29 @@
             position: absolute;
             right: 20px;
             top: 20px;
-            padding: 16px;
-            background-color: white;
-
-            display: flex;
-        }
-
-        .stage-box {
-            position: absolute;
-            right: 20px;
-            top: 20px;
+            padding: 8px;
             z-index: 2;
-        }
+            background-color: white;
+            border-radius: 4px;
 
-        button {
-            margin-right: 8px;
+            button {
+                cursor: pointer;
+
+                &:not(:last-child) {
+                    margin-right: 8px;
+                }
+            }
         }
     </style>
 </head>
 
 <body>
     <div id="cesiumContainer">
+        <div class="btn-box">
+            <button onclick="clipping()">裁剪</button>
+            <button onclick="clearClipping()">恢复</button>
+        </div>
+
     </div>
     <script type="module">
         import createViewer from "../js/initViewer.js"
@@ -53,25 +55,13 @@
             isPositionPick: true
         });
 
-        let coordinates = [
-            108.95915467009141, 34.22007658350828,
-            108.9597831760603, 34.220068970070336,
-            108.95979302053162, 34.21954935314882,
-            108.95909506305938, 34.219550340173114
-        ];
-        let clippingPolygon = new Cesium.ClippingPolygon({
-            positions: Cesium.Cartesian3.fromDegreesArray(coordinates)
-        })
+
         // 加载大雁塔
         const tileset = await Cesium.Cesium3DTileset.fromUrl(
             "http://earthsdk.com/v/last/Apps/assets/dayanta/tileset.json",
             {
                 // 裁剪大雁塔
-                clippingPolygons: new Cesium.ClippingPolygonCollection({
-                    polygons: [clippingPolygon],
-                    enabled: true,
-                    inverse: false, // 
-                }),
+
 
             }
         );
@@ -102,9 +92,31 @@
         //#endregion
 
         viewer.flyTo(tileset);
+        window.tileset = tileset;
 
+        window.clipping = () => {
+            let coordinates = [
+                108.95915467009141, 34.22007658350828,
+                108.9597831760603, 34.220068970070336,
+                108.95979302053162, 34.21954935314882,
+                108.95909506305938, 34.219550340173114
+            ];
+            let clippingPolygon = new Cesium.ClippingPolygon({
+                positions: Cesium.Cartesian3.fromDegreesArray(coordinates)
+            })
+            tileset.clippingPolygons = new Cesium.ClippingPolygonCollection({
+                polygons: [clippingPolygon],
+                enabled: true,
+                inverse: false, // 
+            })
+        };
 
+        window.clearClipping = () => {
 
+            tileset.clippingPolygons.removeAll();
+            // tileset.clippingPolygons.destroy();     // 可有可无
+            tileset.clippingPolygons = undefined;   // 必须调用clippingPolygons.removeAll()，否则会报错；
+        }
     </script>
 </body>
 
