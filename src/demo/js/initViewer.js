@@ -1,6 +1,5 @@
 Cesium.Ion.defaultAccessToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzYTBjYzY2NC0yMGEyLTQxZDYtYmI2MC1hMWE4ZTBlMGNlNjciLCJpZCI6MjU5LCJpYXQiOjE3MzU4NTEwMzF9.nshpaoC5qpRD4F5diwcjwJ3tddp1OjCSXoMrv37Ales";
-
 function createViewer(options = {}) {
   let config = {
     geocoder: false, // 搜索功能
@@ -24,17 +23,20 @@ function createViewer(options = {}) {
   // 设置容器：
   let contanier = options.contanier ?? "cesiumContainer";
 
+  // 初始化view
+  const viewer = new Cesium.Viewer(contanier, config);
+
   // 是否显示地形：
   let showTerrain = options.showTerrain ?? true;
   if (showTerrain) {
-    config = {
-      ...config,
-      terrain: Cesium.Terrain.fromWorldTerrain(),
-    };
+    const promise = Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+      "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+    );
+    promise.then((terrainProvider) => {
+      viewer.terrainProvider = terrainProvider;
+    });
   }
 
-  // 初始化view
-  const viewer = new Cesium.Viewer(contanier, config);
   viewer.cesiumWidget.creditContainer.style.display = "none"; // 去除logo
   viewer.scene.globe.depthTestAgainstTerrain = true;
 
