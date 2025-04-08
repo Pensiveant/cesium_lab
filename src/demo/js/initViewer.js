@@ -1,5 +1,5 @@
 Cesium.Ion.defaultAccessToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzYTBjYzY2NC0yMGEyLTQxZDYtYmI2MC1hMWE4ZTBlMGNlNjciLCJpZCI6MjU5LCJpYXQiOjE3MzU4NTEwMzF9.nshpaoC5qpRD4F5diwcjwJ3tddp1OjCSXoMrv37Ales";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNTZhYmEzOS1hNmFhLTQ1OTAtODk0Mi1lM2U3M2FlMjIxZTMiLCJpZCI6MjU5LCJpYXQiOjE3NDEwMTMyNzF9.J_SThPuEuresJ_TioZat6GbGcDLEruo269cV5QQxiqM";
 function createViewer(options = {}) {
   let config = {
     geocoder: false, // 搜索功能

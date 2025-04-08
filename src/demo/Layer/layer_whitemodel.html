@@ -49,6 +49,23 @@
   tileset.style = style;
   viewer.scene.primitives.add(tileset);
   viewer.zoomTo(tileset);
+
+
+  const eventHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  eventHandler.setInputAction(function (e) {
+    const feature = viewer.scene.pick(e.position);
+    if (feature instanceof Cesium.Cesium3DTileFeature) {
+      // 获取白模属性
+      const propertyIds = feature.getPropertyIds();
+      const length = propertyIds.length;
+      let props={};
+      for (let i = 0; i < length; ++i) {
+        const propertyId = propertyIds[i];
+        props[propertyId]=feature.getProperty(propertyId);
+      }
+    console.log(props);
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 </script>
 
 </html>
