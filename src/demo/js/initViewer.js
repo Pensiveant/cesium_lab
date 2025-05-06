@@ -29,9 +29,14 @@ function createViewer(options = {}) {
   // 是否显示地形：
   let showTerrain = options.showTerrain ?? true;
   if (showTerrain) {
-    const promise = Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
-      "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
-    );
+    // CesiumTerrainProvider 地形
+    const promise = Cesium.CesiumTerrainProvider.fromIonAssetId(3956, {
+      requestVertexNormals: true,
+    });
+
+    // const promise = Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(
+    //   "https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer"
+    // );
     promise.then((terrainProvider) => {
       viewer.terrainProvider = terrainProvider;
     });
