@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+  <script src="../../demo/js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import createViewer from "../../demo/js/initViewer.js";
+    const viewer = createViewer({
+      showTerrain: false,
+      isPositionPick: true,
+    });
+
+    let polygonEntity = new Cesium.Entity({
+      polygon: {
+        hierarchy: {
+          positions: Cesium.Cartesian3.fromDegreesArray([
+            113.57323795973936, 22.900052225088405,
+            113.54902269319257, 22.95935167884449,
+            113.52481666828203, 23.020429872124346,
+            113.51264069610741, 23.04347698286488,
+            113.50371805991618, 23.035036459927884,
+            113.51692212480133, 22.985836170322667,
+            113.52947982229628, 22.949960417542464,
+            113.5530515766072, 22.895698542909056
+          ]),
+        },
+        material: new Cesium.Color(1, 0, 0, 0.2),
+      },
+    });
+
+    viewer.entities.add(polygonEntity); 
+    // 定位到广州
+    // viewer.camera.flyTo({
+    //   destination: Cesium.Cartesian3.fromDegrees(113.2644, 23.1291, 1000),
+    // })
+    viewer.flyTo(polygonEntity)
+
+
+    var polygon = turf.polygon([[
+      [113.57323795973936, 22.900052225088405],
+      [113.54902269319257, 22.95935167884449],
+      [113.52481666828203, 23.020429872124346],
+      [113.51264069610741, 23.04347698286488],
+      [113.50371805991618, 23.035036459927884],
+      [113.51692212480133, 22.985836170322667],
+      [113.52947982229628, 22.949960417542464],
+      [113.5530515766072, 22.895698542909056],
+      [113.57323795973936, 22.900052225088405],
+    ]]);
+    var extent = turf.bbox(polygon);
+    var cellSide = 200 / 1000;
+    var options = { units: 'kilometers', mask: polygon };
+    var grid = turf.pointGrid(extent, cellSide, options);
+
+    let allPoints = [];
+
+    for (let i = 0; i < grid.features.length; i++) {
+      let point = grid.features[i].geometry.coordinates;
+      allPoints.push(point);
+
+    }
+    allPoints = allPoints.reverse();
+
+    //
+    let entities = [];
+    for (let i = 0; i < allPoints.length; i++) {
+      let point = allPoints[i];
+      // 半径设置为20-50米之间的随机数
+      // const radius = Math.random() * 30 + 20;
+      const radius = 50;
+      // Cesium.Cartesian3.fromDegrees(point[0], point[1], 0),
+      let entity = new Cesium.Entity({
+        // position: new Cesium.CallbackPositionProperty(function (time, result) {
+        //   // allPoints 随机获取一个点
+        //   let randomPoint = allPoints[Math.floor(Math.random() * (allPoints.length - i) + i)];
+        //   return Cesium.Cartesian3.fromDegrees(randomPoint[0], randomPoint[1], 0);
+        // }, false),
+        position: Cesium.Cartesian3.fromDegrees(point[0], point[1], 0),
+        ellipsoid: {
+          radii: new Cesium.Cartesian3(radius, radius, radius),
+          material: Cesium.Color.fromCssColorString('rgba(0, 222, 255, 1)'),
+        }
+      });
+      entities.push(entity);
+      viewer.entities.add(entity);
+    }
+    viewer.flyTo(entities);
+
+    // 设置时钟
+    const start = Cesium.JulianDate.now();
+    const stop = Cesium.JulianDate.addSeconds(
+      start,
+      36000,
+      new Cesium.JulianDate()
+    );
+
+    viewer.clock.startTime = start.clone();
+    viewer.clock.stopTime = stop.clone();
+    viewer.clock.currentTime = start.clone();
+    viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP; //Loop at the end
+    viewer.clock.multiplier = 0.5;
+    viewer.clock.shouldAnimate = true;
+
+
+    //  
+    let linePositions = [
+      113.51537042809312, 22.892144001277007,
+      113.50813230765714, 22.906403588969297,
+      113.50073976689038, 22.92800324426797,
+      113.49918650115374, 22.95071158889064,
+      113.5103434794479, 22.980535040688387
+    ]
+    viewer.entities.add({
+      name: "polyline",
+      polyline: {
+        positions: Cesium.Cartesian3.fromDegreesArray(
+          linePositions,
+          viewer.scene.globe.ellipsoid
+        ),
+        width: 5,
+        material: Cesium.Color.RED,
+      },
+    });
+
+
+
+    // const duration = 8;
+    // const times = [0.0, 1.0, 2.0, 3.0, 4.0,];
+    // const firstTime = times[0];
+    // const lastTime = times[times.length - 1];
+    // const delta = lastTime - firstTime;
+    // const before = Cesium.Cartesian3.fromDegrees(113.51537042809312, 22.892144001277007);
+    // const points = [
+    //   Cesium.Cartesian3.fromDegrees(113.51537042809312, 22.892144001277007),
+    //   Cesium.Cartesian3.fromDegrees(113.50813230765714, 22.906403588969297,),
+    //   Cesium.Cartesian3.fromDegrees(113.50073976689038, 22.92800324426797,),
+    //   Cesium.Cartesian3.fromDegrees(113.49918650115374, 22.95071158889064,),
+    //   Cesium.Cartesian3.fromDegrees(113.5103434794479, 22.980535040688387),
+    // ];
+    // const after = Cesium.Cartesian3.fromDegrees(113.5103434794479, 22.980535040688387);
+
+    // const firstTangent = Cesium.Cartesian3.subtract(
+    //   points[0],
+    //   before,
+    //   new Cesium.Cartesian3(),
+    // );
+    // const lastTangent = Cesium.Cartesian3.subtract(
+    //   after,
+    //   points[4],
+    //   new Cesium.Cartesian3(),
+    // );
+
+    // const positionSpline = new Cesium.CatmullRomSpline({
+    //   times: times,
+    //   points: points,
+    //   firstTangent: firstTangent,
+    //   lastTangent: lastTangent,
+    // });
+
+    // const position = new Cesium.CallbackPositionProperty(function (time, result) {
+    //   const splineTime =
+    //     (delta * Cesium.JulianDate.secondsDifference(time, start)) / duration;
+    //   if (splineTime < firstTime || splineTime > lastTime) {
+    //     return undefined;
+    //   }
+    //   return positionSpline.evaluate(splineTime, result);
+    // }, false);
+
+    // let ballEntity = new Cesium.Entity({
+    //   position,
+    //   ellipsoid: {
+    //     radii: new Cesium.Cartesian3(50, 50, 50),
+    //     material: Cesium.Color.fromCssColorString('rgba(0, 222, 255, 1)'),
+    //   }
+    // });
+    // viewer.entities.add(ballEntity);
+    function addOneBall(positions) {
+      const duration = positions.length/4;
+      const times = [];
+      const points = [
+        // Cesium.Cartesian3.fromDegrees(113.51537042809312, 22.892144001277007),
+        // Cesium.Cartesian3.fromDegrees(113.50813230765714, 22.906403588969297,),
+        // Cesium.Cartesian3.fromDegrees(113.50073976689038, 22.92800324426797,),
+        // Cesium.Cartesian3.fromDegrees(113.49918650115374, 22.95071158889064,),
+        // Cesium.Cartesian3.fromDegrees(113.5103434794479, 22.980535040688387),
+      ];
+
+
+      for (let i = 0, len = positions.length; i < len; i++) {
+        let point = positions[i];
+        points.push(Cesium.Cartesian3.fromDegrees(point[0], point[1]))
+        times.push(i);
+      }
+
+      const firstTime = times[0];
+      const lastTime = times[times.length - 1];
+      const delta = lastTime - firstTime;
+      const before = points[0];
+      const after = points[points.length - 1];
+
+      const firstTangent = Cesium.Cartesian3.subtract(
+        points[0],
+        before,
+        new Cesium.Cartesian3(),
+      );
+      const lastTangent = Cesium.Cartesian3.subtract(
+        after,
+        points[points.length - 1],
+        new Cesium.Cartesian3(),
+      );
+
+      const positionSpline = new Cesium.CatmullRomSpline({
+        times: times,
+        points: points,
+        firstTangent: firstTangent,
+        lastTangent: lastTangent,
+      });
+
+      const position = new Cesium.CallbackPositionProperty(function (time, result) {
+        const splineTime =
+          (delta * Cesium.JulianDate.secondsDifference(time, start)) / duration;
+        if (splineTime < firstTime || splineTime > lastTime) {
+          return undefined;
+        }
+        return positionSpline.evaluate(splineTime, result);
+      }, false);
+      // const radius = Math.random() * 30 + 20;
+      const radius = 50;
+      let ballEntity = new Cesium.Entity({
+        position,
+        ellipsoid: {
+          radii: new Cesium.Cartesian3(radius, radius, radius),
+          material: Cesium.Color.fromCssColorString('rgba(0, 222, 255, 1)'),
+        }
+      });
+      viewer.entities.add(ballEntity);
+    }
+
+    // addOneBall([
+    //   [113.51537042809312, 22.892144001277007],
+    //   [113.50813230765714, 22.906403588969297],
+    //   [113.50073976689038, 22.92800324426797],
+    //   [113.49918650115374, 22.95071158889064],
+    //   [113.5103434794479, 22.980535040688387]
+    // ])
+
+
+
+
+    let linePoints = [
+      [113.51537042809312, 22.892144001277007],
+      [113.50813230765714, 22.906403588969297],
+      [113.50073976689038, 22.92800324426797],
+      [113.49918650115374, 22.95071158889064],
+      [113.5103434794479, 22.980535040688387]
+    ];
+
+    var controls = [
+      // Cesium.Cartesian3.fromDegrees(110, 10),
+      // Cesium.Cartesian3.fromDegrees(111, 11),
+      // Cesium.Cartesian3.fromDegrees(112, 9),
+      // Cesium.Cartesian3.fromDegrees(114, 10),
+      // Cesium.Cartesian3.fromDegrees(113, 8)
+    ];
+    for (let i = 0; i < linePoints.length; i++) {
+      const item = linePoints[i];
+      controls.push(Cesium.Cartesian3.fromDegrees(item[0], item[1]));
+    }
+    var spline = new Cesium.LinearSpline({
+      times: [0.0, 0.25, 0.5, 0.75, 1],
+      points: controls
+    });
+    var positions = [];
+    for (var i = 0; i <= 40; i++) {
+      var cartesian3 = spline.evaluate(i / 40);
+      // cartesian3 转经纬度，单位为度
+      let lonlat = Cesium.Cartographic.fromCartesian(cartesian3);
+      positions.push([Cesium.Math.toDegrees(lonlat.longitude), Cesium.Math.toDegrees(lonlat.latitude)]);
+      // viewer.entities.add({
+      //   position: cartesian3,
+      //   point: {
+      //     color: Cesium.Color.YELLOW,
+      //     pixelSize: 6
+      //   }
+      // });
+    }
+    
+    for (let i = 0; i < positions.length-1; i++) {
+      addOneBall(positions.slice(i, positions.length))
+    }
+    
+
+  </script>
+</body>
+
+</html>
