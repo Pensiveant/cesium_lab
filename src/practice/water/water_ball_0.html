@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>水面插值点</title>
+  <!-- Include the CesiumJS JavaScript and CSS files -->
+  <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+  <script src="../../demo/js/importCesium.js"></script>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cesiumContainer"></div>
+  <script type="module">
+    import createViewer from "../../demo/js/initViewer.js";
+    const viewer = createViewer({
+      showTerrain: false,
+      isPositionPick: true,
+    });
+
+    let polygonEntity = new Cesium.Entity({
+      polygon: {
+        hierarchy: {
+          positions: Cesium.Cartesian3.fromDegreesArray([
+            113.57323795973936, 22.900052225088405,
+            113.54902269319257, 22.95935167884449,
+            113.52481666828203, 23.020429872124346,
+            113.51264069610741, 23.04347698286488,
+            113.50371805991618, 23.035036459927884,
+            113.51692212480133, 22.985836170322667,
+            113.52947982229628, 22.949960417542464,
+            113.5530515766072, 22.895698542909056
+          ]),
+        },
+        material: new Cesium.Color(1, 0, 0, 0.2),
+      },
+    });
+
+    viewer.entities.add(polygonEntity); 
+    // 定位到广州
+    // viewer.camera.flyTo({
+    //   destination: Cesium.Cartesian3.fromDegrees(113.2644, 23.1291, 1000),
+    // })
+    viewer.flyTo(polygonEntity)
+    
+
+    var polygon = turf.polygon([[
+      [113.57323795973936, 22.900052225088405],
+      [113.54902269319257, 22.95935167884449],
+      [113.52481666828203, 23.020429872124346],
+      [113.51264069610741, 23.04347698286488],
+      [113.50371805991618, 23.035036459927884],
+      [113.51692212480133, 22.985836170322667],
+      [113.52947982229628, 22.949960417542464],
+      [113.5530515766072, 22.895698542909056],
+      [113.57323795973936, 22.900052225088405],
+    ]]);
+    var extent = turf.bbox(polygon);
+    var cellSide = 200 / 1000;
+    var options = { units: 'kilometers', mask: polygon };
+    var grid = turf.pointGrid(extent, cellSide, options);
+
+    let allPoints = [];
+
+    for (let i = 0; i < grid.features.length; i++) {
+      let point = grid.features[i].geometry.coordinates;
+      allPoints.push(point);
+
+    }
+    allPoints = allPoints.reverse();
+
+    //
+    let entities = [];
+    for (let i = 0; i < allPoints.length; i++) {
+      let point = allPoints[i];
+      // 半径设置为20-50米之间的随机数
+      // const radius = Math.random() * 30 + 20;
+      const radius = 50;
+      // Cesium.Cartesian3.fromDegrees(point[0], point[1], 0),
+      let entity = new Cesium.Entity({
+        // position: new Cesium.CallbackPositionProperty(function (time, result) {
+        //   // allPoints 随机获取一个点
+        //   let randomPoint = allPoints[Math.floor(Math.random() * (allPoints.length - i) + i)];
+        //   return Cesium.Cartesian3.fromDegrees(randomPoint[0], randomPoint[1], 0);
+        // }, false),
+        position: Cesium.Cartesian3.fromDegrees(point[0], point[1], 0),
+        ellipsoid: {
+          radii: new Cesium.Cartesian3(radius, radius, radius),
+          material: Cesium.Color.fromCssColorString('rgba(0, 222, 255, 1)'),
+        }
+      });
+      entities.push(entity);
+      viewer.entities.add(entity);
+    }
+    viewer.flyTo(entities);
+
+  </script>
+</body>
+
+</html>
