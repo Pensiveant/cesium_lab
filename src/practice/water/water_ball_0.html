@@ -50,13 +50,13 @@
       },
     });
 
-    viewer.entities.add(polygonEntity); 
+    viewer.entities.add(polygonEntity);
     // 定位到广州
     // viewer.camera.flyTo({
     //   destination: Cesium.Cartesian3.fromDegrees(113.2644, 23.1291, 1000),
     // })
     viewer.flyTo(polygonEntity)
-    
+
 
     var polygon = turf.polygon([[
       [113.57323795973936, 22.900052225088405],
@@ -73,41 +73,31 @@
     var cellSide = 200 / 1000;
     var options = { units: 'kilometers', mask: polygon };
     var grid = turf.pointGrid(extent, cellSide, options);
+    console.log(grid);
 
-    let allPoints = [];
 
-    for (let i = 0; i < grid.features.length; i++) {
-      let point = grid.features[i].geometry.coordinates;
-      allPoints.push(point);
+    let pointGeojson = Cesium.GeoJsonDataSource.load(
+      grid,
+      {
+        markerSize: 30, // 点大小
+        markerColor: Cesium.Color.RED, // 点颜色
+        markerSymbol: "village", // 点样式， 参考： https://sandcastle.cesium.com/index.html?src=GeoJSON%2520simplestyle.html
+      }
+    ).then((dataSource) => {
+      viewer.dataSources.add(dataSource);
+      viewer.flyTo(dataSource);
+      // 修改默认的点样式
+      var entities = dataSource.entities.values;
+      for (var i = 0; i < entities.length; i++) {
+        var entity = entities[i];
+        entity.billboard = undefined;
+        entity.point = new Cesium.PointGraphics({
+          color: Cesium.Color.RED,
+          pixelSize: 10,
+        });
+      }
 
-    }
-    allPoints = allPoints.reverse();
-
-    //
-    let entities = [];
-    for (let i = 0; i < allPoints.length; i++) {
-      let point = allPoints[i];
-      // 半径设置为20-50米之间的随机数
-      // const radius = Math.random() * 30 + 20;
-      const radius = 50;
-      // Cesium.Cartesian3.fromDegrees(point[0], point[1], 0),
-      let entity = new Cesium.Entity({
-        // position: new Cesium.CallbackPositionProperty(function (time, result) {
-        //   // allPoints 随机获取一个点
-        //   let randomPoint = allPoints[Math.floor(Math.random() * (allPoints.length - i) + i)];
-        //   return Cesium.Cartesian3.fromDegrees(randomPoint[0], randomPoint[1], 0);
-        // }, false),
-        position: Cesium.Cartesian3.fromDegrees(point[0], point[1], 0),
-        ellipsoid: {
-          radii: new Cesium.Cartesian3(radius, radius, radius),
-          material: Cesium.Color.fromCssColorString('rgba(0, 222, 255, 1)'),
-        }
-      });
-      entities.push(entity);
-      viewer.entities.add(entity);
-    }
-    viewer.flyTo(entities);
-
+    });
   </script>
 </body>
 
