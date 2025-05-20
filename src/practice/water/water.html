@@ -26,73 +26,76 @@
 <body>
   <div id="cesiumContainer"></div>
   <script type="module">
+    import data from "./js/road.js";
     import createViewer from "../../demo/js/initViewer.js";
     const viewer = createViewer({
       showTerrain: false,
       isPositionPick: true,
     });
 
-    const polineGraphic = new Cesium.PolylineGraphics({
-      positions: Cesium.Cartesian3.fromDegreesArray(
-        [
-          104.05840213978989, 30.660710197196195, 104.06489477780019,
-          30.660744489868755,
-        ],
-        viewer.scene.globe.ellipsoid
-      ),
-      width: 80,
-      material: texture("#99FFFF", 1000),
-      classificationType: Cesium.ClassificationType.TERRAIN,
-      clampToGround: true,
-    });
-    viewer.entities.add({
-      name: "polyline",
-      polyline: polineGraphic,
-    });
-    viewer.zoomTo(viewer.entities);
-
-
-
-    // let pointGeojson = Cesium.GeoJsonDataSource.load(
-    //   "./data/road.json",
-    //   {
-    //     fill: Cesium.Color.RED,
-    //     stroke: Cesium.Color.BLUE,
-    //     strokeWidth: 10,
-    //     clampToGround: true
-    //   }
-    // ).then((dataSource) => {
-    //   viewer.dataSources.add(dataSource);
-
-    //   var entities = dataSource.entities.values;
-    //   for (var i = 0; i < entities.length; i++) {
-    //     var entity = entities[i];
-    //     // entity.polygon.material = texture();
-       
-    //     let positions = entity.polyline.positions.getValue();
-    //     // 将笛卡尔转换为经纬度
-    //     let coordinates = positions.map(function (position) {
-    //       var cartographic = Cesium.Cartographic.fromCartesian(position);
-    //       return [
-    //         Cesium.Math.toDegrees(cartographic.longitude),
-    //         Cesium.Math.toDegrees(cartographic.latitude),
-    //       ];
-    //     });
-    //     // 使用turf,计算线段长度
-    //     let line = turf.lineString(coordinates);
-    //     let length = turf.length(line, { units: "kilometers" });
-       
-    //     entity.polyline.material = texture("#99FFFF",length*1000);
-    //     entity.polyline.width = 20;
-    //   }
-
-    //   viewer.flyTo(dataSource);
-
-
+    // const polineGraphic = new Cesium.PolylineGraphics({
+    //   positions: Cesium.Cartesian3.fromDegreesArray(
+    //     [
+    //       104.05840213978989, 30.660710197196195, 104.06489477780019,
+    //       30.660744489868755,
+    //     ],
+    //     viewer.scene.globe.ellipsoid
+    //   ),
+    //   width: 80,
+    //   material: texture("#99FFFF", 1000),
+    //   classificationType: Cesium.ClassificationType.TERRAIN,
+    //   clampToGround: true,
     // });
+    // viewer.entities.add({
+    //   name: "polyline",
+    //   polyline: polineGraphic,
+    // });
+    // viewer.zoomTo(viewer.entities);
 
 
-    function texture(color, duration) {
+
+    let pointGeojson = Cesium.GeoJsonDataSource.load(
+      "./data/water-line.json",
+      {
+        fill: Cesium.Color.RED,
+        stroke: Cesium.Color.BLUE,
+        strokeWidth: 10,
+        clampToGround: true
+      }
+    ).then((dataSource) => {
+      viewer.dataSources.add(dataSource);
+
+      var entities = dataSource.entities.values;
+      for (var i = 0; i < entities.length; i++) {
+        var entity = entities[i];
+        // entity.polygon.material = texture();
+
+        let positions = entity.polyline.positions.getValue();
+        // 将笛卡尔转换为经纬度
+        let coordinates = positions.map(function (position) {
+          var cartographic = Cesium.Cartographic.fromCartesian(position);
+          return [
+            Cesium.Math.toDegrees(cartographic.longitude),
+            Cesium.Math.toDegrees(cartographic.latitude),
+          ];
+        });
+        // 使用turf,计算线段长度
+        let line = turf.lineString(coordinates);
+        let length = turf.length(line, { units: "kilometers" });
+        let repeat = Math.floor(length/2);
+        console.log(length, repeat);
+        // entity.polyline.material = texture("#99FFFF",length*1000);
+        entity.polyline.material = texture("#ffeaad", 2000, repeat)
+        entity.polyline.width = 20;
+      }
+
+      viewer.flyTo(dataSource);
+
+
+    });
+
+
+    function texture(color, duration, repeat) {
       // 动态纹理
       function PolylineTrailLinkMaterialProperty(color, duration) {
         this._definitionChanged = new Cesium.Event();
@@ -135,7 +138,8 @@
       Cesium.PolylineTrailLinkMaterialProperty = PolylineTrailLinkMaterialProperty;
       Cesium.Material.PolylineTrailLinkType = 'PolylineTrailLink';
       // Cesium.Material.PolylineTrailLinkImage = "./img/w1.png";
-      Cesium.Material.PolylineTrailLinkImage = "./img/arrow.png";
+      //Cesium.Material.PolylineTrailLinkImage = "./img/arrow.png";
+      Cesium.Material.PolylineTrailLinkImage = "./img/arrow1.png";
       Cesium.Material.PolylineTrailLinkSource = "czm_material czm_getMaterial(czm_materialInput materialInput)\n\
                                                   {\n\
                                                        czm_material material = czm_getDefaultMaterial(materialInput);\n\
@@ -155,7 +159,7 @@
               color: new Cesium.Color(1.0, 0.0, 0.0, 0.5),
               image: Cesium.Material.PolylineTrailLinkImage,
               time: 1000,
-              repeat: new Cesium.Cartesian2(10, 1),
+              repeat: new Cesium.Cartesian2(repeat, 1),
             },
             source: Cesium.Material.PolylineTrailLinkSource,
           },
