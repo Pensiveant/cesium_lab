@@ -87,11 +87,11 @@
         let line = turf.lineString(coordinates);
         // let length = turf.length(line, { units: "kilometers" });
         let length = entity.properties.SHAPE_Leng.getValue() / 1000;
-        let repeat = length < 10 ? 1 : Math.floor(length / 2.5);
+        let repeat = Math.floor(length / 2.5);
         console.log(length, repeat);
         // entity.polyline.material = texture("#99FFFF",length*1000);
         entity.polyline.material = texture("#ffeaad", 2000, repeat)
-        entity.polyline.width = 20;
+        entity.polyline.width = 13
       }
 
       viewer.flyTo(dataSource);
