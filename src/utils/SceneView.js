@@ -13,7 +13,8 @@ class SceneView {
       fullscreenButton: false,
       // 使用ArcGIS 底图
       imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        // url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        url: "https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer",
       }),
 
       ...options,
@@ -48,7 +49,7 @@ class SceneView {
       Cesium.CameraEventType.WHEEL,
       Cesium.CameraEventType.PINCH,
     ];
-    
+
     //移除默认鼠标左键双击事件
     viewer.screenSpaceEventHandler.removeInputAction(
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK

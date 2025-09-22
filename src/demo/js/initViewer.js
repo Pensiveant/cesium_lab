@@ -14,7 +14,8 @@ function createViewer(options = {}) {
     // 使用ArcGIS 底图
     baseLayer: Cesium.ImageryLayer.fromProviderAsync(
       Cesium.ArcGisMapServerImageryProvider.fromUrl(
-        "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+        // "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+        "https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer"
       )
     ),
     ...options,
