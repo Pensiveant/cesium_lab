@@ -109,13 +109,13 @@
         let width = window.innerWidth;
         let height = window.innerHeight;
         let aspect = width / height;
-        let near = 1;
+        let near = .1;
         let far = 10 * 1000 * 1000;
         three.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         three.renderer = new THREE.WebGLRenderer({
             alpha: true
         });
-      //  three.loader = new GLTFLoader();//加载模型用
+        //  three.loader = new GLTFLoader();//加载模型用
         threeContainer.appendChild(three.renderer.domElement);
         //保存物体,循环渲染用
         let _3DObjects = []
@@ -133,12 +133,7 @@
 
         function create3Dobject() {
             let geometry = new THREE.BoxGeometry(10, 10, 100);
-            // 使用更明显的材质，确保可见性
-            let material = new THREE.MeshBasicMaterial({ 
-                color: 0xff0000,  // 红色更醒目
-                wireframe: false, // 可以改为true进行调试
-                transparent: false
-            });
+            let material = new THREE.MeshNormalMaterial();
             let cube = new THREE.Mesh(geometry, material);
             cube.rotation.x = Math.PI / 2
             //缩放控制大小
@@ -149,8 +144,6 @@
 
             var _3DOB = new _3DObject(group, tarPos.lon, tarPos.lat);
             _3DObjects.push(_3DOB)
-            
-            console.log('Cube created and added to scene'); // 调试信息
         }
 
         //cesium的世界坐标转three里的3维向量
@@ -164,8 +157,8 @@
             for (let index in _3DObjects) {
                 let lon = _3DObjects[index].lon
                 let lat = _3DObjects[index].lat
-                //物体中心位置 - 设置适当的高度，确保在地面以上可见
-                let height = 100; // 提高高度，确保立方体可见
+                //物体中心位置
+                let height = 500; // 对应经纬度处，高程约为500米；避免不设置，导致盒子位置飘移问题
                 let center = Cesium.Cartesian3.fromDegrees(lon, lat, height);
                 let centerHigh = Cesium.Cartesian3.fromDegrees(lon, lat, height + 100);
 
@@ -174,9 +167,8 @@
                 let latDir = new THREE.Vector3().subVectors(bottomLeft, topLeft).normalize();
 
                 // 确定实体的位置和方向
-                _3DObjects[index].threeMesh.position.copy(center);
-                // 确保lookAt使用正确的THREE.Vector3
-                _3DObjects[index].threeMesh.lookAt(new THREE.Vector3(centerHigh.x, centerHigh.y, centerHigh.z));
+                _3DObjects[index].threeMesh.position.copy(cartToVec(center));
+                _3DObjects[index].threeMesh.lookAt(cartToVec(centerHigh));
                 _3DObjects[index].threeMesh.up.copy(latDir);
 
             }
@@ -190,7 +182,7 @@
         //three渲染,用cesium相机规则重新初始化three的相机,做到统一控制
         function renderThree() {
             // 使用 Cesium 注册 Three.js 场景
-            three.camera.fov = Cesium.Math.toDegrees(viewer.camera.frustum.fovy); // ThreeJS FOV是垂直的
+            three.camera.fov = Cesium.Math.toDegrees(viewer.camera.frustum.fovy) // ThreeJS FOV是垂直的
             three.camera.updateProjectionMatrix();
 
             //同步两者的相机，由于用户直接的操作的是Cesium所以最终要求将ThreeJS的相机同步到Cesium上,
@@ -198,8 +190,6 @@
             three.camera.matrixAutoUpdate = false;
             let cvm = viewer.camera.viewMatrix;
             let civm = viewer.camera.inverseViewMatrix;
-            
-            // 正确设置相机矩阵
             three.camera.matrixWorld.set(
                 civm[0], civm[4], civm[8], civm[12],
                 civm[1], civm[5], civm[9], civm[13],
@@ -212,9 +202,7 @@
                 cvm[2], cvm[6], cvm[10], cvm[14],
                 cvm[3], cvm[7], cvm[11], cvm[15]
             );
-            
-            // 移除lookAt(0,0,0)，因为它会覆盖之前设置的矩阵
-            // three.camera.lookAt(new THREE.Vector3(0, 0, 0)); // 这行可能导致相机朝向错误
+            //three.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
             let width = threeContainer.clientWidth;
             let height = threeContainer.clientHeight;
