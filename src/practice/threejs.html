@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Include the CesiumJS JavaScript and CSS files -->
+    <title>cesium融合thre.js</title>
+    <script src="../demo/js/importCesium.js"></script>
+    <script type="importmap">
+        {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@v0.157.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.157.0/examples/jsm/"
+        }
+        }
+</script>
+    <style>
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .weather-box {
+            position: absolute;
+            top: 100px;
+            right: 100px;
+            z-index: 2;
+        }
+
+        .weather-box button {
+            cursor: pointer;
+        }
+
+        #threeCtn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            overflow: hidden;
+            padding: 0;
+            font-family: sans-serif;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer">
+
+    </div>
+    <div id="threeCtn"></div>
+    <script type="module">
+        // 初始化view
+        import createViewer from "../demo/js/initViewer.js";
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // const scene = new THREE.Scene();
+        // const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        // let threeContainer = document.getElementById('threeCtn')
+        // const renderer = new THREE.WebGLRenderer();
+        // renderer.setSize(window.innerWidth, window.innerHeight);
+        // renderer.setAnimationLoop(animate);
+        // threeContainer.appendChild(renderer.domElement);
+
+        // const geometry = new THREE.BoxGeometry(1, 1, 1);
+        // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        // const cube = new THREE.Mesh(geometry, material);
+        // scene.add(cube);
+
+        // camera.position.z = 5;
+
+        // function animate() {
+
+        //     cube.rotation.x += 0.01;
+        //     cube.rotation.y += 0.01;
+
+        //     renderer.render(scene, camera);
+
+        // }
+
+
+        const viewer = createViewer({
+            isPositionPick: true
+        });
+        // 定位到成都
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(104.06175, 30.65512, 1400),
+        });
+        window.viewer = viewer;
+
+
+        let threeContainer = document.getElementById('threeCtn')
+        let three = {}
+        let group = null
+        // 初始化threeJS
+        three.scene = new THREE.Scene();
+        let fov = 45;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let aspect = width / height;
+        let near = 1;
+        let far = 10 * 1000 * 1000;
+        three.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        three.renderer = new THREE.WebGLRenderer({
+            alpha: true
+        });
+      //  three.loader = new GLTFLoader();//加载模型用
+        threeContainer.appendChild(three.renderer.domElement);
+        //保存物体,循环渲染用
+        let _3DObjects = []
+        let tarPos = {
+            lon: 104.06304899928249,
+            lat: 30.654998272940134
+        };
+
+        //3DObject类
+        function _3DObject(threeMesh, lon, lat) {
+            this.threeMesh = threeMesh;
+            this.lon = lon;//经度
+            this.lat = lat;//纬度
+        }
+
+        function create3Dobject() {
+            let geometry = new THREE.BoxGeometry(10, 10, 100);
+            // 使用更明显的材质，确保可见性
+            let material = new THREE.MeshBasicMaterial({ 
+                color: 0xff0000,  // 红色更醒目
+                wireframe: false, // 可以改为true进行调试
+                transparent: false
+            });
+            let cube = new THREE.Mesh(geometry, material);
+            cube.rotation.x = Math.PI / 2
+            //缩放控制大小
+            cube.scale.set(10, 10, 10)
+            group = new THREE.Group()
+            group.add(cube)
+            three.scene.add(group)
+
+            var _3DOB = new _3DObject(group, tarPos.lon, tarPos.lat);
+            _3DObjects.push(_3DOB)
+            
+            console.log('Cube created and added to scene'); // 调试信息
+        }
+
+        //cesium的世界坐标转three里的3维向量
+        function cartToVec(cart) {
+            return new THREE.Vector3(cart.x, cart.y, cart.z);
+        }
+
+        //将3DObject里的经纬度转换为threejs的世界坐标系,并赋给Mesh的position
+        function updated3Dobject() {
+
+            for (let index in _3DObjects) {
+                let lon = _3DObjects[index].lon
+                let lat = _3DObjects[index].lat
+                //物体中心位置 - 设置适当的高度，确保在地面以上可见
+                let height = 100; // 提高高度，确保立方体可见
+                let center = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+                let centerHigh = Cesium.Cartesian3.fromDegrees(lon, lat, height + 100);
+
+                var bottomLeft = cartToVec(Cesium.Cartesian3.fromDegrees(lon, lat, height));
+                var topLeft = cartToVec(Cesium.Cartesian3.fromDegrees(lon, lat + 0.001, height));
+                let latDir = new THREE.Vector3().subVectors(bottomLeft, topLeft).normalize();
+
+                // 确定实体的位置和方向
+                _3DObjects[index].threeMesh.position.copy(center);
+                // 确保lookAt使用正确的THREE.Vector3
+                _3DObjects[index].threeMesh.lookAt(new THREE.Vector3(centerHigh.x, centerHigh.y, centerHigh.z));
+                _3DObjects[index].threeMesh.up.copy(latDir);
+
+            }
+        }
+
+        //cesium渲染
+        function renderCesium() {
+            viewer.render();
+        }
+
+        //three渲染,用cesium相机规则重新初始化three的相机,做到统一控制
+        function renderThree() {
+            // 使用 Cesium 注册 Three.js 场景
+            three.camera.fov = Cesium.Math.toDegrees(viewer.camera.frustum.fovy); // ThreeJS FOV是垂直的
+            three.camera.updateProjectionMatrix();
+
+            //同步两者的相机，由于用户直接的操作的是Cesium所以最终要求将ThreeJS的相机同步到Cesium上,
+            //每一帧更新,所以这里要放到three的loop(animate)函数里
+            three.camera.matrixAutoUpdate = false;
+            let cvm = viewer.camera.viewMatrix;
+            let civm = viewer.camera.inverseViewMatrix;
+            
+            // 正确设置相机矩阵
+            three.camera.matrixWorld.set(
+                civm[0], civm[4], civm[8], civm[12],
+                civm[1], civm[5], civm[9], civm[13],
+                civm[2], civm[6], civm[10], civm[14],
+                civm[3], civm[7], civm[11], civm[15]
+            );
+            three.camera.matrixWorldInverse.set(
+                cvm[0], cvm[4], cvm[8], cvm[12],
+                cvm[1], cvm[5], cvm[9], cvm[13],
+                cvm[2], cvm[6], cvm[10], cvm[14],
+                cvm[3], cvm[7], cvm[11], cvm[15]
+            );
+            
+            // 移除lookAt(0,0,0)，因为它会覆盖之前设置的矩阵
+            // three.camera.lookAt(new THREE.Vector3(0, 0, 0)); // 这行可能导致相机朝向错误
+
+            let width = threeContainer.clientWidth;
+            let height = threeContainer.clientHeight;
+            let aspect = width / height;
+            //透视摄像机 视锥体长宽比
+            three.camera.aspect = aspect;
+            three.camera.updateProjectionMatrix();
+
+            three.renderer.setSize(width, height);
+            three.renderer.render(three.scene, three.camera);
+        }
+
+        //在three的loop函数里,循环渲染cesium和three,同步两个渲染器
+        function loop() {
+            requestAnimationFrame(loop);
+            renderCesium();
+            renderThree();
+        }
+
+        async function initModelScene() {
+            create3Dobject()
+            updated3Dobject()
+            loop()
+        }
+
+        initModelScene()
+
+
+    </script>
+</body>
+
+</html>
