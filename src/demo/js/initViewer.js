@@ -50,6 +50,7 @@ function createViewer(options = {}) {
   if (options.isPositionPick) {
     positionPick(viewer);
   }
+  modifyMouseAction(viewer);
 
   return viewer;
 }
@@ -85,6 +86,32 @@ function positionPick(viewer) {
       positionArr1: [lng, lat, height],
     });
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+}
+
+function modifyMouseAction(viewer) {
+  //修改旋转为右键操作
+  viewer.scene.screenSpaceCameraController.tiltEventTypes = [
+    Cesium.CameraEventType.RIGHT_DRAG,
+    Cesium.CameraEventType.PINCH,
+    {
+      eventType: Cesium.CameraEventType.LEFT_DRAG,
+      modifier: Cesium.KeyboardEventModifier.CTRL,
+    },
+    {
+      eventType: Cesium.CameraEventType.RIGHT_DRAG,
+      modifier: Cesium.KeyboardEventModifier.CTRL,
+    },
+  ];
+  //重置地图放大缩小操作，
+  viewer.scene.screenSpaceCameraController.zoomEventTypes = [
+    Cesium.CameraEventType.MIDDLE_DRAG,
+    Cesium.CameraEventType.WHEEL,
+    Cesium.CameraEventType.PINCH,
+  ];
+  //移除默认鼠标左键双击事件
+  viewer.screenSpaceEventHandler.removeInputAction(
+    Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+  );
 }
 
 export default createViewer;
