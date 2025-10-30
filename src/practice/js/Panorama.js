@@ -14,6 +14,7 @@ class Panorama {
       renderer: null,
       mesh: null,
     };
+    this._animationId = null;
 
     this._init();
   }
@@ -200,9 +201,45 @@ class Panorama {
 
   //在three的loop函数里,循环渲染cesium和three,同步两个渲染器
   _loop() {
-    requestAnimationFrame(this._loop.bind(this));
+    this._animationId = requestAnimationFrame(this._loop.bind(this));
     this._renderCesium();
     this._renderThree();
+  }
+
+  /**
+   * 销毁全景图，清理资源
+   */
+  destroy() {
+    // 取消动画帧
+    if (this._animationId) {
+      cancelAnimationFrame(this._animationId);
+      this._animationId = null;
+    }
+
+    // 清除camera.lookAt效果
+    if (this.viewer && this.viewer.camera) {
+      // 方法1：恢复相机的自由控制
+      this.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+      // 方法2：可选 - 如果需要，可以添加一个flyTo操作回到之前的视角
+      // this.viewer.flyTo(this.viewer.entities, { duration: 0.5 });
+    }
+
+    // 移除DOM元素
+    if (this.three.containerId) {
+      const container = document.getElementById(this.three.containerId);
+      if (container && container.parentNode) {
+        container.parentNode.removeChild(container);
+      }
+    }
+
+    // 清理THREE.js资源
+    if (this.three.renderer) {
+      this.three.renderer.dispose();
+    }
+
+    // 重置属性
+    this.three = null;
+    this.viewer = null;
   }
 }
 
